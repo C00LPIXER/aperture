@@ -1,0 +1,405 @@
+<%- include('partials/head') %>
+<body>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+      <a href="/admin" class="brand-wrap">
+        <img
+          src="/images/icons/logo-1.png"
+          class="logo"
+          alt="Evara Dashboard"
+        />
+      </a>
+      <div>
+        <button class="btn btn-icon btn-aside-minimize">
+          <i class="text-muted material-icons md-menu_open"></i>
+        </button>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="/admin">
+            <i class="icon material-icons md-home"></i>
+            <span class="text">Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/products">
+            <i class="icon material-icons md-shopping_bag"></i>
+            <span class="text">Products List</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/orders">
+            <i class="icon material-icons md-shopping_cart"></i>
+            <span class="text">Orders list</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-store"></i>
+            <span class="text">Sales Report</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/add_product">
+            <i class="icon material-icons md-add_box"></i>
+            <span class="text">Add product</span>
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a class="menu-link" href="/admin/users">
+            <i class="icon material-icons md-person"></i>
+            <span class="text">Users</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-comment"></i>
+            <span class="text">Reviews</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/brands">
+            <i class="icon material-icons md-stars"></i>
+            <span class="text">Brands</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" disabled href="/admin/categories">
+            <i class="icon material-icons md-pie_chart"></i>
+            <span class="text">Categories</span>
+          </a>
+        </li>
+      </ul>
+      <hr />
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-settings"></i>
+            <span class="text">Settings</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-local_offer"></i>
+            <span class="text"> Starter page </span>
+          </a>
+        </li>
+      </ul>
+      <br />
+      <br />
+    </nav>
+  </aside>
+  <main class="main-wrap">
+    <header class="main-header navbar">
+      <div class="col-search">
+        <form  class="searchform">
+          <div class="input-group">
+            <input
+              list="search_terms"
+              type="text"
+              class="form-control"
+              placeholder="Search term"
+            />
+            <button class="btn btn-light bg" type="button">
+              <i class="material-icons md-search"></i>
+            </button>
+          </div>
+          <datalist id="search_terms">
+            <option value="Products"></option>
+            <option value="New orders"></option>
+            <option value="Apple iphone"></option>
+            <option value="Ahmed Hassan"></option>
+          </datalist>
+        </form>
+      </div>
+      <div class="col-nav">
+        <button
+          class="btn btn-icon btn-mobile me-auto"
+          data-trigger="#offcanvas_aside"
+        >
+          <i class="material-icons md-apps"></i>
+        </button>
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link btn-icon darkmode" href="#">
+              <i class="material-icons md-nights_stay"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="requestfullscreen nav-link btn-icon"
+              ><i class="material-icons md-cast"></i
+            ></a>
+          </li>
+          <li class="dropdown nav-item">
+            <a
+              class="dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="#"
+              id="dropdownLanguage"
+              aria-expanded="false"
+              ><i class="material-icons md-public"></i
+            ></a>
+          </li>
+          <li class="dropdown nav-item">
+            <a
+              class="dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="#"
+              id="dropdownAccount"
+              aria-expanded="false"
+            >
+              <img
+                class="img-xs rounded-circle"
+                src="/assets/imgs/people/avatar2.jpg"
+                alt="User"
+            /></a>
+            <div
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownAccount"
+            >
+              <a class="dropdown-item" href="#"
+                ><i class="material-icons md-perm_identity"></i>Edit Profile</a
+              >
+              <a class="dropdown-item" href="#"
+                ><i class="material-icons md-settings"></i>Account Settings</a
+              >
+              <a class="dropdown-item" href="#"
+                ><i class="material-icons md-account_balance_wallet"></i
+                >Wallet</a
+              >
+              <a class="dropdown-item" href="#"
+                ><i class="material-icons md-receipt"></i>Billing</a
+              >
+              <a class="dropdown-item" href="#"
+                ><i class="material-icons md-help_outline"></i>Help center</a
+              >
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" href="#"
+                ><i class="material-icons md-exit_to_app"></i>Logout</a
+              >
+            </div>
+          </li>
+        </ul>
+      </div>
+    </header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Reviews</h2>
+          <p>Lorem ipsum dolor sit amet.</p>
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Search by name"
+            class="form-control bg-white"
+          />
+        </div>
+      </div>
+      <div class="card mb-4">
+        <header class="card-header">
+          <div class="row gx-3">
+            <div class="col-lg-4 col-md-6 me-auto">
+              <input type="text" placeholder="Search..." class="form-control" />
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+              <select class="form-select">
+                <option>Status</option>
+                <option>Active</option>
+                <option>Disabled</option>
+                <option>Show all</option>
+              </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <select class="form-select" id="limitSelect">
+                    <option value="4" <%= limit === 4 ? 'selected' : '' %>>Show 4</option>
+                    <option value="8" <%= limit === 8 ? 'selected' : '' %>>Show 8</option>
+                    <option value="12" <%= limit === 12 ? 'selected' : '' %>>Show 12</option>
+                </select>
+            </div>
+            
+          </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Join Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% users.forEach(user => { %>
+                <tr>
+                  <td><b><%= user.firstName %> <%= user.lastName %></b></td>
+                  <td><%= user.email %></td>
+                  <td>
+                    <% if (!user.is_blocked) { %>
+                    <span class="badge bg-success w-50">Active</span>
+                    <% } else { %>
+                    <span class="badge bg-danger w-50">Blocked</span>
+                    <% } %>
+                  </td>
+                  <td><%= new Date(user.signUpDate).toDateString() %></td>
+                  <td>
+                    <% if (!user.is_blocked) { %>
+                    <button
+                      style="width: 80px"
+                      data-user-id="<%= user._id %>"
+                      data-action="block"
+                      class="btn btn-danger btn-sm btn-block"
+                    >
+                      Block
+                    </button>
+                    <% } else { %>
+                    <button
+                      style="width: 80px"
+                      data-user-id="<%= user._id %>"
+                      data-action="unblock"
+                      class="btn btn-warning btn-sm btn-block"
+                    >
+                      Unblock
+                    </button>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="pagination-area mt-30 mb-50">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                <i class="material-icons md-chevron_left"></i>
+              </a>
+            </li>
+            <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a class="page-link" href="?page=<%= i %>"> <%= i %> </a>
+            </li>
+            <% } %> <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                <i class="material-icons md-chevron_right"></i>
+              </a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+    </section>
+    <div
+      id="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      class="position-fixed top-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <div
+        id="toast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+    <!-- content-main end// -->
+    <%- include('partials/footer') %>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const tableBody = document.querySelector("tbody");
+
+        tableBody.addEventListener("click", function (e) {
+          const button = e.target;
+
+          if (button.classList.contains("btn-block")) {
+            const userId = button.dataset.userId;
+            const action = button.dataset.action;
+
+            fetch(`/admin/user/${action}_user/${userId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.success) {
+                  const row = button.closest("tr");
+                  const statusBadge = row.querySelector("span.badge");
+
+                  if (data.status === "blocked") {
+                    showToast(data.message);
+                    statusBadge.classList.remove("bg-success");
+                    statusBadge.classList.add("bg-danger");
+                    statusBadge.textContent = "Blocked";
+
+                    button.textContent = "Unblock";
+                    button.classList.remove("btn-danger");
+                    button.classList.add("btn-warning");
+                    button.dataset.action = "unblock";
+                  } else {
+                    showToast(data.message);
+                    statusBadge.classList.remove("bg-danger");
+                    statusBadge.classList.add("bg-success");
+                    statusBadge.textContent = "Active";
+
+                    button.textContent = "Block";
+                    button.classList.remove("btn-warning");
+                    button.classList.add("btn-danger");
+                    button.dataset.action = "block";
+                  }
+                } else {
+                  console.error("Failed to update user status");
+                }
+              })
+              .catch((error) => console.error("Error:", error));
+          }
+        });
+      });
+
+      function showToast(message) {
+        const toastBody = document.getElementById("toast-body");
+        toastBody.textContent = message;
+
+        const toastElement = document.getElementById("toast");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+
+      document
+        .getElementById("limitSelect")
+        .addEventListener("change", function () {
+          const selectedLimit = this.value; 
+          const url = new URL(window.location.href);
+
+          url.searchParams.set("limit", selectedLimit);
+
+          window.location.href = url.toString();
+        });
+    </script>
+  </main>
+</body>

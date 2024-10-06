@@ -1,0 +1,468 @@
+<%- include('partials/head') %>
+<style>
+  input.error {
+    border-color: red;
+  }
+
+  input.error::placeholder {
+    color: red;
+  }
+
+  textarea.error {
+    border-color: red;
+  }
+
+  textarea.error::placeholder {
+    color: red;
+  }
+</style>
+<body>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+      <a href="/admin" class="brand-wrap">
+        <img
+          src="/images/icons/logo-1.png"
+          class="logo"
+          alt="Evara Dashboard"
+        />
+      </a>
+      <div>
+        <button class="btn btn-icon btn-aside-minimize">
+          <i class="text-muted material-icons md-menu_open"></i>
+        </button>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="/admin">
+            <i class="icon material-icons md-home"></i>
+            <span class="text">Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/products">
+            <i class="icon material-icons md-shopping_bag"></i>
+            <span class="text">Products List</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/orders">
+            <i class="icon material-icons md-shopping_cart"></i>
+            <span class="text">Orders list</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-store"></i>
+            <span class="text">Sales Report</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/add_product">
+            <i class="icon material-icons md-add_box"></i>
+            <span class="text">Add product</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/users">
+            <i class="icon material-icons md-person"></i>
+            <span class="text">Users</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-comment"></i>
+            <span class="text">Reviews</span>
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a class="menu-link" href="/admin/brands">
+            <i class="icon material-icons md-stars"></i>
+            <span class="text">Brands</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" disabled href="/admin/categories">
+            <i class="icon material-icons md-pie_chart"></i>
+            <span class="text">Categories</span>
+          </a>
+        </li>
+      </ul>
+      <hr />
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-settings"></i>
+            <span class="text">Settings</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-local_offer"></i>
+            <span class="text"> Starter page </span>
+          </a>
+        </li>
+      </ul>
+      <br />
+      <br />
+    </nav>
+  </aside>
+  <main class="main-wrap">
+    <header class="main-header navbar">
+      <div class="col-search">
+        <form class="searchform">
+          <div class="input-group">
+            <input
+              list="search_terms"
+              type="text"
+              class="form-control"
+              placeholder="Search term"
+            />
+            <button class="btn btn-light bg" type="button">
+              <i class="material-icons md-search"></i>
+            </button>
+          </div>
+          <datalist id="search_terms">
+            <option value="Products"></option>
+            <option value="New orders"></option>
+            <option value="Apple iphone"></option>
+            <option value="Ahmed Hassan"></option>
+          </datalist>
+        </form>
+      </div>
+      <div class="col-nav">
+        <button
+          class="btn btn-icon btn-mobile me-auto"
+          data-trigger="#offcanvas_aside"
+        >
+          <i class="material-icons md-apps"></i>
+        </button>
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link btn-icon" href="#">
+              <i class="material-icons md-notifications animation-shake"></i>
+              <span class="badge rounded-pill">3</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn-icon darkmode" href="#">
+              <i class="material-icons md-nights_stay"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="requestfullscreen nav-link btn-icon"
+              ><i class="material-icons md-cast"></i
+            ></a>
+          </li>
+          <li class="dropdown nav-item">
+            <a
+              class="dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="#"
+              id="dropdownLanguage"
+              aria-expanded="false"
+              ><i class="material-icons md-public"></i
+            ></a>
+          </li>
+          <li class="dropdown nav-item">
+            <a
+              class="dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="#"
+              id="dropdownAccount"
+              aria-expanded="false"
+            >
+              <img
+                class="img-xs rounded-circle"
+                src="/assets/imgs/people/avatar2.jpg"
+                alt="User"
+            /></a>
+          </li>
+        </ul>
+      </div>
+    </header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Brands</h2>
+          <p>Add, edit or delete a Brands</p>
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Search Categories"
+            class="form-control bg-white"
+          />
+        </div>
+      </div>
+      <div class="card" id="brand-list">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <form id="brandForm" action="/brands" method="post">
+                <div class="mb-4">
+                  <label for="brand_name" class="form-label"
+                    >Brands name</label
+                  >
+                  <input
+                    name="name"
+                    type="text"
+                    placeholder="Type here"
+                    class="form-control"
+                    id="brand_name"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="form-label">Description</label>
+                  <textarea
+                    name="discription"
+                    id="brand_discreption"
+                    placeholder="Type here"
+                    class="form-control"
+                  ></textarea>
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">
+                    Add Brand
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="col-md-9">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Status</th>
+                      <th class="text-end"><span class="me-5">Action</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% brands.forEach(brand => { %>
+                    <tr>
+                      <td><b><%= brand.name %></b></td>
+                      <td><%= brand.discription %></td>
+                      <td>
+                        <% if (brand.is_Active) { %>
+                        <span class="badge bg-success w-75">Active</span>
+                        <% } else { %>
+                        <span class="badge bg-danger w-75">Blocked</span>
+                        <% } %>
+                      </td>
+                      <td class="text-end">
+                        <% if (brand.is_Active) { %>
+                        <a
+                          style="width: 80px"
+                          data-brand-id="<%= brand._id %>"
+                          class="brand-unlist btn btn-danger btn-sm btn-block"
+                        >
+                          Unlist
+                        </a>
+                        <% } else { %>
+                        <a
+                          style="width: 80px"
+                          data-brand-id="<%= brand._id %>"
+                          class="brand-list btn btn-warning btn-sm btn-block"
+                        >
+                          List
+                        </a>
+                        <% } %>
+                        <a class="btn bg-warning-light btn-sm btn-block ms-3 me-3" href="edit_brand">Edit</a>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- .col// -->
+          </div>
+          <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+      </div>
+      <!-- card .// -->
+    </section>
+    <div
+      id="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      class="position-fixed top-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <div
+        id="toast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="toast_error"
+        class="toast align-items-center text-white bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body-error" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
+  </main>
+</body>
+<script>
+  $(document).ready(function () {
+    $("#brandForm").on("submit", function (e) {
+      e.preventDefault();
+
+      if (validateForm()) {
+        const formData = $(this).serialize();
+
+        $.ajax({
+          type: "POST",
+          url: "/admin/brands",
+          data: formData,
+          success: function (response) {
+            if (response.success) {
+              showToast(response.message);
+              $('#brand-list').load('/admin/brands #brand-list');
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: function () {
+            showToast("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+
+  $(document).ready(() => {
+  $(document).on("click", ".brand-unlist",(e) => {
+    e.preventDefault();
+
+    const brandId = $(e.currentTarget).data("brand-id");
+
+    $.ajax({
+      type: "GET",
+      url: `/admin/brands/unlist/${brandId}`,
+      success: (response) => {
+        console.log(response);
+        if (response.success) {
+              showToast(response.message);
+              $('#brand-list').load('/admin/brands #brand-list');
+            } else {
+              showToastError(response.message);
+            }
+      },
+      error: function () {
+            showToast("An error occurred. Please try again.");
+      },
+    })
+  })
+})
+
+$(document).ready(() => {
+  $(document).on("click", ".brand-list",(e) => {
+    e.preventDefault();
+
+    const brandId = $(e.currentTarget).data("brand-id");
+
+    $.ajax({
+      type: "GET",
+      url: `/admin/brands/list/${brandId}`,
+      success: (response) => {
+        console.log(response);
+        if (response.success) {
+              showToast(response.message);
+              $('#brand-list').load('/admin/brands #brand-list');
+            } else {
+              showToastError(response.message);
+            }
+      },
+      error: function () {
+            showToast("An error occurred. Please try again.");
+      },
+    })
+  })
+})
+
+  function validateForm() {
+    let isValid = true;
+
+    const brand_name = document.getElementById("brand_name");
+
+    if (brand_name.value.trim() === "") {
+      displayError(brand_name, "Categoryname is required");
+      isValid = false;
+    } else {
+      clearError(brand_name, "Type here");
+    }
+
+    const brand_discreption = document.getElementById(
+      "brand_discreption"
+    );
+
+    if (brand_discreption.value.trim() === "") {
+      displayError(brand_discreption, "Discription is required");
+      isValid = false;
+    } else {
+      clearError(brand_discreption, "Type here");
+    }
+
+    return isValid;
+  }
+
+  function displayError(inputField, errorMessage) {
+    inputField.classList.add("error");
+    inputField.value = "";
+    inputField.placeholder = errorMessage;
+  }
+
+  function clearError(inputField, originalPlaceholder) {
+    inputField.classList.remove("error");
+    inputField.placeholder = originalPlaceholder;
+  }
+
+  function showToast(message) {
+    const toastBody = document.getElementById("toast-body");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+
+  function showToastError(message) {
+    const toastBody = document.getElementById("toast-body-error");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast_error");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+
+</script>

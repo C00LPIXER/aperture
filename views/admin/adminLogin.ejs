@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+
+<body>
+    <main>
+        <header class="main-header style-2 navbar">
+            <div class="col-brand">
+                <a href="/admin" class="brand-wrap">
+                    <img src="assets/images/icon/logo-1.png" class="logo" alt="Evara Dashboard">
+                </a>
+            </div>
+            <div class="col-nav">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main mt-80 mb-80">
+            <div class="card mx-auto card-login">
+                <div class="card-body">
+                    <h4 class="card-title mb-4 text-center">Sign in</h4>
+                    <form>
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input class="form-control" placeholder="Username or email" type="text">
+                        </div> <!-- form-group// -->
+                        <div class="mb-3">
+                            <label for="password">Password</label>
+                            <input class="form-control" placeholder="Password" type="password">
+                        </div> <!-- form-group// -->
+                        <div class="mb-4">
+                            <button type="submit" class="btn btn-primary w-100"> Login </button>
+                        </div> <!-- form-group// -->
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
