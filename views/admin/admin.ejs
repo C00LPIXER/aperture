@@ -82,10 +82,10 @@
           </a>
         </li>
         <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-local_offer"></i>
-            <span class="text"> Starter page </span>
-          </a>
+          <a class="menu-link text-danger" onclick="logout()"
+                ><i class="icon material-icons md-exit_to_app"></i>
+                <span class="text">Logout</span>
+              </a>
         </li>
       </ul>
       <br />
@@ -124,20 +124,9 @@
         </button>
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link btn-icon" href="#">
-              <i class="material-icons md-notifications animation-shake"></i>
-              <span class="badge rounded-pill">3</span>
-            </a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link btn-icon darkmode" href="#">
               <i class="material-icons md-nights_stay"></i>
             </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="requestfullscreen nav-link btn-icon"
-              ><i class="material-icons md-cast"></i
-            ></a>
           </li>
           <li class="dropdown nav-item">
             <a
@@ -149,7 +138,7 @@
             >
               <img
                 class="img-xs rounded-circle"
-                src="/assets/imgs/people/avatar2.jpg"
+                src="assets/imgs/people/avatar2.jpg"
                 alt="User"
             /></a>
             <div
@@ -271,7 +260,7 @@
                     >
                       <div class="d-flex align-items-center">
                         <img
-                          src="/assets/imgs/people/avatar4.jpg"
+                          src="assets/imgs/people/avatar4.jpg"
                           alt=""
                           class="avatar"
                         />
@@ -289,7 +278,7 @@
                     >
                       <div class="d-flex align-items-center">
                         <img
-                          src="/assets/imgs/people/avatar2.jpg"
+                          src="assets/imgs/people/avatar2.jpg"
                           alt=""
                           class="avatar"
                         />
@@ -307,7 +296,7 @@
                     >
                       <div class="d-flex align-items-center">
                         <img
-                          src="/assets/imgs/people/avatar3.jpg"
+                          src="assets/imgs/people/avatar3.jpg"
                           alt=""
                           class="avatar"
                         />
@@ -774,6 +763,6 @@
       </div>
     </section>
     <!-- content-main end// -->
-    <%- include('partials/footer') %>
   </main>
+  <%- include('partials/footer') %>
 </body>

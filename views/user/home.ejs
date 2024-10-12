@@ -741,13 +741,14 @@
           <div
             class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%= item.category.name %>"
           >
+          <a href="/product-detail/<%= item._id %>">
             <div class="block2">
               <div class="block2-pic hov-img0">
                 <img src="<%= item.images[0] %>" alt="IMG-PRODUCT" />
 
                 <a
-                  href="/product-detail/<%= item._id %>"
-                  class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04"
+                  href=""
+                  class="block2-btn flex-c-m stext-103 cl2 size-102 bg10 bor2 hov-btn1 p-lr-15 trans-04"
                 >
                   Detail View
                 </a>
@@ -761,8 +762,11 @@
                   >
                     <%= item.name %>
                   </a>
-
-                  <span class=" cl3"> ₹<%= item.price %> </span>
+                  <%if(item.stock < 1) {%>
+                  <span class="cl3 text-danger"> Currently unavailable </span>
+                  <%} else {%>
+                  <span class="cl3"> ₹<%= item.price %> </span>
+                  <%}%>
                 </div>
 
                 <div class="block2-txt-child2 flex-r p-t-3">
@@ -784,6 +788,7 @@
                 </div>
               </div>
             </div>
+          </a>
           </div>
           <% }); %>
         </div>
@@ -791,9 +796,9 @@
     </section>
 
     <div class="container m-b-100">
-		<div class="p-b-100 text-center">
-			<h3 class="ltext-103 cl5">Capture the moment with the best gear</h3>
-		  </div>
+      <div class="p-b-100 text-center">
+        <h3 class="ltext-103 cl5">Capture the moment with the best gear</h3>
+      </div>
       <div class="gallery-wrap">
         <div class="item item-1"></div>
         <div class="item item-2"></div>

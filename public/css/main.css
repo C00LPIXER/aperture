@@ -1869,7 +1869,7 @@ input.num-product::-webkit-inner-spin-button {
 [ Modal1 ]*/
 .wrap-modal1 {
   position: fixed;
-  width: 100%;
+  width: 70vh;
   height: 100vh;
   top: 0;
   left: 0;
@@ -2649,6 +2649,7 @@ input.num-product::-webkit-inner-spin-button {
 .bg6 {background-color: #f2f2f2;}
 .bg7 {background-color: #333;}
 .bg8 {background-color: #f3f3f3;}
+.bg10 {background-color: #000000;}
 .bg9 {background-color: rgba(255,255,255,0.9);}
 
 /*---------------------------------------------*/
@@ -3383,4 +3384,17 @@ input.num-product::-webkit-inner-spin-button {
     display: block;
     width: 32px;
   }
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }

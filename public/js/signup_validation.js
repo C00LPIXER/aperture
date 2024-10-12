@@ -24,6 +24,19 @@
     });
   });
 
+  $("#toggle-password").on("click", function () {
+    const passwordField = $("#password");
+    const passwordIcon = $("#password-icon");
+  
+    if (passwordField.attr("type") === "password") {
+      passwordField.attr("type", "text");
+      passwordIcon.removeClass("fa-eye").addClass("fa-eye-slash");
+    } else {
+      passwordField.attr("type", "password");
+      passwordIcon.removeClass("fa-eye-slash").addClass("fa-eye");
+    }
+  });
+
 function validateForm() {
   let isValid = true;
 

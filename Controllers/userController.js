@@ -1,8 +1,8 @@
-const User = require("../Modals/userModal");
+const User = require("../Models/userModel");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const Product = require("../Modals/productModal");
-const Category = require("../Modals/categoryModal");
+const Product = require("../Models/productModel");
+const Category = require("../Models/categoryModel");
 require("dotenv").config();
 
 const securePasswd = async (password) => {
@@ -47,8 +47,6 @@ const SendVerificationEmail = async (email, OTP) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
       }
     });
   } catch (error) {
@@ -58,8 +56,15 @@ const SendVerificationEmail = async (email, OTP) => {
 
 const loadLandingPage = async (req, res) => {
   try {
-    const product = await Product.find( { is_Active: true }).populate("category", "name").limit(12)
-    res.render("landing",{ product });
+    const activeProducts = await Product.find( { is_Active: true })
+    .populate({ path: 'category', select: "name", match: { is_Active: true }})
+    .populate({ path: 'brand', select: "name", match: { is_Active: true }}).limit(12);
+     
+    const product = activeProducts.filter(product => 
+      product.category && product.brand
+    )
+
+    res.render("landing",{ product});
   } catch (error) {
     console.log(error);
   }
@@ -75,7 +80,15 @@ const loadLoginPage = async (req, res) => {
 
 const loadHomePage = async (req, res) => {
   try {
-    const product = await Product.find({ is_Active: true }).populate("category", "name").limit(12)
+
+    const activeProducts = await Product.find( { is_Active: true })
+    .populate({ path: 'category', select: "name", match: { is_Active: true }})
+    .populate({ path: 'brand', select: "name", match: { is_Active: true }}).limit(12);
+     
+    const product = activeProducts.filter(product => 
+      product.category && product.brand
+    )
+
     res.render("home", { product });
   } catch (error) {
     console.log(error.message);
@@ -163,19 +176,16 @@ const verifyOtp = async (req, res) => {
         req.session.otp = null;
         req.session.verified = true;
         req.session.otpTimestamp = null;
-        req.flash("success_msg", "OTP verified successfully!");
-        res.redirect("/login");
+        res.json({ success: true});
       } else {
         console.log("not verified");
-        req.flash("error_msg", "Invalid OTP!");
-        res.redirect("/verification");
+        res.json({ success: false, message: "Invalid OTP!" });
       }
     } else {
       console.log("OTP expired");
       req.session.otp = null;
       req.session.otpTimestamp = null;
-      req.flash("error_msg", "OTP has expired. Please resend OTP");
-      res.redirect("/verification");
+      res.json({ success: false, message: "OTP has expired. Please resend OTP" });
     }
   } catch (error) {
     console.log(error.message);
@@ -183,6 +193,7 @@ const verifyOtp = async (req, res) => {
 };
 
 const userAuthentication = async (req, res) => {
+  try {
   const email = req.body.email;
   const password = req.body.password;
   const userData = await User.findOne({ email: email });
@@ -214,14 +225,17 @@ const userAuthentication = async (req, res) => {
       message: "Invalid credentials, please try again.",
     });
   }
+  } catch (error) {
+    console.log(error.message)
+  }
 };
 
 const productDetail = async (req, res) => {
   try {
     const productId = req.params.id
     const product = await Product.findById(productId).populate("category", "name").populate("brand", "name")
-    const reProduct = await Product.find({category: product.category._id, is_Active: true}).limit(8)
-      res.render("productDetail", { product, reProduct })
+    const relatedProduct = await Product.find({category: product.category._id, is_Active: true}).limit(8)
+      res.render("productDetail", { product, relatedProduct })
   } catch (error) {
     console.log(error.message);
   }
@@ -251,3 +265,4 @@ module.exports = {
   productDetail,
 };
 
+ 

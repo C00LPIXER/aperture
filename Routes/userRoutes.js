@@ -30,4 +30,5 @@ routes.get("/404", userController.laodErrorPage);
 
 routes.get("/Logout", userController.loadLogout);
 
-module.exports = routes;
+module.exports = routes; 
+ 

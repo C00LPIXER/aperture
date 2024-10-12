@@ -4,7 +4,6 @@ let currentImageInput;
 $(document).ready(() => {
   $("#imageInput1, #imageInput2, #imageInput3").on("change", function (e) {
     currentImageInput = e.target;
-
     if (
       validateImage(currentImageInput) &&
       currentImageInput.files &&
@@ -71,28 +70,60 @@ $(document).ready(() => {
   });
 });
 
+function removeImgae(imgid, id) {
+  swal(
+    {
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this image!",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+    },
+    function (isConfirm) {
+      if (isConfirm) {
+        $.ajax({
+          type: "Delete",
+          url: "/admin/edit_product/image",
+          data: { imgid: imgid, id: id },
+          success: (response) => {
+            if (response.success) {
+              showToast(response.message);
+              window.location.href = `/admin/edit_product/${id}`;
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: () => {
+            showToastError("An error occurred while deleting the image.");
+          },
+        });
+      }
+    }
+  );
+}
+
 $(document).ready(() => {
-  $("#addProductForm").on("submit", function (e) {
+  $("#ProductEditForm").on("submit", function (e) {
     e.preventDefault();
 
     if (validateForm()) {
       const formData = new FormData(this);
 
       $.ajax({
-        type: "POST",
-        url: "/admin/add_product",
+        type: "PUT",
+        url: "/admin/edit_product",
         data: formData,
         contentType: false,
         processData: false,
-        success: (response) => {
+        success: function (response) {
           if (response.success) {
             showToast(response.message);
-            $("#addProductForm")[0].reset();
+            window.location.href = "/admin/products";
           } else {
             showToastError(response.message);
           }
         },
-        error: () => {
+        error: function () {
           showToast("An error occurred. Please try again.");
         },
       });
@@ -102,8 +133,81 @@ $(document).ready(() => {
 
 function validateForm() {
   let isValid = true;
+  let imageChanged = false;
+
+  const originalName = document
+    .getElementById("product_name")
+    ?.getAttribute("data-original");
+  const originalDescription = document
+    .getElementById("description")
+    ?.getAttribute("data-original");
+  const originalListingPrice = document
+    .getElementById("price")
+    ?.getAttribute("data-original");
+  const originalRegularPrice = document
+    .getElementById("orginal_price")
+    ?.getAttribute("data-original");
+  const originalCategory = document
+    .getElementById("category")
+    ?.getAttribute("data-original");
+  const originalBrand = document
+    .getElementById("brands")
+    ?.getAttribute("data-original");
+  const originalStock = document
+    .getElementById("stock")
+    ?.getAttribute("data-original");
+  const originalHighlights = document
+    .getElementById("highlights")
+    ?.getAttribute("data-original");
 
   const name = document.getElementById("product_name");
+  const description = document.getElementById("description");
+  const price = document.getElementById("price");
+  const originalPrice = document.getElementById("orginal_price");
+  const stock = document.getElementById("stock");
+  const category = document.getElementById("category");
+  const brand = document.getElementById("brands");
+  const highlights = document.getElementById("highlights");
+
+  const nameChanged = name.value !== originalName;
+  const descriptionChanged = description.value !== originalDescription;
+  const priceChanged = price.value !== originalListingPrice;
+  const originalPriceChanged = originalPrice.value !== originalRegularPrice;
+  const categoryChanged =
+    category.options[category.selectedIndex].text !== originalCategory;
+  const brandChanged =
+    brand.options[brand.selectedIndex].text !== originalBrand;
+  const stockChanged = stock.value !== originalStock;
+  const highlightsChanged = highlights.value !== originalHighlights;
+
+  const imageInput1 = document.getElementById("imageInput1");
+  const imageInput2 = document.getElementById("imageInput2");
+  const imageInput3 = document.getElementById("imageInput3");
+
+  if (
+    imageInput1.files.length > 0 ||
+    imageInput2.files.length > 0 ||
+    imageInput3.files.length > 0
+  ) {
+    imageChanged = true;
+  }
+
+  if (
+    !nameChanged &&
+    !descriptionChanged &&
+    !priceChanged &&
+    !categoryChanged &&
+    !brandChanged &&
+    !originalPriceChanged &&
+    !stockChanged &&
+    !highlightsChanged &&
+    !imageChanged
+  ) {
+    showToastError("No changes made");
+    isValid = false;
+  }
+
+  // Perform field-specific validations
   if (name.value.trim() === "") {
     displayError(name, "Product title is required");
     isValid = false;
@@ -111,7 +215,6 @@ function validateForm() {
     clearError(name, "Type here");
   }
 
-  const description = document.getElementById("description");
   if (description.value.trim() === "") {
     displayError(description, "Full description is required");
     isValid = false;
@@ -119,7 +222,6 @@ function validateForm() {
     clearError(description, "Type here");
   }
 
-  const price = document.querySelector('input[name="price"]');
   if (price.value.trim() === "") {
     displayError(price, "Promotional price is required");
     isValid = false;
@@ -127,7 +229,6 @@ function validateForm() {
     clearError(price, "₹");
   }
 
-  const originalPrice = document.querySelector('input[name="orginal_price"]');
   if (originalPrice.value.trim() === "") {
     displayError(originalPrice, "Regular price is required");
     isValid = false;
@@ -135,7 +236,6 @@ function validateForm() {
     clearError(originalPrice, "₹");
   }
 
-  const stock = document.querySelector('input[name="stock"]');
   if (stock.value.trim() === "") {
     displayError(stock, "Stock is required");
     isValid = false;
@@ -143,7 +243,6 @@ function validateForm() {
     clearError(stock, "Enter stock");
   }
 
-  const category = document.querySelector('select[name="category"]');
   if (category.value === "") {
     displayError(category, "Category is required");
     isValid = false;
@@ -151,7 +250,6 @@ function validateForm() {
     clearError(category, "Select Category");
   }
 
-  const brand = document.querySelector('select[name="brands"]');
   if (brand.value === "") {
     displayError(brand, "Brand is required");
     isValid = false;
@@ -159,7 +257,6 @@ function validateForm() {
     clearError(brand, "Select Brand");
   }
 
-  const highlights = document.querySelector('input[name="highlights"]');
   if (highlights.value.trim() === "") {
     displayError(highlights, "Tags are required");
     isValid = false;
@@ -167,48 +264,11 @@ function validateForm() {
     clearError(highlights, "Enter highlights");
   }
 
-  const imageInput1 = document.getElementById("imageInput1");
-  const imageInput2 = document.getElementById("imageInput2");
-  const imageInput3 = document.getElementById("imageInput3");
-
-  if (imageInput1.files.length === 0) {
-    displayError(imageInput1, "Please upload an image");
-    isValid = false;
-  } else {
-    clearError(imageInput1);
-  }
-
-  if (imageInput2.files.length === 0) {
-    displayError(imageInput2, "Please upload an image");
-    isValid = false;
-  } else {
-    clearError(imageInput2);
-  }
-
-  if (imageInput3.files.length === 0) {
-    displayError(imageInput3, "Please upload an image");
-    isValid = false;
-  } else {
-    clearError(imageInput3);
-  }
-
-  if (!validateImage(imageInput1)) {
-    isValid = false;
-  }
-
-  if (!validateImage(imageInput2)) {
-    isValid = false;
-  }
-
-  if (!validateImage(imageInput3)) {
-    isValid = false;
-  }
-
   return isValid;
 }
 
 function validateImage(imageInput) {
-  const maxSize = 5 * 1024 * 1024; // 5MB
+  const maxSize = 5 * 1024 * 1024; 
   const allowedTypes = ["image/jpeg", "image/png"];
 
   if (imageInput.files.length === 0) {
@@ -233,40 +293,6 @@ function validateImage(imageInput) {
 
   clearErrorMessage(imageInput);
   return true;
-}
-
-function displayErrorMessage(inputElement, message) {
-  let errorElement = inputElement.nextElementSibling;
-
-  if (!errorElement || errorElement.tagName.toLowerCase() !== "p") {
-    errorElement = document.createElement("p");
-    errorElement.classList.add("error-message");
-    inputElement.parentNode.insertBefore(
-      errorElement,
-      inputElement.nextSibling
-    );
-  }
-
-  errorElement.textContent = message;
-}
-
-function clearErrorMessage(inputElement) {
-  let errorElement = inputElement.nextElementSibling;
-
-  if (errorElement && errorElement.tagName.toLowerCase() === "p") {
-    errorElement.textContent = "";
-  }
-}
-
-function displayError(inputField, errorMessage) {
-  inputField.classList.add("error");
-  inputField.value = "";
-  inputField.placeholder = errorMessage;
-}
-
-function clearError(inputField, originalPlaceholder) {
-  inputField.classList.remove("error");
-  inputField.placeholder = originalPlaceholder;
 }
 
 function displayError(inputField, errorMessage) {
@@ -296,4 +322,27 @@ function showToastError(message) {
   const toastElement = document.getElementById("toast_error");
   const toast = new bootstrap.Toast(toastElement);
   toast.show();
+}
+
+function displayErrorMessage(inputElement, message) {
+  let errorElement = inputElement.nextElementSibling;
+
+  if (!errorElement || errorElement.tagName.toLowerCase() !== "p") {
+    errorElement = document.createElement("p");
+    errorElement.classList.add("error-message");
+    inputElement.parentNode.insertBefore(
+      errorElement,
+      inputElement.nextSibling
+    );
+  }
+
+  errorElement.textContent = message;
+}
+
+function clearErrorMessage(inputElement) {
+  let errorElement = inputElement.nextElementSibling;
+
+  if (errorElement && errorElement.tagName.toLowerCase() === "p") {
+    errorElement.textContent = "";
+  }
 }

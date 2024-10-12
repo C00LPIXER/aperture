@@ -7,7 +7,7 @@ const userRoutes = require("./Routes/userRoutes");
 const adminRoutes = require('./Routes/adminRoutes');
 const passport = require("./middleware/passportOAuth");
 const path = require('path')
-const app = express();
+const app = express();   
 
 
 require("dotenv").config();
@@ -24,11 +24,9 @@ const connectDB = async () => {
 };
 connectDB();
 
-// Set view engine to EJS
 app.set("view engine", "ejs");
 app.set('views',[path.join(__dirname,"views/auth") , path.join(__dirname , "views/admin") , path.join(__dirname,"views/user")]);
 
-//middleware
 app.use(
   session({
     secret: process.env.SECRET_KEY,
