@@ -99,10 +99,10 @@
           </a>
         </li>
         <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-local_offer"></i>
-            <span class="text"> Starter page </span>
-          </a>
+          <a class="menu-link text-danger" onclick="logout()"
+                ><i class="icon material-icons md-exit_to_app"></i>
+                <span class="text">Logout</span>
+              </a>
         </li>
       </ul>
       <br />
@@ -271,8 +271,8 @@
                 <div class="mb-4">
                   <label class="form-label">Description</label>
                   <textarea
-                    name="discription"
-                    id="category_discreption"
+                    name="description"
+                    id="category_descreption"
                     placeholder="Type here"
                     class="form-control"
                   ></textarea>
@@ -299,7 +299,7 @@
                     <% categories.forEach(category => { %>
                     <tr>
                       <td><b><%= category.name %></b></td>
-                      <td><%= category.discription %></td>
+                      <td><%= category.description %></td>
                       <td>
                         <% if (category.is_Active) { %>
                         <span class="badge bg-success w-75">Active</span>
@@ -325,7 +325,7 @@
                           List
                         </a>
                         <% } %>
-                        <a class="btn bg-warning-light btn-sm btn-block ms-3 me-3" href="edit_catogery">Edit</a>
+                        <a class="btn bg-warning-light btn-sm btn-block ms-3 me-3" href="/admin/categories/edit/<%= category._id %>">Edit</a>
                       </td>
                     </tr>
                     <% }) %>
@@ -421,8 +421,8 @@ $(document).ready(() => {
     const categoryId = $(e.currentTarget).data("category-id");
 
     $.ajax({
-      type: "GET",
-      url: `/admin/categories/unlist/${categoryId}`,
+      type: "patch",
+      url: `/admin/categories/${categoryId}/unlist`,
       success: (response) => {
         if (response.success) {
               showToast(response.message);
@@ -445,8 +445,8 @@ $(document).ready(() => {
     const categoryId = $(e.currentTarget).data("category-id");
 
     $.ajax({
-      type: "GET",
-      url: `/admin/categories/list/${categoryId}`,
+      type: "patch",
+      url: `/admin/categories/${categoryId}/list`,
       success: (response) => {
         if (response.success) {
               showToast(response.message);
@@ -474,15 +474,15 @@ $(document).ready(() => {
       clearError(category_name, "Type here");
     }
 
-    const category_discreption = document.getElementById(
-      "category_discreption"
+    const category_descreption = document.getElementById(
+      "category_descreption"
     );
 
-    if (category_discreption.value.trim() === "") {
-      displayError(category_discreption, "Discription is required");
+    if (category_descreption.value.trim() === "") {
+      displayError(category_descreption, "Discription is required");
       isValid = false;
     } else {
-      clearError(category_discreption, "Type here");
+      clearError(category_descreption, "Type here");
     }
 
     return isValid;

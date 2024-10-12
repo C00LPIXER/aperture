@@ -1,0 +1,326 @@
+<%- include('partials/head') %>
+<style>
+  input.error,
+  textarea.error {
+    border-color: red;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+</style>
+<body>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+      <a href="/admin" class="brand-wrap">
+        <img
+          src="/images/icons/logo-1.png"
+          class="logo"
+          alt="Evara Dashboard"
+        />
+      </a>
+      <div>
+        <button class="btn btn-icon btn-aside-minimize">
+          <i class="text-muted material-icons md-menu_open"></i>
+        </button>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="/admin">
+            <i class="icon material-icons md-home"></i>
+            <span class="text">Dashboard</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/products">
+            <i class="icon material-icons md-shopping_bag"></i>
+            <span class="text">Products List</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/orders">
+            <i class="icon material-icons md-shopping_cart"></i>
+            <span class="text">Orders list</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-store"></i>
+            <span class="text">Sales Report</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/add_product">
+            <i class="icon material-icons md-add_box"></i>
+            <span class="text">Add product</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/users">
+            <i class="icon material-icons md-person"></i>
+            <span class="text">Users</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-comment"></i>
+            <span class="text">Reviews</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/admin/brands">
+            <i class="icon material-icons md-stars"></i>
+            <span class="text">Brands</span>
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a class="menu-link" disabled href="/admin/categories">
+            <i class="icon material-icons md-pie_chart"></i>
+            <span class="text">Categories</span>
+          </a>
+        </li>
+      </ul>
+      <hr />
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="#">
+            <i class="icon material-icons md-settings"></i>
+            <span class="text">Settings</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link text-danger" onclick="logout()"
+                ><i class="icon material-icons md-exit_to_app"></i>
+                <span class="text">Logout</span>
+              </a>
+        </li>
+      </ul>
+      <br />
+      <br />
+    </nav>
+  </aside>
+  <main class="main-wrap">
+    <header class="main-header navbar">
+        <div class="container">
+            <div class="bread-crumb">
+              <a href="/admin" class="">
+                Dashboard
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+              </a>
+      
+              <a href="/admin/categories" class="stext-109 cl8 hov-cl1 trans-04">
+                Categories
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+              </a>
+      
+              <span class="stext-109 cl4"> Edit </span>
+            </div>
+          </div>
+    </header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Edit Category</h2>
+          <p>Edit the category details</p>
+        </div>
+      </div>
+      <div class="card w-50">
+        <div class="card-body">
+          <form
+            id="categoryEditForm"
+            action="/admin/categories/edit"
+            method="post"
+          >
+            <div class="mb-4">
+              <input
+                name="id"
+                type="text"
+                hidden="true"
+                value="<%= category._id %>"
+              />
+              <label for="category_name" class="form-label"
+                >Category name</label
+              >
+              <input
+                name="name"
+                type="text"
+                placeholder="Type here"
+                class="form-control"
+                id="category_name"
+                data-original="<%= category.name %>"
+                value="<%= category.name %>"
+              />
+              <p id="category_name_error" class="error-message"></p>
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Description</label>
+              <textarea
+                name="description"
+                id="category_description"
+                placeholder="Type here"
+                class="form-control" data-original="<%= category.description %>"><%= category.description %></textarea>
+              <p id="category_description_error" class="error-message"></p>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <button type="submit" class="btn btn-primary w-40">
+                  Update Category
+                </button>
+                <a href="/admin/categories" type="button" class="btn btn-secondary" id="cancelButton">
+                  Back to Categories
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div
+        id="toast-container"
+        aria-live="polite"
+        aria-atomic="true"
+        class="position-fixed top-0 end-0 p-3"
+        style="z-index: 11"
+      >
+        <div
+          id="toast"
+          class="toast align-items-center text-white bg-success border-0"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div id="toast-body" class="toast-body"></div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+        <div
+          id="toast_error"
+          class="toast align-items-center text-white bg-danger border-0"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div id="toast-body-error" class="toast-body"></div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <%- include('partials/footer') %>
+  </main>
+</body>
+
+<script>
+
+  $(document).ready(() => {
+    $("#categoryEditForm").on("submit", function (e) {
+      e.preventDefault();
+
+      if (validateForm()) {
+        const formData = $(this).serialize();
+
+        $.ajax({
+          type: "Put",
+          url: "/admin/categories/edit",
+          data: formData,
+          success: function (response) {
+            if (response.success) {
+              showToast(response.message);
+              window.location.href = "/admin/categories"
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: function () {
+            showToast("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+
+  function validateForm() {
+    let isValid = true;
+
+    const categoryName = document.getElementById('category_name').getAttribute('data-original');
+    const categoryDescription = document.getElementById('category_description').getAttribute('data-original');
+
+    const category_name = document.getElementById("category_name");
+    const category_name_error = document.getElementById("category_name_error");
+    const category_description = document.getElementById("category_description");
+    const category_description_error = document.getElementById("category_description_error");
+
+    const nameChanged = category_name.value !== categoryName;
+    const descriptionChanged = category_description.value !== categoryDescription;
+    
+    if(!nameChanged && !descriptionChanged){
+      showToastError("No changes made")
+      isValid = false;
+    }
+
+    if (category_name.value.trim() === "") {
+      displayError(
+        category_name,
+        category_name_error,"Category name is required");
+      isValid = false;
+    } else {
+      clearError(category_name, category_name_error);
+    }
+
+    if (category_description.value.trim() === "") {
+      displayError(
+        category_description,
+        category_description_error,
+        "Description is required"
+      );
+      isValid = false;
+    } else {
+      clearError(category_description, category_description_error);
+    }
+
+    return isValid;
+  }
+
+  function displayError(inputField, errorField, errorMessage) {
+    inputField.classList.add("error");
+    errorField.textContent = errorMessage;
+  }
+
+  function clearError(inputField, errorField) {
+    inputField.classList.remove("error");
+    errorField.textContent = "";
+  }
+
+  function showToast(message) {
+    const toastBody = document.getElementById("toast-body");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+
+  function showToastError(message) {
+    const toastBody = document.getElementById("toast-body-error");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast_error");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+</script>

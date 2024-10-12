@@ -33,7 +33,11 @@
             </div>
           </header>
           <div id="message"></div>
-          <div id="otpErrorMessage" class="text-center mb-2 text-danger" style="display: none"></div>
+          <div
+            id="otpErrorMessage"
+            class="text-center mb-2 text-danger"
+            style="display: none"
+          ></div>
           <% if (success_msg) { %>
           <div class="text-center mb-2 text-success"><%= success_msg %></div>
           <% } %> <% if (error_msg) { %>
@@ -108,12 +112,54 @@
               <input type="submit" class="btn btn-primary" value="Submit OTP" />
             </div>
           </form>
-          <div class="signin">
+          <div class="signin" id="verificationForm">
             <span id="timer" class="fw-medium">seconds remaining:</span>
             <span id="resendOtp" style="display: none" onclick="resendOtp()"
               ><a type="submit">Resend OTP</a></span
             >
           </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      class="position-fixed top-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <div
+        id="toast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="toast_error"
+        class="toast align-items-center text-white bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body-error" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
         </div>
       </div>
     </div>
@@ -163,8 +209,6 @@
           if (value.length !== 1 || !/^\d$/.test(value)) {
             isValid = false;
             element.style.borderColor = "red";
-          } else {
-            element.style.borderColor = "green";
           }
         });
 
@@ -198,99 +242,84 @@
           const fullOtp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
           document.getElementById("fullOtp").value = fullOtp;
 
-          this.submit();
+          const formData = $(this).serialize();
+
+          $.ajax({
+            type: "Post",
+            url: `/verification`,
+            data: formData,
+            success: (response) => {
+              if (response.success) {
+                // showToast(response.message);
+                window.location.href = "/login";
+              } else {
+                showToastError(response.message);
+              }
+            },
+            error: function () {
+              showToast("An error occurred. Please try again.");
+            },
+          });
         });
 
-      let timeLeft = 60;
+      timer(6);
       const timerElement = document.getElementById("timer");
       const resendOtpButton = document.getElementById("resendOtp");
 
-      const countdown = setInterval(() => {
-        if (timeLeft > 0) {
-          timeLeft--;
-          timerElement.innerHTML = `seconds remaining: ${timeLeft}`;
-        } else {
-          clearInterval(countdown);
-          timerElement.innerHTML = "OTP Expired!";
-          resendOtpButton.style.display = "inline";
-        }
-      }, 1000);
+      function timer(timeLeft) {
+        const countdown = setInterval(() => {
+          resendOtpButton.style.display = "none";
+          if (timeLeft > 0) {
+            timeLeft--;
+            timerElement.innerHTML = `seconds remaining: ${timeLeft}`;
+          } else {
+            clearInterval(countdown);
+            timerElement.innerHTML = "OTP Expired!";
+            resendOtpButton.style.display = "inline";
+          }
+        }, 1000);
+      }
 
       function resendOtp() {
         window.location.href = "/reSendOtp";
+      }
+
+      // function resendOtp() {
+      //   $.ajax({
+      //     type: "Get",
+      //     url: `/reSendOtp`,
+      //     success: (response) => {
+      //       if (response.success) {
+      //         showToast(response.message);
+      //         window.location.href= "/verification"
+      //       } else {
+      //         showToastError(response.message);
+      //       }
+      //     },
+      //     error: function () {
+      //       showToast("An error occurred. Please try again.");
+      //     },
+      //   });
+      // }
+
+      function showToast(message) {
+        const toastBody = document.getElementById("toast-body");
+        toastBody.textContent = message;
+
+        const toastElement = document.getElementById("toast");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+
+      function showToastError(message) {
+        const toastBody = document.getElementById("toast-body-error");
+        toastBody.textContent = message;
+
+        const toastElement = document.getElementById("toast_error");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
       }
     </script>
-
-    <!-- <script>
-      function moveNext(current, nextFieldID) {
-        if (current.value.length === 1 && nextFieldID) {
-          document.getElementById(nextFieldID).focus();
-        }
-      }
-
-      function moveBack(event, current, previousFieldID) {
-        if (
-          event.key === "Backspace" &&
-          current.value === "" &&
-          previousFieldID
-        ) {
-          document.getElementById(previousFieldID).focus();
-        }
-      }
-
-      function handlePaste(event) {
-        event.preventDefault();
-        const pastedData = (
-          event.clipboardData || window.clipboardData
-        ).getData("text");
-        const otpInputs = ["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"];
-
-        if (pastedData.length === 6 && /^\d+$/.test(pastedData)) {
-          otpInputs.forEach((id, index) => {
-            document.getElementById(id).value = pastedData[index];
-          });
-          document.getElementById("otp6").focus();
-        }
-      }
-
-      document
-        .getElementById("otpForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
-
-          const otp1 = document.getElementById("otp1").value;
-          const otp2 = document.getElementById("otp2").value;
-          const otp3 = document.getElementById("otp3").value;
-          const otp4 = document.getElementById("otp4").value;
-          const otp5 = document.getElementById("otp5").value;
-          const otp6 = document.getElementById("otp6").value;
-
-          const fullOtp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
-          document.getElementById("fullOtp").value = fullOtp;
-
-          this.submit();
-        });
-
-      let timeLeft = 60; 
-      const timerElement = document.getElementById("timer");
-      const resendOtpButton = document.getElementById("resendOtp");
-
-      
-      const countdown = setInterval(() => {
-        if (timeLeft > 0) {
-          timeLeft--; 
-          timerElement.innerHTML = `seconds remaining: ${timeLeft}`;
-        } else {
-          clearInterval(countdown); 
-          timerElement.innerHTML = 'OTP Expired!';
-          resendOtpButton.style.display = "inline"; 
-        }
-      }, 1000);
-
-      function resendOtp() {
-        window.location.href = "/reSendOtp";
-      }
-    </script> -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"

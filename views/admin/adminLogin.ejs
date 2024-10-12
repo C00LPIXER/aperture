@@ -1,44 +1,206 @@
 <%- include('partials/head') %>
+<style>
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
 
+  .content-main {
+    overflow: auto;
+  }
+  input.error {
+    border-color: red;
+  }
+
+  input.error::placeholder {
+    color: red;
+  }
+</style>
 <body>
-    <main>
-        <header class="main-header style-2 navbar">
-            <div class="col-brand">
-                <a href="/admin" class="brand-wrap">
-                    <img src="assets/images/icon/logo-1.png" class="logo" alt="Evara Dashboard">
-                </a>
-            </div>
-            <div class="col-nav">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-                    </li>
-                </ul>
-            </div>
-        </header>
-        <section class="content-main mt-80 mb-80">
-            <div class="card mx-auto card-login">
-                <div class="card-body">
-                    <h4 class="card-title mb-4 text-center">Sign in</h4>
-                    <form>
-                        <div class="mb-3">
-                            <label for="email">Email</label>
-                            <input class="form-control" placeholder="Username or email" type="text">
-                        </div> <!-- form-group// -->
-                        <div class="mb-3">
-                            <label for="password">Password</label>
-                            <input class="form-control" placeholder="Password" type="password">
-                        </div> <!-- form-group// -->
-                        <div class="mb-4">
-                            <button type="submit" class="btn btn-primary w-100"> Login </button>
-                        </div> <!-- form-group// -->
-                    </form>
+  <main>
+    <div
+      id="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      class="position-fixed top-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <div
+        id="toast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="toast_error"
+        class="toast align-items-center text-white bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body-error" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+    <section
+      class="content-main d-flex align-items-center"
+      style="height: 100vh"
+    >
+      <div class="container">
+        <div class="card mx-auto" style="max-width: 400px">
+          <div class="card-body">
+            <h4 class="card-title mb-4 text-center">Admin</h4>
+            <form id="adminLogin" method="POST" action="/admin/login">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  placeholder="email"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                  <input
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    type="password"
+                  />
+                  <span class="input-group-text" id="toggle-password">
+                    <i class="fas fa-eye" id="password-icon"></i>
+                  </span>
                 </div>
-            </div>
-        </section>
-    </main>
+              </div>
+              <div class="mb-4">
+                <button type="submit" class="btn btn-primary w-100">
+                  Login
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <%- include('partials/footer') %>
+    </section>
+  </main>
+</body>
+<script>
+  $(document).ready(function () {
+    $("#adminLogin").on("submit", function (e) {
+      e.preventDefault();
 
-    <%- include('partials/footer') %>
+      if (validateForm()) {
+        const formData = $(this).serialize();
+
+        $.ajax({
+          type: "POST",
+          url: "/admin/login",
+          data: formData,
+          success: function (response) {
+            if (response.success) {
+              window.location.href = "/admin"
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: function () {
+            showToast("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+
+  function validateForm() {
+    let isValid = true;
+
+    const email = document.getElementById("email");
+    const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+
+    if (email.value.trim() === "") {
+      displayError(email, "Email is required");
+      isValid = false;
+    } else if (!emailPattern.test(email.value)) {
+      displayError(email, "Enter a valid email");
+      isValid = false;
+    } else {
+      clearError(email, "Email");
+    }
+
+    const password = document.getElementById("password");
+    if (password.value.trim() === "") {
+      displayError(password, "Password is required");
+      isValid = false;
+    } else {
+      clearError(password, "Password");
+    }
+
+    return isValid;
+  }
+  function displayError(inputField, errorMessage) {
+    inputField.classList.add("error");
+    inputField.value = "";
+    inputField.placeholder = errorMessage;
+  }
+
+  function clearError(inputField, originalPlaceholder) {
+    inputField.classList.remove("error");
+    inputField.placeholder = originalPlaceholder;
+  }
+
+  function showToast(message) {
+    const toastBody = document.getElementById("toast-body");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+
+  function showToastError(message) {
+    const toastBody = document.getElementById("toast-body-error");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast_error");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+
+  $("#toggle-password").on("click", function () {
+      const passwordField = $("#password");
+      const passwordIcon = $("#password-icon");
+
+      if (passwordField.attr("type") === "password") {
+        passwordField.attr("type", "text");
+        passwordIcon.removeClass("fa-eye").addClass("fa-eye-slash");
+      } else {
+        passwordField.attr("type", "password");
+        passwordIcon.removeClass("fa-eye-slash").addClass("fa-eye");
+      }
+    });
+
+</script>

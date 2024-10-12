@@ -83,10 +83,10 @@
           </a>
         </li>
         <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-local_offer"></i>
-            <span class="text"> Starter page </span>
-          </a>
+          <a class="menu-link text-danger" onclick="logout()"
+                ><i class="icon material-icons md-exit_to_app"></i>
+                <span class="text">Logout</span>
+              </a>
         </li>
       </ul>
       <br />
@@ -95,53 +95,6 @@
   </aside>
   <main class="main-wrap">
     <header class="main-header navbar">
-      <div class="col-search">
-        <form class="searchform">
-          <div class="input-group">
-            <input
-              list="search_terms"
-              type="text"
-              class="form-control"
-              placeholder="Search term"
-            />
-            <button class="btn btn-light bg" type="button">
-              <i class="material-icons md-search"></i>
-            </button>
-          </div>
-          <datalist id="search_terms">
-            <option value="Products"></option>
-            <option value="New orders"></option>
-            <option value="Apple iphone"></option>
-            <option value="Ahmed Hassan"></option>
-          </datalist>
-        </form>
-      </div>
-      <div class="col-nav">
-        <button
-          class="btn btn-icon btn-mobile me-auto"
-          data-trigger="#offcanvas_aside"
-        >
-          <i class="material-icons md-apps"></i>
-        </button>
-        <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link btn-icon" href="#">
-              <i class="material-icons md-notifications animation-shake"></i>
-              <span class="badge rounded-pill">3</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn-icon darkmode" href="#">
-              <i class="material-icons md-nights_stay"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="requestfullscreen nav-link btn-icon"
-              ><i class="material-icons md-cast"></i
-            ></a>
-          </li>
-        </ul>
-      </div>
     </header>
     <section class="content-main">
       <div class="content-header">
@@ -204,7 +157,7 @@
               <tbody>
                 <% products.forEach(product => { %>
                 <tr>
-                  <td class="d-flex align-items-center">
+                  <td class="">
                       <img
                         src="<%= product.images[0] %>"
                         class="img-xs img-thumbnail"
@@ -241,7 +194,7 @@
                       Unblock
                     </button>
                     <% } %>
-                    <a class="btn bg-warning-light btn-sm btn-block" href="edit_product">Edit</a>
+                    <a class="btn bg-warning-light btn-sm btn-block" href="edit_product/<%= product._id %>">Edit</a>
                   </td>
                 </tr>
                 <% }) %>
@@ -312,8 +265,8 @@
             const productId = button.dataset.productId;
             const action = button.dataset.action;
 
-            fetch(`/admin/products/${action}_product/${productId}`, {
-              method: "POST",
+            fetch(`/admin/products/${productId}/${action}`, {
+              method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
               },

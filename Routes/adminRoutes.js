@@ -1,7 +1,8 @@
 const express = require("express");
 const adminController = require("../Controllers/adminController");
-const multer  = require('multer')
-const path  = require('path')
+const adminAuth = require("../middleware/adminAuth");
+const multer  = require('multer');
+const path  = require('path');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -11,36 +12,52 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + "_" + file.originalname);
     },
   });
-  
+
 const upload = multer({ storage: storage });
 
 const app = express();
+
 const routes = express.Router();
 
-routes.get("/admin", adminController.loadAdminPage);
+//? [admin authentication] 
+routes.get("/admin", adminAuth.isadminLogin, adminController.loadAdminPage);
+routes.get("/admin/login", adminAuth.isadminLogout, adminController.loadAdminLogin);
+routes.post("/admin/login", adminAuth.isadminLogout, adminController.adminAuthentication);
+routes.get("/admin/logout", adminController.adminLogout);
 
-routes.get("/admin/orders", adminController.loadOrderList);
-routes.get("/admin/order_details", adminController.loadOrderDetail);
+routes.get("/admin/orders", adminAuth.isAdmin, adminController.loadOrderList);
+routes.get("/admin/order_details", adminAuth.isAdmin, adminController.loadOrderDetail);
 
-routes.get("/admin/users", adminController.loadUserList);
-routes.post("/admin/user/block_user/:id", adminController.blockUser);
-routes.post("/admin/user/unblock_user/:id", adminController.unblockUser);
+//? [user manegement]
+routes.get("/admin/users", adminAuth.isAdmin, adminController.loadUserList);
+routes.post("/admin/user/block_user/:id", adminAuth.isAdmin, adminController.blockUser);
+routes.post("/admin/user/unblock_user/:id", adminAuth.isAdmin, adminController.unblockUser);
 
-routes.get("/admin/categories", adminController.loadCategoryPage);
-routes.post("/admin/categories/", adminController.createCategory);
-routes.get("/admin/categories/list/:id", adminController.listCategory);
-routes.get("/admin/categories/unlist/:id", adminController.unlistCategory);
+//? [category manegement]
+routes.get("/admin/categories", adminAuth.isAdmin, adminController.loadCategoryPage);
+routes.post("/admin/categories", adminAuth.isAdmin, adminController.createCategory);
+routes.patch("/admin/categories/:id/list", adminAuth.isAdmin, adminController.listCategory);
+routes.patch("/admin/categories/:id/unlist", adminAuth.isAdmin, adminController.unlistCategory);
+routes.get("/admin/categories/edit/:id", adminAuth.isAdmin, adminController.loadeditCategory);
+routes.put("/admin/categories/edit", adminAuth.isAdmin, adminController.editCategory);
 
-routes.get("/admin/brands", adminController.loadBrandPage);
-routes.post("/admin/brands", adminController.createBrand);
-routes.post("/admin/brands", adminController.createBrand);
-routes.get("/admin/brands/unlist/:id", adminController.unlistBrand);
-routes.get("/admin/brands/list/:id", adminController.listBrand);
+//? [brand manegement]
+routes.get("/admin/brands", adminAuth.isAdmin, adminController.loadBrandPage);
+routes.post("/admin/brands", adminAuth.isAdmin, adminController.createBrand);
+routes.patch("/admin/brands/:id/unlist", adminAuth.isAdmin, adminController.unlistBrand);
+routes.patch("/admin/brands/:id/list", adminAuth.isAdmin, adminController.listBrand);
+routes.get("/admin/brands/edit/:id", adminAuth.isAdmin, adminController.loadeditBrand);
+routes.put("/admin/brands/edit", adminAuth.isAdmin, adminController.editBrand);
 
-routes.get("/admin/products", adminController.loadProductList);
-routes.get("/admin/add_product", adminController.loadAddProduct);
-routes.post("/admin/products/block_product/:id", adminController.blockProduct);
-routes.post("/admin/products/unblock_product/:id", adminController.unblockProduct);
-routes.post("/admin/add_product/create", upload.array('product_images', 3), adminController.createProduct);
+//? [product manegement]
+routes.get("/admin/products", adminAuth.isAdmin, adminController.loadProductList);
+routes.get("/admin/add_product", adminAuth.isAdmin, adminController.loadAddProduct);
+routes.post("/admin/add_product", adminAuth.isAdmin, upload.array('product_images', 5), adminController.createProduct);
+routes.get("/admin/edit_product/:id", adminAuth.isAdmin, adminController.LoadEditProduct);
+routes.put("/admin/edit_product", adminAuth.isAdmin, upload.array('product_images', 5), adminController.editProduct);
+routes.delete("/admin/edit_product/image", adminAuth.isAdmin, adminController.removeImage);
+routes.patch("/admin/products/:id/block", adminAuth.isAdmin, adminController.blockProduct);
+routes.patch("/admin/products/:id/unblock", adminAuth.isAdmin, adminController.unblockProduct);
+ 
 
-module.exports = routes; 
+module.exports = routes;

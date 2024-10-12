@@ -46,10 +46,10 @@
     	$('.select-nice').select2();
 	}
 	// Perfect Scrollbar
-	if ($('#offcanvas_aside').length) {
-		const demo = document.querySelector('#offcanvas_aside');
-		const ps = new PerfectScrollbar(demo);
-	}
+	// if ($('#offcanvas_aside').length) {
+	// 	const demo = document.querySelector('#offcanvas_aside');
+	// 	const ps = new PerfectScrollbar(demo);
+	// }
 
 	// Dark mode toogle
 	$('.darkmode').on('click', function () {

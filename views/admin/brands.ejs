@@ -99,10 +99,10 @@
           </a>
         </li>
         <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-local_offer"></i>
-            <span class="text"> Starter page </span>
-          </a>
+          <a class="menu-link text-danger" onclick="logout()"
+                ><i class="icon material-icons md-exit_to_app"></i>
+                <span class="text">Logout</span>
+              </a>
         </li>
       </ul>
       <br />
@@ -111,77 +111,6 @@
   </aside>
   <main class="main-wrap">
     <header class="main-header navbar">
-      <div class="col-search">
-        <form class="searchform">
-          <div class="input-group">
-            <input
-              list="search_terms"
-              type="text"
-              class="form-control"
-              placeholder="Search term"
-            />
-            <button class="btn btn-light bg" type="button">
-              <i class="material-icons md-search"></i>
-            </button>
-          </div>
-          <datalist id="search_terms">
-            <option value="Products"></option>
-            <option value="New orders"></option>
-            <option value="Apple iphone"></option>
-            <option value="Ahmed Hassan"></option>
-          </datalist>
-        </form>
-      </div>
-      <div class="col-nav">
-        <button
-          class="btn btn-icon btn-mobile me-auto"
-          data-trigger="#offcanvas_aside"
-        >
-          <i class="material-icons md-apps"></i>
-        </button>
-        <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link btn-icon" href="#">
-              <i class="material-icons md-notifications animation-shake"></i>
-              <span class="badge rounded-pill">3</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn-icon darkmode" href="#">
-              <i class="material-icons md-nights_stay"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="requestfullscreen nav-link btn-icon"
-              ><i class="material-icons md-cast"></i
-            ></a>
-          </li>
-          <li class="dropdown nav-item">
-            <a
-              class="dropdown-toggle"
-              data-bs-toggle="dropdown"
-              href="#"
-              id="dropdownLanguage"
-              aria-expanded="false"
-              ><i class="material-icons md-public"></i
-            ></a>
-          </li>
-          <li class="dropdown nav-item">
-            <a
-              class="dropdown-toggle"
-              data-bs-toggle="dropdown"
-              href="#"
-              id="dropdownAccount"
-              aria-expanded="false"
-            >
-              <img
-                class="img-xs rounded-circle"
-                src="/assets/imgs/people/avatar2.jpg"
-                alt="User"
-            /></a>
-          </li>
-        </ul>
-      </div>
     </header>
     <section class="content-main">
       <div class="content-header">
@@ -217,8 +146,8 @@
                 <div class="mb-4">
                   <label class="form-label">Description</label>
                   <textarea
-                    name="discription"
-                    id="brand_discreption"
+                    name="description"
+                    id="brand_descreption"
                     placeholder="Type here"
                     class="form-control"
                   ></textarea>
@@ -245,7 +174,7 @@
                     <% brands.forEach(brand => { %>
                     <tr>
                       <td><b><%= brand.name %></b></td>
-                      <td><%= brand.discription %></td>
+                      <td><%= brand.description %></td>
                       <td>
                         <% if (brand.is_Active) { %>
                         <span class="badge bg-success w-75">Active</span>
@@ -271,7 +200,7 @@
                           List
                         </a>
                         <% } %>
-                        <a class="btn bg-warning-light btn-sm btn-block ms-3 me-3" href="edit_brand">Edit</a>
+                        <a class="btn bg-warning-light btn-sm btn-block ms-3 me-3" href="/admin/brands/edit/<%= brand._id %>">Edit</a>
                       </td>
                     </tr>
                     <% }) %>
@@ -367,8 +296,8 @@
     const brandId = $(e.currentTarget).data("brand-id");
 
     $.ajax({
-      type: "GET",
-      url: `/admin/brands/unlist/${brandId}`,
+      type: "Patch",
+      url: `/admin/brands/${brandId}/unlist`,
       success: (response) => {
         console.log(response);
         if (response.success) {
@@ -392,8 +321,8 @@ $(document).ready(() => {
     const brandId = $(e.currentTarget).data("brand-id");
 
     $.ajax({
-      type: "GET",
-      url: `/admin/brands/list/${brandId}`,
+      type: "Patch",
+      url: `/admin/brands/${brandId}/list`,
       success: (response) => {
         console.log(response);
         if (response.success) {
@@ -422,15 +351,15 @@ $(document).ready(() => {
       clearError(brand_name, "Type here");
     }
 
-    const brand_discreption = document.getElementById(
-      "brand_discreption"
+    const brand_descreption = document.getElementById(
+      "brand_descreption"
     );
 
-    if (brand_discreption.value.trim() === "") {
-      displayError(brand_discreption, "Discription is required");
+    if (brand_descreption.value.trim() === "") {
+      displayError(brand_descreption, "Discription is required");
       isValid = false;
     } else {
-      clearError(brand_discreption, "Type here");
+      clearError(brand_descreption, "Type here");
     }
 
     return isValid;
