@@ -269,7 +269,7 @@ function validateForm() {
 
 function validateImage(imageInput) {
   const maxSize = 5 * 1024 * 1024; 
-  const allowedTypes = ["image/jpeg", "image/png"];
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
   if (imageInput.files.length === 0) {
     displayErrorMessage(imageInput, "Please upload an image");

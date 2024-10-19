@@ -1,0 +1,985 @@
+<%- include('partials/head') %>
+<html>
+  <style>
+    .is-invalid ~ .invalid-feedback {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .nav-link {
+      color: #000000 !important;
+    }
+    .list-group-item.active {
+      background-color: #000000 !important;
+      color: white;
+      border-color: #000000;
+    }
+    #showAddAddressButton {
+      cursor: pointer;
+    }
+    #containers {
+      min-height: 100vh;
+    }
+  </style>
+  <body id="full-body">
+    <!-- Header -->
+    <header class="header-v4">
+      <!-- Header desktop -->
+      <div class="container-menu-desktop">
+        <div class="wrap-menu-desktop how-shadow1">
+          <nav class="limiter-menu-desktop container">
+            <!-- Logo desktop -->
+            <a href="/" class="logo">
+              <img src="/images/icons/logo-1.png" alt="IMG-LOGO" />
+            </a>
+
+            <!-- Menu desktop -->
+            <div class="menu-desktop">
+              <ul class="main-menu">
+                <li>
+                  <a href="/">Home</a>
+                </li>
+
+                <li>
+                  <a href="/shop">Shop</a>
+                </li>
+
+                <li>
+                  <a href="/blog">Blog</a>
+                </li>
+
+                <li>
+                  <a href="/about">About</a>
+                </li>
+
+                <li>
+                  <a href="/contact">Contact</a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Icon header -->
+            <div class="wrap-icon-header flex-w flex-r-m">
+              <a href="/cart">
+                <div
+                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+                >
+                  <i class="zmdi zmdi-shopping-cart"></i>
+                </div>
+              </a>
+              <a
+                href="/"
+                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+              >
+                <i class="zmdi zmdi-favorite-outline"></i>
+              </a>
+              <a
+                href="/profile"
+                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+              >
+                <i class="fa-solid fa-circle-user"></i>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Header Mobile -->
+      <div class="wrap-header-mobile">
+        <!-- Logo moblie -->
+        <div class="logo-mobile">
+          <a href="/"><img src="/images/icons/logo-1.png" alt="IMG-LOGO" /></a>
+        </div>
+
+        <!-- Button show menu -->
+        <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+          <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Menu Mobile -->
+      <div class="menu-mobile">
+        <ul class="main-menu-m">
+          <li>
+            <a href="/">Home</a>
+          </li>
+
+          <li>
+            <a href="/shop">Shop</a>
+          </li>
+
+          <li>
+            <a href="/blog">Blog</a>
+          </li>
+
+          <li>
+            <a href="/about">About</a>
+          </li>
+
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
+          <li>
+            <a href="/profile">Contact</a>
+          </li>
+          <li>
+            <a href="/wishlist">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <div id="containers" class="container">
+      <h2>User Profile</h2>
+      <hr />
+      <div class="row">
+        <!-- Sidebar for Navigation Tabs -->
+        <div class="col-md-3">
+          <div class="list-group" id="profileTabs" role="tablist">
+            <a
+              class="list-group-item list-group-item-action active"
+              id="user-info-tab"
+              data-bs-toggle="list"
+              href="#user-info"
+              role="tab"
+              aria-controls="user-info"
+              >User Information</a
+            >
+            <a
+              class="list-group-item list-group-item-action"
+              id="orders-tab"
+              data-bs-toggle="list"
+              href="#orders"
+              role="tab"
+              aria-controls="orders"
+              >My Orders</a
+            >
+            <a
+              class="list-group-item list-group-item-action"
+              id="address-management-tab"
+              data-bs-toggle="list"
+              href="#address-management"
+              role="tab"
+              aria-controls="address-management"
+              >Address Management</a
+            >
+            <a
+              class="list-group-item list-group-item-action"
+              id="password-reset-tab"
+              data-bs-toggle="list"
+              href="#password-reset"
+              role="tab"
+              aria-controls="password-reset"
+              >Wallet</a
+            >
+            <a
+              class="list-group-item list-group-item-action"
+              onclick="userLogout()"
+              role="tab"
+              >Logout</a
+            >
+          </div>
+        </div>
+
+        <!-- Main Content for Tab Panes -->
+        <div class="col-md-9">
+          <div class="tab-content" id="profileTabContent">
+            <!-- User Information Section -->
+            <div
+              class="tab-pane fade show active"
+              id="user-info"
+              role="tabpanel"
+              aria-labelledby="user-info-tab"
+            >
+              <form id="updateForm">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <input type="hidden" name="id" value="<%=user.id%>" />
+                      <label for="firstName">First Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="firstName"
+                        value="<%= user.firstName %>"
+                        name="firstName"
+                      />
+                      <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group">
+                      <label for="lastName">Last Name</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="lastName"
+                        value="<%= user.lastName %>"
+                        name="lastName"
+                      />
+                      <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email</label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        disabled
+                        value="<%= user.email %>"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Password update section (optional) -->
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="currentPassword">Current Password</label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="currentPassword"
+                        name="currentPassword"
+                      />
+                      <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group">
+                      <label for="newPassword">New Password</label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="newPassword"
+                        name="newPassword"
+                      />
+                      <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group">
+                      <label for="confirmPassword">Confirm New Password</label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="confirmPassword"
+                      />
+                      <div class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-dark mt-3">
+                  Update Profile
+                </button>
+              </form>
+            </div>
+
+            <!-- Order Management Section -->
+            <div
+              class="tab-pane fade"
+              id="orders"
+              role="tabpanel"
+              aria-labelledby="orders-tab"
+            >
+              <h3 class="mb-3">Orders</h3>
+
+              <!-- Pending Order with Cancel Option -->
+              <% if (order) { %> <% order.forEach((order) => { %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">Order #<%= order._id %></h5>
+                  <p class="card-text m-2">
+                    Date: <%= new Date(order.placedAt).toDateString() %>
+                  </p>
+                  <p class="card-text m-2">Status: <%= order.orderStatus %></p>
+
+                  <!-- Button to view order details -->
+                  <button
+                    class="btn btn-outline-dark my-2"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#orderDetails<%= order._id %>"
+                    aria-expanded="false"
+                    aria-controls="orderDetails<%= order._id %>"
+                  >
+                    View Order Details
+                  </button>
+
+                  <!-- Button to cancel the order -->
+                  <%if(order.orderStatus=== 'Cancelled') {%>
+                  <a type="hidden"></a>
+                  <%} else if(order.orderStatus === 'Delivered'){%>
+                  <a
+                    href="javascript:void(0);"
+                    class="btn btn-primary text-white"
+                    >Rate & Review Product</a
+                  >
+                  <%} else {%>
+                  <a
+                    href="javascript:void(0);"
+                    class="btn btn-danger text-white"
+                    data-order-id="<%= order._id %>"
+                    onclick="cancelOrder(this)"
+                    >Cancel Order</a
+                  >
+                  <%}%>
+
+                  <!-- Order Details Section (Collapsible) -->
+                  <div class="collapse mt-3" id="orderDetails<%= order._id %>">
+                    <!-- Tabs for Order Details -->
+                    <ul
+                      class="nav nav-tabs"
+                      id="orderDetailsTab"
+                      role="tablist"
+                    >
+                      <li class="nav-item" role="presentation">
+                        <a
+                          class="nav-link active"
+                          id="product-details-tab-<%= order._id %>"
+                          data-bs-toggle="tab"
+                          href="#product-details-<%= order._id %>"
+                          role="tab"
+                          aria-controls="product-details-<%= order._id %>"
+                          aria-selected="true"
+                        >
+                          Product Details
+                        </a>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <a
+                          class="nav-link"
+                          id="shipping-details-tab-<%= order._id %>"
+                          data-bs-toggle="tab"
+                          href="#shipping-details-<%= order._id %>"
+                          role="tab"
+                          aria-controls="shipping-details-<%= order._id %>"
+                          aria-selected="false"
+                        >
+                          Shipping Details
+                        </a>
+                      </li>
+                    </ul>
+
+                    <!-- Tab Content for Order Details -->
+                    <div
+                      class="tab-content mt-3"
+                      id="orderDetailsTabContent<%= order._id %>"
+                    >
+                      <!-- Product Details Tab -->
+                      <div
+                        class="tab-pane fade show active"
+                        id="product-details-<%= order._id %>"
+                        role="tabpanel"
+                        aria-labelledby="product-details-tab-<%= order._id %>"
+                      >
+                        <p class="my-2">
+                          <strong>Order Date:</strong> <%= new
+                          Date(order.placedAt).toDateString() %>
+                        </p>
+                        <p class="my-2">
+                          <strong>Payment:</strong> <%= order.paymentStatus %>
+                        </p>
+                        <p class="my-2">
+                          <strong>Status:</strong> <%= order.orderStatus %>
+                        </p>
+
+                        <!-- Table for showing all ordered products -->
+                        <table class="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th scope="col">Image</th>
+                              <th scope="col">Product</th>
+                              <th scope="col">Quantity</th>
+                              <th scope="col">Price</th>
+                              <th scope="col">Subtotal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% order.items.forEach((item) => { %>
+                            <tr>
+                              <td>
+                                <img
+                                  src="<%= item.product.images[0] %>"
+                                  alt="<%= item.product.name %>"
+                                  class="img-fluid"
+                                  style="width: 80px"
+                                />
+                              </td>
+                              <td><%= item.product.name %></td>
+                              <td><%= item.quantity %></td>
+                              <td>₹ <%= item.price %></td>
+                              <td>₹ <%= item.price * item.quantity %></td>
+                            </tr>
+                            <% }) %>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <th colspan="4" class="text-end">Total:</th>
+                              <th>₹ <%= order.totalPrice %></th>
+                            </tr>
+                            <tr>
+                              <th colspan="4" class="text-end">
+                                Payment Method:
+                              </th>
+                              <th><%= order.paymentMethod %></th>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+
+                      <!-- Shipping Details Tab -->
+                      <div
+                        class="tab-pane fade"
+                        id="shipping-details-<%= order._id %>"
+                        role="tabpanel"
+                        aria-labelledby="shipping-details-tab-<%= order._id %>"
+                      >
+                        <p>
+                          <strong>Delivery Address:</strong><br />
+                          <%= order.shippingAddress.name %> <br />
+                          <%= order.shippingAddress.locality %>, <%=
+                          order.shippingAddress.city %> <br />
+                          <%= order.shippingAddress.state + " " +
+                          order.shippingAddress.pincode %> <br />
+                          <%= "Mobile " + order.shippingAddress.mobile %> <br />
+                        </p>
+                        <p class="py-2">
+                          <strong>Estimated Delivery Date: </strong>
+                          <%= new Date(new Date(order.placedAt).getTime() + 7 *
+                          24 * 60 * 60 * 1000).toDateString() %>
+                        </p>
+
+                        <!-- Progress Bar for Order Status -->
+                        <div class="progress">
+                          <div class="progress-bar <% if(order.orderStatus ===
+                          'Cancelled') { %> bg-danger <% } else { %> bg-success
+                          <% } %>" role="progressbar" style=`width: <%
+                          if(order.orderStatus === 'Processing') { %> 25% <% }
+                          else if(order.orderStatus === 'Shipped') { %> 70% <% }
+                          else if(order.orderStatus === 'Delivered') { %> 100%
+                          <% } else if(order.orderStatus === 'Cancelled') { %>
+                          100% <% } %>;` aria-valuenow=" <% if(order.orderStatus
+                          === 'Processing') { %> 25 <% } else
+                          if(order.orderStatus === 'Shipped') { %> 70 <% } else
+                          if(order.orderStatus === 'Delivered') { %> 100 <% }
+                          else if(order.orderStatus === 'Cancelled') { %> 100 <%
+                          } %>" aria-valuemin="0" aria-valuemax="100" > <%
+                          if(order.orderStatus === 'Cancelled') { %> Cancelled
+                          <% } else { %> <%= order.progressPercentage %> <% } %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% }) %> <% } else { %>
+            <p>No order history.</p>
+            <% } %>
+          </div>
+
+          <!-- Address Management Section -->
+          <div
+            class="tab-pane fade"
+            id="address-management"
+            role="tabpanel"
+            aria-labelledby="address-management-tab"
+          >
+            <!-- Button to Show Add Address Form -->
+            <div
+              class="btn w-100 mb-3 border p-3"
+              onclick="toggleAddAddressForm()"
+              id="showAddAddressButton"
+            >
+              <p class="">
+                <strong
+                  ><i class="fa-solid fa-plus"></i> Add New Address</strong
+                >
+              </p>
+            </div>
+
+            <!-- Add New Address Form (Hidden initially) -->
+            <form
+              id="addAddressForm"
+              action="/Profile/add-address"
+              method="post"
+              style="display: none"
+            >
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    name="name"
+                    placeholder="Enter name"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="mobile" class="form-label">Mobile number</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="mobile"
+                    name="mobile"
+                    placeholder="Enter mobile number"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="pincode" class="form-label">Pincode</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="pincode"
+                    name="pincode"
+                    placeholder="Enter pincode"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="locality" class="form-label">Locality</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="locality"
+                    name="locality"
+                    placeholder="Enter locality"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="city" class="form-label"
+                    >City/District/Town</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="city"
+                    name="city"
+                    placeholder="Enter city"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="state" class="form-label">State</label>
+                  <select class="form-control" id="state" name="state">
+                    <option value="">Select State</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Karnataka">Karnataka</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="landmark" class="form-label"
+                    >Landmark (Optional)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="landmark"
+                    name="landmark"
+                    placeholder="Enter landmark"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="type" class="form-label">Type</label>
+                  <select class="form-control" id="type" name="type">
+                    <option value="">Select Address type</option>
+                    <option value="Home">Home</option>
+                    <option value="Office">Office</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="secondmobile" class="form-label"
+                    >Alternate Phone (Optional)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="secondmobile"
+                    name="secondmobile"
+                    placeholder="Enter alternate phone"
+                  />
+                </div>
+              </div>
+              <button for="submit" type="submit" class="btn btn-primary mb-5">
+                Save
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary mb-5"
+                onclick="toggleAddAddressForm()"
+              >
+                Cancel
+              </button>
+            </form>
+
+            <!-- Current Addresses Section -->
+            <div id="currentAddresses" class="<%= user.addresses._id %>">
+              <% if (user.addresses && user.addresses.length > 0) { %> <%
+              user.addresses.forEach((addresses, index) => { %>
+              <div class="card mb-3">
+                <div
+                  class="card-body d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <h5 class="card-title"><%= addresses.name %></h5>
+                    <p class="card-text">
+                      <%= addresses.locality %>, <%= addresses.city %> - <%=
+                      addresses.pincode %><br />
+                      <%= addresses.state %><br />
+                      <%= addresses.mobile.join(', ') %><br />
+                      <% if (addresses.Landmark) { %> <%= addresses.landmark %>
+                      <% } %>
+                    </p>
+                  </div>
+                  <div>
+                    <!-- Buttons on the left -->
+                    <button class="btn btn-warning btn-sm">Edit</button>
+                    <button
+                      class="btn btn-danger btn-sm"
+                      onclick="deleteAddress('<%= addresses._id %>')"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <% }) %> <% } else { %>
+              <p>No addresses found.</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <%- include('partials/footer') %>
+    <script>
+      function cancelOrder(element) {
+        const orderId = element.getAttribute("data-order-id");
+
+        showConfirmationDialog(
+          "Cancel order",
+          "Are you sure you want to cancel this order?",
+          "Confirm",
+          "Cancel",
+          "btn-success"
+        ).then((isConfirm) => {
+          if (isConfirm) {
+            $.ajax({
+              url: `/Profile/cancel-order`,
+              type: "PATCH",
+              data: { orederId: orderId },
+              success: function (response) {
+                if (response.status) {
+                  showToastifySuccess(response.message);
+                  $("#orders").load("/Profile #orders > *");
+                } else {
+                  showToastifyError(response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                showToastifyError(
+                  "An error occurred while cancelling the order."
+                );
+              },
+            });
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("updateForm");
+        const firstName = document.getElementById("firstName");
+        const lastName = document.getElementById("lastName");
+        const currentPassword = document.getElementById("currentPassword");
+        const newPassword = document.getElementById("newPassword");
+        const confirmPassword = document.getElementById("confirmPassword");
+
+        const originalValues = {
+          firstName: firstName.value,
+          lastName: lastName.value,
+          currentPassword: currentPassword.value,
+          newPassword: newPassword.value,
+          confirmPassword: confirmPassword.value,
+        };
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          if (!isFormChanged()) {
+            showToastify("No changes made.");
+            return;
+          }
+
+          if (validation()) {
+            const formData = $(form).serialize();
+
+            $.ajax({
+              url: "/Profile/edit",
+              type: "PUT",
+              data: formData,
+              success: function (response) {
+                if (response.success) {
+                  showToastifySuccess(response.message);
+                } else {
+                  showToastifyError(response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                showToastifyError(
+                  "An error occurred while updating the profile."
+                );
+              },
+            });
+          }
+        });
+
+        function isFormChanged() {
+          return (
+            firstName.value !== originalValues.firstName ||
+            lastName.value !== originalValues.lastName ||
+            currentPassword.value !== originalValues.currentPassword ||
+            newPassword.value !== originalValues.newPassword ||
+            confirmPassword.value !== originalValues.confirmPassword
+          );
+        }
+
+        function validation() {
+          let isValid = true;
+          clearErrors();
+
+          const namePattern = /^[A-Za-z]{2,}$/;
+          const passwordPattern = /^.{1,20}$/;
+          // const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/;
+
+          if (firstName.value.trim() === "") {
+            setError(firstName, "First name is required.");
+            isValid = false;
+          } else if (!namePattern.test(firstName.value)) {
+            setError(
+              firstName,
+              "First name must be at least 2 characters and contain only letters."
+            );
+            isValid = false;
+          }
+
+          if (lastName.value.trim() === "") {
+            setError(lastName, "Last name is required.");
+            isValid = false;
+          } else if (!namePattern.test(lastName.value)) {
+            setError(
+              lastName,
+              "Last name must be at least 2 characters and contain only letters."
+            );
+            isValid = false;
+          }
+
+          if (currentPassword.value !== "") {
+            if (newPassword.value.trim() === "") {
+              setError(newPassword, "Password is required.");
+              isValid = false;
+            } else {
+              if (!passwordPattern.test(newPassword.value)) {
+                setError(
+                  newPassword,
+                  "Password must be at least 2 characters and contain letters and numbers."
+                );
+                isValid = false;
+              }
+              
+              if (newPassword.value !== confirmPassword.value) {
+                setError(confirmPassword, "Passwords do not match.");
+                isValid = false;
+              }
+            }
+          }
+          return isValid;
+        }
+
+        function setError(input, message) {
+          const errorElement = input.nextElementSibling;
+          errorElement.textContent = message;
+          errorElement.style.display = "block";
+          input.classList.add("is-invalid");
+        }
+
+        function clearErrors() {
+          const errorMessages = document.querySelectorAll(".is-invalid");
+          errorMessages.forEach(function (element) {
+            element.classList.remove("is-invalid");
+            const errorElement = element.nextElementSibling;
+            if (errorElement) {
+              errorElement.style.display = "none";
+              errorElement.textContent = "";
+            }
+          });
+        }
+      });
+    </script>
+    <script>
+      document
+        .getElementById("addAddressForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          // Clear previous error styles
+          const fields = document.querySelectorAll(".form-control");
+          fields.forEach((field) => {
+            field.style.borderColor = ""; // Reset to default border color
+          });
+
+          // Validation
+          let isValid = true;
+          const name = document.getElementById("name").value.trim();
+          const mobile = document.getElementById("mobile").value.trim();
+          const pincode = document.getElementById("pincode").value.trim();
+          const locality = document.getElementById("locality").value.trim();
+          const city = document.getElementById("city").value.trim();
+          const state = document.getElementById("state").value;
+          const type = document.getElementById("type").value.trim();
+          const mobilePattern = /^[6-9]\d{9}$/;
+          const pincodePattern = /^\d{6}$/;
+          if (!name) {
+            showValidationError("name", "Name is required.");
+            isValid = false;
+          }
+          if (!mobile || !mobilePattern.test(mobile)) {
+            showValidationError(
+              "mobile",
+              "Please enter a valid 10-digit mobile number."
+            );
+            isValid = false;
+          }
+          if (!pincode || !pincodePattern.test(pincode)) {
+            showValidationError(
+              "pincode",
+              "Please enter a valid 6-digit pincode."
+            );
+            isValid = false;
+          }
+          if (!locality) {
+            showValidationError("locality", "Locality is required.");
+            isValid = false;
+          }
+          if (!city) {
+            showValidationError("city", "City/District/Town is required.");
+            isValid = false;
+          }
+          if (!state) {
+            showValidationError("state", "Please select a state.");
+            isValid = false;
+          }
+          if (!type) {
+            showValidationError(
+              "type",
+              "Please select an address type (Home or Office)."
+            );
+            isValid = false;
+          }
+
+          if (isValid) {
+            const formData = $(this).serialize();
+
+            $.ajax({
+              url: "/Profile/add-address",
+              type: "POST",
+              data: formData,
+              success: function (response) {
+                if (response.success) {
+                  showToastifySuccess(response.message);
+                  $("#currentAddresses").load("/Profile #currentAddresses > *");
+                  $("#addAddressForm")[0].reset();
+                  toggleAddAddressForm();
+                } else {
+                  showToastifyError(response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                showToastifyError(
+                  "An error occurred while updating the profile."
+                );
+              },
+            });
+          }
+        });
+
+      function showValidationError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        field.style.borderColor = "#dc3545";
+        showToastifyError(message);
+      }
+
+      function showToastifySuccess(message) {
+        Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#28a745",
+        }).showToast();
+      }
+
+      function showToastifyError(message) {
+        Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#dc3545",
+        }).showToast();
+      }
+
+      function displayError(inputField, errorMessage) {
+        inputField.classList.add("error");
+        inputField.value = "";
+        inputField.placeholder = errorMessage;
+      }
+
+      function clearError(inputField, originalPlaceholder) {
+        inputField.classList.remove("error");
+        inputField.placeholder = originalPlaceholder;
+      }
+    </script>
+
+    <script>
+      function deleteAddress(id) {
+        showConfirmationDialog(
+          "Are you sure?",
+          "Once deleted, this address cannot be recovered!", 
+          "Delete",
+          "Cancel",
+          "btn-success"
+        ).then((isConfirm) => {
+          if (isConfirm) {
+            $.ajax({
+              url: "/Profile/remove-address",
+              type: "DELETE",
+              data: { id: id },
+              success: function (response) {
+                if (response.success) {
+                  showToastifySuccess(response.message);
+                  $("#currentAddresses").load("/Profile #currentAddresses > *");
+                } else {
+                  showToastifyError(response.message);
+                }
+              },
+              error: function (error) {
+                showToastifyError(
+                  "An error occurred while deleting the address."
+                );
+              },
+            });
+          }
+        });
+      }
+
+      function toggleAddAddressForm() {
+        var form = document.getElementById("addAddressForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+    </script>
+  </body>
+</html>

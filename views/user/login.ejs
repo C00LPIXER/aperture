@@ -22,7 +22,7 @@
         style="background-image: url(/images/photographer4.jpg)"
         class="col-md-6 side-image"
       >
-        <img src="images/icons/logo-02.png" alt="" />
+        <img src="/images/icons/logo-02.png" alt="" />
         <div class="text">
           <h2>Zoom Into the Future</h2>
           <p>
@@ -63,9 +63,9 @@
                 </div>
               </div>
               <% if (success_msg) { %>
-              <div class="text-success"><%= success_msg %></div>
+              <div class="text-success fw-bold"><%= success_msg %></div>
               <% } %> <% if (error_msg) { %>
-              <div class="text-danger"><%= error_msg %></div>
+              <div class="text-danger fw-bold"><%= error_msg %></div>
               <% } %>
             </div>
           </header>
@@ -111,65 +111,13 @@
             <span
               >Don't have an account? <a href="/signup">Sign up here <br /></a
             ></span>
-            <span><a href="#" class="text-secondary">Forgot Password</a></span>
+            <span><a href="/forgot-password" class="text-secondary">Forgot Password</a></span>
           </div>
         </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/login_validation.js"></script>
-
-    <script>
-      // document
-      //   .getElementById("loginForm")
-      //   .addEventListener("submit", function (event) {
-      //     event.preventDefault();
-      //     validateForm();
-      //   });
-
-      // function validateForm() {
-      //   let isValid = true;
-
-      //   // Email validation
-      //   const email = document.getElementById("email");
-      //   const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-
-      //   if (email.value.trim() === "") {
-      //     displayError(email, "Email is required");
-      //     isValid = false;
-      //   } else if (!emailPattern.test(email.value)) {
-      //     displayError(email, "Enter a valid email");
-      //     isValid = false;
-      //   } else {
-      //     clearError(email, "Email");
-      //   }
-
-      //   // Password validation
-      //   const password = document.getElementById("password");
-      //   if (password.value.trim() === "") {
-      //     displayError(password, "Password is required");
-      //     isValid = false;
-      //   } else {
-      //     clearError(password, "Password");
-      //   }
-
-      //   // If form is valid
-      //   if (isValid) {
-      //     document.getElementById("loginForm").submit();
-      //   }
-      // }
-
-      // function displayError(inputField, errorMessage) {
-      //   inputField.classList.add("error");
-      //   inputField.value = "";
-      //   inputField.placeholder = errorMessage;
-      // }
-
-      // function clearError(inputField, originalPlaceholder) {
-      //   inputField.classList.remove("error");
-      //   inputField.placeholder = originalPlaceholder;
-      // }
-    </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script

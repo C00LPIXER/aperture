@@ -1,0 +1,438 @@
+<%- include('partials/head') %>
+<html>
+  <style>
+    .is-invalid ~ .invalid-feedback {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .nav-link {
+      color: #495057;
+    }
+    .nav-link.active {
+      background-color: #0d6efd;
+      color: white;
+    }
+    #showAddAddressButton {
+      cursor: pointer;
+    }
+    #containers {
+      min-height: 100vh;
+    }
+  </style>
+  <body class="animsition">
+    <!-- Header -->
+    <header class="header-v4">
+      <div class="container-menu-desktop">
+        <div class="wrap-menu-desktop how-shadow1">
+          <nav class="limiter-menu-desktop container">
+            <!-- Logo desktop -->
+            <a href="/" class="logo">
+              <img src="/images/icons/logo-1.png" alt="IMG-LOGO" />
+            </a>
+
+            <!-- Menu desktop -->
+            <div class="menu-desktop">
+              <ul class="main-menu">
+                <li>
+                  <a href="/">Home</a>
+                </li>
+                <li>
+                  <a href="/shop">Shop</a>
+                </li>
+                <li>
+                  <a href="/blog">Blog</a>
+                </li>
+                <li>
+                  <a href="/about">About</a>
+                </li>
+                <li>
+                  <a href="/contact">Contact</a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Icon header -->
+            <div class="wrap-icon-header flex-w flex-r-m">
+              <a href="/cart">
+                <div
+                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+                >
+                  <i class="zmdi zmdi-shopping-cart"></i>
+                </div>
+              </a>
+              <a
+                href="/profile"
+                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+              >
+                <i class="fa-solid fa-circle-user"></i>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- breadcrumb -->
+    <div class="container">
+      <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+        <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+          Home
+          <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+        </a>
+        <a href="/cart" class="stext-109 cl8 hov-cl1 trans-04">
+          Cart
+          <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+        </a>
+        <span class="stext-109 cl4"> Checkout </span>
+      </div>
+    </div>
+
+    <div id="checkout" class="container p-t-25" style="min-height: 75vh">
+      <div class="col-lg-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Products</th>
+              <th scope="col">Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <% cart.items.forEach(item => { %>
+          <tbody>
+            <tr>
+              <td><%= item.productId.name %></td>
+              <td>
+                <%= item.price.toFixed(2) %>
+                <span style="text-decoration: line-through" class="p-3"
+                  >₹<%= item.productId.promotional_price.toFixed(2) %>
+                </span>
+              </td>
+              <td><%= item.quantity %></td>
+              <td>₹<%= (item.price * item.quantity).toFixed(2)%></td>
+            </tr>
+          </tbody>
+          <%})%>
+        </table>
+      </div>
+      <% if (cart) { %>
+      <div class="row">
+        <div class="col-lg-7">
+          <!-- Button to Show Add Address Form -->
+          <div
+            class="btn w-100 mb-3 border p-3"
+            onclick="toggleAddAddressForm()"
+            id="showAddAddressButton"
+          >
+            <p class="">
+              <strong><i class="fa-solid fa-plus"></i> Add New Address</strong>
+            </p>
+          </div>
+          <!-- Add New Address Form (Hidden initially) -->
+          <form
+            id="addAddressForm"
+            action="/Profile/add-address"
+            method="post"
+            style="display: none"
+          >
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  name="name"
+                  placeholder="Enter name"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="mobile" class="form-label">Mobile number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="mobile"
+                  name="mobile"
+                  placeholder="Enter mobile number"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="pincode" class="form-label">Pincode</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pincode"
+                  name="pincode"
+                  placeholder="Enter pincode"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="locality" class="form-label">Locality</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="locality"
+                  name="locality"
+                  placeholder="Enter locality"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="city" class="form-label">City/District/Town</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="city"
+                  name="city"
+                  placeholder="Enter city"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="state" class="form-label">State</label>
+                <select class="form-control" id="state" name="state">
+                  <option value="">Select State</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                  <option value="Assam">Assam</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <!-- Add options for states -->
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="landmark" class="form-label"
+                  >Landmark (Optional)</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="landmark"
+                  name="landmark"
+                  placeholder="Enter landmark"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="landmark" class="form-label">Type</label>
+                <select class="form-control" id="type" name="type">
+                  <option value="">Select Address type</option>
+                  <option value="Home">Home</option>
+                  <option value="Office">Office</option>
+                  <!-- Add options for states -->
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="altPhone" class="form-label"
+                  >Alternate Phone (Optional)</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="secondmobile"
+                  name="secondmobile"
+                  placeholder="Enter alternate phone"
+                />
+              </div>
+            </div>
+            <button for="submit" type="submit" class="btn btn-primary mb-5">
+              Save
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary mb-5"
+              onclick="toggleAddAddressForm()"
+            >
+              Cancel
+            </button>
+          </form>
+        </div>
+        <div class="col-lg-5">
+          <div class="btn w-100 mb-3 border p-3">
+            <p class=""><%= user.email %></p>
+          </div>
+        </div>
+      </div>
+      <form
+        id="checkOutForm"
+        action="/checkout/complete"
+        method="POST"
+        class="bg0 p-b-85"
+      >
+        <div class="row">
+          <div class="col-lg-7 m-b-50">
+            <!-- Current Addresses Section -->
+            <div id="currentAddresses" class="<%= user.addresses._id %>">
+              <% if (user.addresses && user.addresses.length > 0) { %> <%
+              user.addresses.forEach((addresses, index) => { %>
+              <div class="card mb-3">
+                <div
+                  class="card-body d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <h5 class="card-title"><%= addresses.name %></h5>
+                    <p class="card-text">
+                      <%= addresses.locality %>, <%= addresses.city %> - <%=
+                      addresses.pincode %><br />
+                      <%= addresses.state %><br />
+                      <%= addresses.mobile.join(', ') %><br />
+                      <% if (addresses.Landmark) { %> <%= addresses.landmark %>
+                      <% } %>
+                    </p>
+                  </div>
+                  <div>
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="shippingAddressId"
+                      value="<%= addresses._id %>"
+                      id="address"
+                      checked
+                    />
+                    <label class="form-check-label" for="address" ></label>
+                  </div>
+                </div>
+              </div>
+              <% }) %> <% } else { %>
+              <p>No addresses found.</p>
+              <% } %>
+            </div>
+          </div>
+
+          <div class="col-lg-5 m-b-50">
+            <div class="bor10 p-lr-40 p-t-30 p-b-40">
+              <h4 class="ltext-320 p-b-30">Your Order</h4>
+              <div class="flex-w flex-t p-b-13">
+                <div class="size-208">
+                  <span class="stext-110 cl22">Subtotal:</span>
+                </div>
+                <div class="size-209">
+                  <span class="mtext-110 cl22"
+                    >₹ <%= cart.totalPrice.toFixed(2) %></span
+                  >
+                </div>
+              </div>
+
+              <div class="flex-w flex-t p-b-13">
+                <div class="size-208">
+                  <span class="stext-110 cl22">Shipping:</span>
+                </div>
+                <div class="size-209">
+                  <span class="mtext-110 cl22">Free</span>
+                </div>
+              </div>
+
+              <div class="flex-w flex-t p-t-27 p-b-33">
+                <div class="size-208">
+                  <span class="mtext-101 cl22">Total:</span>
+                </div>
+                <input type="hidden" value="<%= cart.totalPrice %>" name="totalPrice">
+                <div class="size-209">
+                  <span class="mtext-110 cl22"
+                    >$ <%= cart.totalPrice.toFixed(2) %></span
+                  >
+                </div>
+              </div>
+
+              <h4 class="ltext-320 p-b-30">Payment</h4>
+              <div class="form-group">
+                <label for="payment-method">Select Payment Method</label>
+                <select
+                  name="paymentMethod"
+                  id="payment-method"
+                  class="form-control"
+                  required
+                >
+                  <option value="PayPal">PayPal</option>
+                  <option value="Cash on Delivery" selected>Cash on Delivery</option>
+                </select>
+              </div>
+              <button
+                type="submit"
+                class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-3"
+              >
+                Complete Purchase
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <% } else { %>
+      <h6 class="text-center mt-4">Your cart is empty</h6>
+      <% } %>
+    </div>
+    <%- include('partials/footer') %>
+    <script>
+         document
+        .getElementById("checkOutForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = $(this).serialize();
+
+          $.ajax({
+            url: "/checkout/complete",
+            type: "POST",
+            data: formData,
+            success: function (response) {
+              if (response.success) {
+                window.location.href = "/order-placed"
+              } else {
+                Toastify({
+                  text: response.message,
+                  duration: 3000,
+                  gravity: "top",
+                  position: "right",
+                  backgroundColor: "#dc3545",
+                }).showToast();
+              }
+            },
+            error: function (xhr, status, error) {
+              showToastifyError(response.message);
+            },
+          });
+        });
+        
+      document
+        .getElementById("addAddressForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = $(this).serialize();
+
+          $.ajax({
+            url: "/Profile/add-address",
+            type: "POST",
+            data: formData,
+            success: function (response) {
+              if (response.success) {
+                showToastifySuccess(response.message);
+                $("#checkOutForm").load("/checkout #checkOutForm > *");
+                $("#addAddressForm")[0].reset();
+                toggleAddAddressForm();
+              } else {
+                Toastify({
+                  text: response.message,
+                  duration: 3000,
+                  gravity: "top",
+                  position: "right",
+                  backgroundColor: "#dc3545",
+                }).showToast();
+              }
+            },
+            error: function (xhr, status, error) {
+              showToastifyError(
+                "An error occurred while updating the profile."
+              );
+            },
+          });
+        });
+
+      function toggleAddAddressForm() {
+        const form = document.getElementById("addAddressForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+    </script>
+  </body>
+</html>

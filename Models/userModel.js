@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const userAddress = require("./userAddress");
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -7,7 +8,7 @@ const userSchema = new mongoose.Schema({
   },
   lastName: {
     type: String,
-    required: true,
+    required: false,
   },
   email: {
     type: String,
@@ -25,6 +26,11 @@ const userSchema = new mongoose.Schema({
   signUpDate: {
     type: String,
     required: true,
+  },
+  addresses: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'address',
+    required: false,
   },
   is_blocked: {
     type: Boolean,

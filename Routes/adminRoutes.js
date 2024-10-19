@@ -25,8 +25,10 @@ routes.get("/admin/login", adminAuth.isadminLogout, adminController.loadAdminLog
 routes.post("/admin/login", adminAuth.isadminLogout, adminController.adminAuthentication);
 routes.get("/admin/logout", adminController.adminLogout);
 
+// ? [order manegement]
 routes.get("/admin/orders", adminAuth.isAdmin, adminController.loadOrderList);
-routes.get("/admin/order_details", adminAuth.isAdmin, adminController.loadOrderDetail);
+routes.get("/admin/orders/:id", adminAuth.isAdmin, adminController.loadOrderDetail);
+routes.patch("/admin/orders/change-status", adminAuth.isAdmin, adminController.changeOrderStatus);
 
 //? [user manegement]
 routes.get("/admin/users", adminAuth.isAdmin, adminController.loadUserList);
