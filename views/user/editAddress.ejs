@@ -1,0 +1,493 @@
+<%- include('partials/head') %>
+<html>
+  <style>
+    .is-invalid ~ .invalid-feedback {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .nav-link {
+      color: #000000 !important;
+    }
+    .list-group-item.active {
+      background-color: #000000 !important;
+      color: white;
+      border-color: #000000;
+    }
+    #showAddAddressButton {
+      cursor: pointer;
+    }
+    #containers {
+      min-height: 100vh;
+    }
+  </style>
+  <body id="full-body">
+    <header class="header-v4">
+        <!-- Header desktop -->
+        <div class="container-menu-desktop">
+          <div class="wrap-menu-desktop how-shadow1">
+            <nav class="limiter-menu-desktop container">
+              <!-- Logo desktop -->
+              <a href="/" class="logo">
+                <img src="/images/icons/logo-1.png" alt="IMG-LOGO" />
+              </a>
+  
+              <!-- Menu desktop -->
+              <div class="menu-desktop">
+                <ul class="main-menu">
+                  <li>
+                    <a href="/">Home</a>
+                  </li>
+  
+                  <li>
+                    <a href="/shop">Shop</a>
+                  </li>
+  
+                  <li>
+                    <a href="/blog">Blog</a>
+                  </li>
+  
+                  <li>
+                    <a href="/about">About</a>
+                  </li>
+  
+                  <li>
+                    <a href="/contact">Contact</a>
+                  </li>
+                </ul>
+              </div>
+  
+              <!-- Icon header -->
+              <div class="wrap-icon-header flex-w flex-r-m">
+                <a href="/cart">
+                  <div
+                    class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+                  >
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                  </div>
+                </a>
+                <a
+                  href="/"
+                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+                >
+                  <i class="zmdi zmdi-favorite-outline"></i>
+                </a>
+                <a
+                  href="/profile"
+                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
+                >
+                  <i class="fa-solid fa-circle-user"></i>
+                </a>
+              </div>
+            </nav>
+          </div>
+        </div>
+  
+        <!-- Header Mobile -->
+        <div class="wrap-header-mobile">
+          <!-- Logo moblie -->
+          <div class="logo-mobile">
+            <a href="/"><img src="/images/icons/logo-1.png" alt="IMG-LOGO" /></a>
+          </div>
+  
+          <!-- Button show menu -->
+          <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+            </span>
+          </div>
+        </div>
+  
+        <!-- Menu Mobile -->
+        <div class="menu-mobile">
+          <ul class="main-menu-m">
+            <li>
+              <a href="/">Home</a>
+            </li>
+  
+            <li>
+              <a href="/shop">Shop</a>
+            </li>
+  
+            <li>
+              <a href="/blog">Blog</a>
+            </li>
+  
+            <li>
+              <a href="/about">About</a>
+            </li>
+  
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
+            <li>
+              <a href="/profile">Contact</a>
+            </li>
+            <li>
+              <a href="/wishlist">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </header>
+    <div class="container">
+      <% if(address) { %>
+      <form id="addAddressForm" action="/Profile/edit-address" method="post">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  name="name"
+                  value="<%= address.name %>"
+                  placeholder="Enter name"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="mobile" class="form-label">Mobile number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="mobile"
+                  name="mobile"
+                  value="<%= address.mobile[0] %>"
+                  placeholder="Enter mobile number"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="pincode" class="form-label">Pincode</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pincode"
+                  name="pincode"
+                  value="<%= address.pincode %>"
+                  placeholder="Enter pincode"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="locality" class="form-label">Locality</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="locality"
+                  name="locality"
+                  value="<%= address.locality %>"
+                  placeholder="Enter locality"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="city" class="form-label">City/District/Town</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="city"
+                  name="city"
+                  value="<%= address.city %>"
+                  placeholder="Enter city"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="state" class="form-label">State</label>
+                <select class="form-control" id="state" name="state">
+                    <option value="Kerala" <%= address.state === 'Kerala' ? `selected` : '' %>>Kerala</option>
+                    <option value="Tamil Nadu" <%= address.state === 'Tamil Nadu' ? 'selected' : '' %>>Tamil Nadu</option>
+                    <option value="Andhra Pradesh" <%= address.state === 'Andhra Pradesh' ? 'selected' : '' %>>Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh" <%= address.state === 'Arunachal Pradesh' ? 'selected' : '' %>>Arunachal Pradesh</option>
+                    <option value="Assam" <%= address.state === 'Assam' ? 'selected' : '' %>>Assam</option>
+                    <option value="Goa" <%= address.state === 'Goa' ? 'selected' : '' %>>Goa</option>
+                    <option value="Karnataka" <%= address.state === 'Karnataka' ? 'selected' : '' %>>Karnataka</option>
+                </select>
+            </div>
+              <div class="col-md-6 mb-3">
+                <label for="landmark" class="form-label">Landmark (Optional)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="landmark"
+                  name="landmark"
+                  value="<%= address.landmark %>"
+                  placeholder="Enter landmark"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="type" class="form-label">Type</label>
+                <select class="form-control" id="type" name="type">
+                  <option value="Home" <%= address.state === 'Home' ? 'selected' : '' %>>Home</option>
+                  <option value="Office" <%= address.state === 'Office' ? 'selected' : '' %>>Office</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="secondmobile" class="form-label"
+                  >Alternate Phone (Optional)</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="secondmobile"
+                  name="secondmobile"
+                  value="<%= address.mobile[1] %>"
+                  placeholder="Enter alternate phone"
+                />
+              </div>
+        </div>
+        <input id="addressId" name="addressId" type="hidden" value="<%= address._id %>">
+        <button id="submitBtn" type="submit" class="btn btn-primary mb-5">
+          Save
+        </button>
+        <button onclick="goBack()" type="button" class="btn btn-secondary mb-5">Back</button>
+      </form>
+      <% } else { %>
+        <div style="height: 67vh;">
+          <h1>404</h1>
+        </div>
+      <% } %>
+    </div>
+    <%- include('partials/footer') %>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const originalData = {
+          name: "<%= address.name %>",
+          mobile: "<%= address.mobile[0] %>",
+          pincode: "<%= address.pincode %>",
+          locality: "<%= address.locality %>",
+          city: "<%= address.city %>",
+          state: "<%= address.state %>",
+          landmark: "<%= address.landmark %>",
+          type: "<%= address.type %>",
+          secondmobile: "<%= address.mobile[1] %>",
+        };
+      
+        function validateForm() {
+          let valid = true;
+      
+          const mobile = document.getElementById("mobile");
+          const pincode = document.getElementById("pincode");
+          const name = document.getElementById("name");
+          const locality = document.getElementById("locality");
+          const city = document.getElementById("city");
+          const state = document.getElementById("state");
+      
+          clearErrorMessages();
+      
+          // Trim values for validation
+          const mobileValue = mobile.value.trim();
+          const pincodeValue = pincode.value.trim();
+          const nameValue = name.value.trim();
+          const localityValue = locality.value.trim();
+          const cityValue = city.value.trim();
+          const stateValue = state.value.trim();
+      
+          if (nameValue === "") {
+            valid = false;
+            showErrorMessage(name, "Please enter a valid name.");
+          }
+      
+          if (mobileValue.length < 10 || isNaN(mobileValue)) {
+            valid = false;
+            showErrorMessage(mobile, "Please enter a valid 10-digit mobile number.");
+          }
+      
+          if (pincodeValue.length !== 6 || isNaN(pincodeValue)) {
+            valid = false;
+            showErrorMessage(pincode, "Please enter a valid 6-digit pincode.");
+          }
+      
+          if (localityValue === "") {
+            valid = false;
+            showErrorMessage(locality, "Please enter a locality.");
+          }
+      
+          if (cityValue === "") {
+            valid = false;
+            showErrorMessage(city, "Please enter a city.");
+          }
+      
+          if (stateValue === "") {
+            valid = false;
+            showErrorMessage(state, "Please select a state.");
+          }
+      
+          return valid;
+        }
+      
+        function clearErrorMessages() {
+          const errorMessages = document.querySelectorAll(".error-message");
+          errorMessages.forEach((msg) => msg.remove());
+        }
+      
+        function showErrorMessage(inputElement, message) {
+          const errorMessage = document.createElement("div");
+          errorMessage.className = "error-message text-danger";
+          errorMessage.textContent = message;
+          errorMessage.style.fontSize = "0.9em";
+          inputElement.parentElement.appendChild(errorMessage);
+        }
+      
+        function formDataChanged() {
+          const currentData = {
+            name: document.getElementById("name").value,
+            mobile: document.getElementById("mobile").value,
+            pincode: document.getElementById("pincode").value,
+            locality: document.getElementById("locality").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            landmark: document.getElementById("landmark").value,
+            type: document.getElementById("type").value,
+            secondmobile: document.getElementById("secondmobile").value,
+          };
+      
+          return JSON.stringify(originalData) !== JSON.stringify(currentData);
+        }
+      
+        document.getElementById("submitBtn").addEventListener("click", function (event) {
+          event.preventDefault();
+      
+          if (formDataChanged()) {
+            if (validateForm()) {
+              const formData = {
+                name: document.getElementById("name").value,
+                mobile: document.getElementById("mobile").value,
+                pincode: document.getElementById("pincode").value,
+                locality: document.getElementById("locality").value,
+                city: document.getElementById("city").value,
+                state: document.getElementById("state").value,
+                landmark: document.getElementById("landmark").value,
+                type: document.getElementById("type").value,
+                secondmobile: document.getElementById("secondmobile").value,
+                addressId: document.getElementById("addressId").value,
+              };
+      
+              $.ajax({
+                 url: "/Profile/edit-address",
+                 type: "PUT",
+                 data: formData,
+                 success: function (response) {
+                   if (response.success) {
+                     showToastifySuccess(response.message);
+                     window.history.back();
+                   } else {
+                     showToastifyError(response.message);
+                   }
+                 },
+                 error: function () {
+                   showToastifyError("Error: Could not connect to the server.");
+                 },
+               });
+             } else {
+               showToastifyError("Please fix the validation errors.");
+             }
+          } else {
+            showToastify("No changes detected.");
+          }
+        });
+      });
+      function goBack() {
+        window.history.back();
+      }  
+
+    </script>
+    <!-- <script>
+        $(document).ready(function () {
+          const originalData = {
+            name: "<%= address.name %>",
+            mobile: "<%= address.mobile[0] %>",
+            pincode: "<%= address.pincode %>",
+            locality: "<%= address.locality %>",
+            city: "<%= address.city %>",
+            state: "<%= address.state %>",
+            landmark: "<%= address.landmark %>",
+            type: "<%= address.type %>",
+            secondmobile: "<%= address.mobile[1] %>",
+          };
+      
+          function validateForm() {
+            let valid = true;
+      
+            const mobile = $("#mobile");
+            const pincode = $("#pincode");
+      
+            $(".error-message").remove();
+      
+            if (mobile.val().length < 10 || isNaN(mobile.val())) {
+              valid = false;
+              showErrorMessage(mobile, "Please enter a valid 10-digit mobile number.");
+            }
+      
+            if (pincode.val().length !== 6 || isNaN(pincode.val())) {
+              valid = false;
+              showErrorMessage(pincode, "Please enter a valid 6-digit pincode.");
+            }
+      
+            return valid;
+          }
+      
+          function showErrorMessage(inputElement, message) {
+            const errorMessage = $('<div class="error-message text-danger"></div>');
+            errorMessage.text(message);
+            errorMessage.css("font-size", "0.9em");
+            inputElement.parent().append(errorMessage);
+          }
+      
+          function formDataChanged() {
+            const currentData = {
+              name: $("#name").val(),
+              mobile: $("#mobile").val(),
+              pincode: $("#pincode").val(),
+              locality: $("#locality").val(),
+              city: $("#city").val(),
+              state: $("#state").val(),
+              landmark: $("#landmark").val(),
+              type: $("#type").val(),
+              secondmobile: $("#secondmobile").val(),
+            };
+
+            return JSON.stringify(originalData) !== JSON.stringify(currentData);
+          }
+      
+          $("#submitBtn").on("click", function (event) {
+            event.preventDefault();
+      
+            if (formDataChanged()) {
+              if (validateForm()) {
+                const formData = {
+                  name: $("#name").val(),
+                  mobile: $("#mobile").val(),
+                  pincode: $("#pincode").val(),
+                  locality: $("#locality").val(),
+                  city: $("#city").val(),
+                  state: $("#state").val(),
+                  landmark: $("#landmark").val(),
+                  type: $("#type").val(),
+                  secondmobile: $("#secondmobile").val(),
+                  addressId: $("#addressId").val(),
+                };
+      
+                $.ajax({
+                  url: "/Profile/edit-address",
+                  type: "PUT",
+                  data: formData,
+                  success: function (response) {
+                    if (response.success) {
+                      showToastifySuccess(response.message);
+                    } else {
+                      showToastifyError(response.message);
+                    }
+                  },
+                  error: function () {
+                    showToastifyError("Error: Could not connect to the server.");
+                  },
+                });
+              } else {
+                showToastifyError("Please fix the validation errors.");
+              }
+            } else {
+              showToastify("No changes detected.");
+            }
+          });
+        });
+    </script> -->
+  </body>
+</html>

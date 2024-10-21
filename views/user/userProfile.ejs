@@ -133,7 +133,7 @@
     </header>
 
     <div id="containers" class="container">
-      <h2>User Profile</h2>
+      <h2>My Account</h2>
       <hr />
       <div class="row">
         <!-- Sidebar for Navigation Tabs -->
@@ -146,7 +146,7 @@
               href="#user-info"
               role="tab"
               aria-controls="user-info"
-              >User Information</a
+              >My profile</a
             >
             <a
               class="list-group-item list-group-item-action"
@@ -448,22 +448,25 @@
                         </p>
 
                         <!-- Progress Bar for Order Status -->
+                         <div class="d-flex justify-content-around">
+                          <p>Processing</p><p>Shipped</p><p>Delivered</p>
+                         </div>
                         <div class="progress">
                           <div class="progress-bar <% if(order.orderStatus ===
                           'Cancelled') { %> bg-danger <% } else { %> bg-success
-                          <% } %>" role="progressbar" style=`width: <%
+                          <% } %>" role="progressbar" style="width: <%
                           if(order.orderStatus === 'Processing') { %> 25% <% }
                           else if(order.orderStatus === 'Shipped') { %> 70% <% }
-                          else if(order.orderStatus === 'Delivered') { %> 100%
-                          <% } else if(order.orderStatus === 'Cancelled') { %>
-                          100% <% } %>;` aria-valuenow=" <% if(order.orderStatus
-                          === 'Processing') { %> 25 <% } else
-                          if(order.orderStatus === 'Shipped') { %> 70 <% } else
-                          if(order.orderStatus === 'Delivered') { %> 100 <% }
-                          else if(order.orderStatus === 'Cancelled') { %> 100 <%
-                          } %>" aria-valuemin="0" aria-valuemax="100" > <%
-                          if(order.orderStatus === 'Cancelled') { %> Cancelled
-                          <% } else { %> <%= order.progressPercentage %> <% } %>
+                          else if(order.orderStatus === 'Delivered' ||
+                          order.orderStatus === 'Cancelled') { %> 100% <% } %>;"
+                          aria-valuenow="<% if(order.orderStatus ===
+                          'Processing') { %> 25 <% } else if(order.orderStatus
+                          === 'Shipped') { %> 70 <% } else if(order.orderStatus
+                          === 'Delivered' || order.orderStatus === 'Cancelled')
+                          { %> 100 <% } %>" aria-valuemin="0"
+                          aria-valuemax="100" > <% if(order.orderStatus ===
+                          'Cancelled') { %> Cancelled <% } else { %> <%=
+                          order.progressPercentage %> <% } %>
                         </div>
                       </div>
                     </div>
@@ -471,188 +474,195 @@
                 </div>
               </div>
             </div>
-            <% }) %> <% } else { %>
-            <p>No order history.</p>
-            <% } %>
-          </div>
-
-          <!-- Address Management Section -->
-          <div
-            class="tab-pane fade"
-            id="address-management"
-            role="tabpanel"
-            aria-labelledby="address-management-tab"
-          >
-            <!-- Button to Show Add Address Form -->
-            <div
-              class="btn w-100 mb-3 border p-3"
-              onclick="toggleAddAddressForm()"
-              id="showAddAddressButton"
-            >
-              <p class="">
-                <strong
-                  ><i class="fa-solid fa-plus"></i> Add New Address</strong
-                >
-              </p>
+              <% }) %> <% } else { %>
+              <p>No order history.</p>
+              <% } %>
             </div>
 
-            <!-- Add New Address Form (Hidden initially) -->
-            <form
-              id="addAddressForm"
-              action="/Profile/add-address"
-              method="post"
-              style="display: none"
+            <!-- Address Management Section -->
+            <div
+              class="tab-pane fade"
+              id="address-management"
+              role="tabpanel"
+              aria-labelledby="address-management-tab"
             >
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="name" class="form-label">Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="name"
-                    name="name"
-                    placeholder="Enter name"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="mobile" class="form-label">Mobile number</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="mobile"
-                    name="mobile"
-                    placeholder="Enter mobile number"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="pincode" class="form-label">Pincode</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="pincode"
-                    name="pincode"
-                    placeholder="Enter pincode"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="locality" class="form-label">Locality</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="locality"
-                    name="locality"
-                    placeholder="Enter locality"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="city" class="form-label"
-                    >City/District/Town</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="city"
-                    name="city"
-                    placeholder="Enter city"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="state" class="form-label">State</label>
-                  <select class="form-control" id="state" name="state">
-                    <option value="">Select State</option>
-                    <option value="Kerala">Kerala</option>
-                    <option value="Tamil Nadu">Tamil Nadu</option>
-                    <option value="Andhra Pradesh">Andhra Pradesh</option>
-                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                    <option value="Assam">Assam</option>
-                    <option value="Goa">Goa</option>
-                    <option value="Karnataka">Karnataka</option>
-                  </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="landmark" class="form-label"
-                    >Landmark (Optional)</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="landmark"
-                    name="landmark"
-                    placeholder="Enter landmark"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="type" class="form-label">Type</label>
-                  <select class="form-control" id="type" name="type">
-                    <option value="">Select Address type</option>
-                    <option value="Home">Home</option>
-                    <option value="Office">Office</option>
-                  </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="secondmobile" class="form-label"
-                    >Alternate Phone (Optional)</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="secondmobile"
-                    name="secondmobile"
-                    placeholder="Enter alternate phone"
-                  />
-                </div>
-              </div>
-              <button for="submit" type="submit" class="btn btn-primary mb-5">
-                Save
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary mb-5"
+              <!-- Button to Show Add Address Form -->
+              <div
+                class="btn w-100 mb-3 border p-3"
                 onclick="toggleAddAddressForm()"
+                id="showAddAddressButton"
               >
-                Cancel
-              </button>
-            </form>
+                <p class="">
+                  <strong
+                    ><i class="fa-solid fa-plus"></i> Add New Address</strong
+                  >
+                </p>
+              </div>
 
-            <!-- Current Addresses Section -->
-            <div id="currentAddresses" class="<%= user.addresses._id %>">
-              <% if (user.addresses && user.addresses.length > 0) { %> <%
-              user.addresses.forEach((addresses, index) => { %>
-              <div class="card mb-3">
-                <div
-                  class="card-body d-flex justify-content-between align-items-center"
-                >
-                  <div>
-                    <h5 class="card-title"><%= addresses.name %></h5>
-                    <p class="card-text">
-                      <%= addresses.locality %>, <%= addresses.city %> - <%=
-                      addresses.pincode %><br />
-                      <%= addresses.state %><br />
-                      <%= addresses.mobile.join(', ') %><br />
-                      <% if (addresses.Landmark) { %> <%= addresses.landmark %>
-                      <% } %>
-                    </p>
+              <!-- Add New Address Form (Hidden initially) -->
+              <form
+                id="addAddressForm"
+                action="/Profile/add-address"
+                method="post"
+                style="display: none"
+              >
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="name"
+                      name="name"
+                      placeholder="Enter name"
+                    />
                   </div>
-                  <div>
-                    <!-- Buttons on the left -->
-                    <button class="btn btn-warning btn-sm">Edit</button>
-                    <button
-                      class="btn btn-danger btn-sm"
-                      onclick="deleteAddress('<%= addresses._id %>')"
+                  <div class="col-md-6 mb-3">
+                    <label for="mobile" class="form-label">Mobile number</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="mobile"
+                      name="mobile"
+                      placeholder="Enter mobile number"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="pincode" class="form-label">Pincode</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="pincode"
+                      name="pincode"
+                      placeholder="Enter pincode"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="locality" class="form-label">Locality</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="locality"
+                      name="locality"
+                      placeholder="Enter locality"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="city" class="form-label"
+                      >City/District/Town</label
                     >
-                      Delete
-                    </button>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="city"
+                      name="city"
+                      placeholder="Enter city"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="state" class="form-label">State</label>
+                    <select class="form-control" id="state" name="state">
+                      <option value="">Select State</option>
+                      <option value="Kerala">Kerala</option>
+                      <option value="Tamil Nadu">Tamil Nadu</option>
+                      <option value="Andhra Pradesh">Andhra Pradesh</option>
+                      <option value="Arunachal Pradesh">
+                        Arunachal Pradesh
+                      </option>
+                      <option value="Assam">Assam</option>
+                      <option value="Goa">Goa</option>
+                      <option value="Karnataka">Karnataka</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="landmark" class="form-label"
+                      >Landmark (Optional)</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="landmark"
+                      name="landmark"
+                      placeholder="Enter landmark"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="type" class="form-label">Type</label>
+                    <select class="form-control" id="type" name="type">
+                      <option value="">Select Address type</option>
+                      <option value="Home">Home</option>
+                      <option value="Office">Office</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="secondmobile" class="form-label"
+                      >Alternate Phone (Optional)</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="secondmobile"
+                      name="secondmobile"
+                      placeholder="Enter alternate phone"
+                    />
                   </div>
                 </div>
+                <button for="submit" type="submit" class="btn btn-primary mb-5">
+                  Save
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary mb-5"
+                  onclick="toggleAddAddressForm()"
+                >
+                  Cancel
+                </button>
+              </form>
+
+              <!-- Current Addresses Section -->
+              <div id="currentAddresses" class="<%= user.addresses._id %>">
+                <% if (user.addresses && user.addresses.length > 0) { %> <%
+                user.addresses.forEach((addresses, index) => { %>
+                <div class="card mb-3">
+                  <div
+                    class="card-body d-flex justify-content-between align-items-center"
+                  >
+                    <div>
+                      <h5 class="card-title"><%= addresses.name %></h5>
+                      <span class="badge rounded-pill bg-dark w-25"><%= addresses.type %></span>
+                      <p class="card-text">
+                        <%= addresses.locality %>, <%= addresses.city %> - <%=
+                        addresses.pincode %><br />
+                        <%= addresses.state %><br />
+                        <%= addresses.mobile.join(', ') %><br />
+                        <% if (addresses.Landmark) { %> <%= addresses.landmark
+                        %> <% } %>
+                      </p>
+                    </div>
+                    <div>
+                      <!-- Buttons on the left -->
+                      <a
+                        href="/Profile/edit-address/<%= addresses._id %>"
+                        class="btn btn-warning btn-sm"
+                        >Edit</a
+                      >
+                      <button
+                        class="btn btn-danger btn-sm"
+                        onclick="deleteAddress('<%= addresses._id %>')"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <% }) %> <% } else { %>
+                <p>No addresses found.</p>
+                <% } %>
               </div>
-              <% }) %> <% } else { %>
-              <p>No addresses found.</p>
-              <% } %>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
 
     <%- include('partials/footer') %>
@@ -789,7 +799,7 @@
                 );
                 isValid = false;
               }
-              
+
               if (newPassword.value !== confirmPassword.value) {
                 setError(confirmPassword, "Passwords do not match.");
                 isValid = false;
@@ -948,7 +958,7 @@
       function deleteAddress(id) {
         showConfirmationDialog(
           "Are you sure?",
-          "Once deleted, this address cannot be recovered!", 
+          "Once deleted, this address cannot be recovered!",
           "Delete",
           "Cancel",
           "btn-success"

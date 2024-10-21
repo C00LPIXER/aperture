@@ -272,6 +272,7 @@
                 >
                   <div>
                     <h5 class="card-title"><%= addresses.name %></h5>
+                    <span class="badge rounded-pill bg-dark w-25"><%= addresses.type %></span>
                     <p class="card-text">
                       <%= addresses.locality %>, <%= addresses.city %> - <%=
                       addresses.pincode %><br />
@@ -282,15 +283,26 @@
                     </p>
                   </div>
                   <div>
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="shippingAddressId"
-                      value="<%= addresses._id %>"
-                      id="address"
-                      checked
-                    />
-                    <label class="form-check-label" for="address" ></label>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 20px;">
+                        <!-- Button for Edit -->
+                        <div class="button-group" style="display: flex;">
+                          <a href="/Profile/edit-address/<%= addresses._id %>" class="btn btn-warning btn-sm">Edit</a>
+                        </div>
+        
+                        <!-- Radio Button for Selecting Default Address -->
+                        <div class="form-check mb-3" style="padding-left: 15px;">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="shippingAddressId"
+                            value="<%= addresses._id %>"
+                            id="address"
+                            style="transform: scale(1.5);"
+                            checked
+                          />
+                          <label class="form-check-label" for="address"></label>
+                        </div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 const express = require("express");
-const adminController = require("../Controllers/adminController");
+const adminController = require("../Controllers/Admin/adminController");
 const adminAuth = require("../middleware/adminAuth");
 const multer  = require('multer');
 const path  = require('path');

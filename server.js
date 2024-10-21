@@ -54,7 +54,7 @@ app.use("/", userRoutes);
 app.use("/", adminRoutes); 
 
 app.get("*", (req, res) => {
-  res.redirect("/404");
+  res.redirect("/not-found");
 });
 
 app.listen(port, () => {
