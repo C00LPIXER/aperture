@@ -52,6 +52,7 @@ routes.delete("/Profile/remove-address", userAuthentication.isLogin, accountCont
 routes.patch("/Profile/cancel-order", userAuthentication.isLogin, storeController.cancelOrder);
 routes.get("/Profile/edit-address/:id", userAuthentication.isLogin, accountController.loadEditAddress);
 routes.put("/Profile/edit-address", userAuthentication.isLogin, accountController.editAddress);
+routes.post("/Profile/submit-review", userAuthentication.isLogin, accountController.addReview);
 
 //* error page
 routes.get("/not-found", authController.loadErrorPage);

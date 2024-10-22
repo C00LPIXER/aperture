@@ -272,7 +272,9 @@
                 >
                   <div>
                     <h5 class="card-title"><%= addresses.name %></h5>
-                    <span class="badge rounded-pill bg-dark w-25"><%= addresses.type %></span>
+                    <span class="badge rounded-pill bg-dark w-25"
+                      ><%= addresses.type %></span
+                    >
                     <p class="card-text">
                       <%= addresses.locality %>, <%= addresses.city %> - <%=
                       addresses.pincode %><br />
@@ -283,25 +285,32 @@
                     </p>
                   </div>
                   <div>
-                    <div class="d-flex justify-content-between align-items-center" style="gap: 20px;">
-                        <!-- Button for Edit -->
-                        <div class="button-group" style="display: flex;">
-                          <a href="/Profile/edit-address/<%= addresses._id %>" class="btn btn-warning btn-sm">Edit</a>
-                        </div>
-        
-                        <!-- Radio Button for Selecting Default Address -->
-                        <div class="form-check mb-3" style="padding-left: 15px;">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            name="shippingAddressId"
-                            value="<%= addresses._id %>"
-                            id="address"
-                            style="transform: scale(1.5);"
-                            checked
-                          />
-                          <label class="form-check-label" for="address"></label>
-                        </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                      style="gap: 20px"
+                    >
+                      <!-- Button for Edit -->
+                      <div class="button-group" style="display: flex">
+                        <a
+                          href="/Profile/edit-address/<%= addresses._id %>"
+                          class="btn btn-warning btn-sm"
+                          >Edit</a
+                        >
+                      </div>
+
+                      <!-- Radio Button for Selecting Default Address -->
+                      <div class="form-check mb-3" style="padding-left: 15px">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="shippingAddressId"
+                          value="<%= addresses._id %>"
+                          id="address"
+                          style="transform: scale(1.5)"
+                          checked
+                        />
+                        <label class="form-check-label" for="address"></label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -339,7 +348,11 @@
                 <div class="size-208">
                   <span class="mtext-101 cl22">Total:</span>
                 </div>
-                <input type="hidden" value="<%= cart.totalPrice %>" name="totalPrice">
+                <input
+                  type="hidden"
+                  value="<%= cart.totalPrice %>"
+                  name="totalPrice"
+                />
                 <div class="size-209">
                   <span class="mtext-110 cl22"
                     >$ <%= cart.totalPrice.toFixed(2) %></span
@@ -357,7 +370,10 @@
                   required
                 >
                   <option value="PayPal">PayPal</option>
-                  <option value="Cash on Delivery" selected>Cash on Delivery</option>
+                  <option value="Wallet">Wallet</option>
+                  <option value="Cash on Delivery" selected>
+                    Cash on Delivery
+                  </option>
                 </select>
               </div>
               <button
@@ -376,7 +392,7 @@
     </div>
     <%- include('partials/footer') %>
     <script>
-         document
+      document
         .getElementById("checkOutForm")
         .addEventListener("submit", function (event) {
           event.preventDefault();
@@ -389,7 +405,7 @@
             data: formData,
             success: function (response) {
               if (response.success) {
-                window.location.href = "/order-placed"
+                window.location.href = "/order-placed";
               } else {
                 Toastify({
                   text: response.message,
@@ -405,45 +421,136 @@
             },
           });
         });
-        
+
       document
         .getElementById("addAddressForm")
         .addEventListener("submit", function (event) {
           event.preventDefault();
 
-          const formData = $(this).serialize();
-
-          $.ajax({
-            url: "/Profile/add-address",
-            type: "POST",
-            data: formData,
-            success: function (response) {
-              if (response.success) {
-                showToastifySuccess(response.message);
-                $("#checkOutForm").load("/checkout #checkOutForm > *");
-                $("#addAddressForm")[0].reset();
-                toggleAddAddressForm();
-              } else {
-                Toastify({
-                  text: response.message,
-                  duration: 3000,
-                  gravity: "top",
-                  position: "right",
-                  backgroundColor: "#dc3545",
-                }).showToast();
-              }
-            },
-            error: function (xhr, status, error) {
-              showToastifyError(
-                "An error occurred while updating the profile."
-              );
-            },
+          const fields = document.querySelectorAll(".form-control");
+          fields.forEach((field) => {
+            field.style.borderColor = "";
           });
-        });
 
+          let isValid = true;
+          const name = document.getElementById("name").value.trim();
+          const mobile = document.getElementById("mobile").value.trim();
+          const pincode = document.getElementById("pincode").value.trim();
+          const locality = document.getElementById("locality").value.trim();
+          const city = document.getElementById("city").value.trim();
+          const state = document.getElementById("state").value;
+          const type = document.getElementById("type").value.trim();
+          const mobilePattern = /^[6-9]\d{9}$/;
+          const pincodePattern = /^\d{6}$/;
+          if (!name) {
+            showValidationError("name", "Name is required.");
+            isValid = false;
+          }
+          if (!mobile || !mobilePattern.test(mobile)) {
+            showValidationError(
+              "mobile",
+              "Please enter a valid 10-digit mobile number."
+            );
+            isValid = false;
+          }
+          if (!pincode || !pincodePattern.test(pincode)) {
+            showValidationError(
+              "pincode",
+              "Please enter a valid 6-digit pincode."
+            );
+            isValid = false;
+          }
+          if (!locality) {
+            showValidationError("locality", "Locality is required.");
+            isValid = false;
+          }
+          if (!city) {
+            showValidationError("city", "City/District/Town is required.");
+            isValid = false;
+          }
+          if (!state) {
+            showValidationError("state", "Please select a state.");
+            isValid = false;
+          }
+          if (!type) {
+            showValidationError(
+              "type",
+              "Please select an address type (Home or Office)."
+            );
+            isValid = false;
+          }
+
+          if (isValid) {
+            const formData = $(this).serialize();
+
+            $.ajax({
+              url: "/Profile/add-address",
+              type: "POST",
+              data: formData,
+              success: function (response) {
+                if (response.success) {
+                  showToastifySuccess(response.message);
+                  $("#checkOutForm").load("/checkout #checkOutForm > *");
+                  $("#addAddressForm")[0].reset();
+                  toggleAddAddressForm();
+                } else {
+                  Toastify({
+                    text: response.message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                  }).showToast();
+                }
+              },
+              error: function (xhr, status, error) {
+                showToastifyError(
+                  "An error occurred while updating the profile."
+                );
+              },
+            });
+          }
+        });
       function toggleAddAddressForm() {
         const form = document.getElementById("addAddressForm");
         form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+
+      function showValidationError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        field.style.borderColor = "#dc3545";
+        showToastifyError(message);
+      }
+
+      function showToastifySuccess(message) {
+        Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#28a745",
+        }).showToast();
+      }
+
+      function showToastifyError(message) {
+        Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#dc3545",
+        }).showToast();
+      }
+
+      function displayError(inputField, errorMessage) {
+        inputField.classList.add("error");
+        inputField.value = "";
+        inputField.placeholder = errorMessage;
+      }
+
+      function clearError(inputField, originalPlaceholder) {
+        inputField.classList.remove("error");
+        inputField.placeholder = originalPlaceholder;
       }
     </script>
   </body>

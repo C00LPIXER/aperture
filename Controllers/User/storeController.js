@@ -40,6 +40,7 @@ const loadShopPage = async (req, res) => {
       const limit = parseInt(req.query.limit) || 12;
   
       const search = req.query.search || "";
+      console.log(req.query)
       const selectedBrands = req.query.brand ? req.query.brand.split(',') : []; 
       const selectedCategories = req.query.category ? req.query.category.split(',') : []; 
       const sort = req.query.sort || "";
@@ -288,6 +289,9 @@ const loadShopPage = async (req, res) => {
   
       const cart = await Cart.findOne({ userId });
       const shippingAddress = await Address.findById(shippingAddressId);
+      if(!shippingAddress){
+        return res.json({success: false, message: "Please make sure you select an address"})
+      }
   
       const items = cart.items.map((item) => ({
         product: item.productId,

@@ -191,6 +191,15 @@ const loadEditAddress = async (req, res) => {
   }
 };
 
+const addReview = async (req, res) => {
+    try {
+        console.log(req.body)
+        res.json({success: true, message: "Your review has been submitted successfully!"})
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 module.exports = {
   loadProfilePage,
   editUserInfo,
@@ -198,4 +207,5 @@ module.exports = {
   addAddress,
   editAddress,
   loadEditAddress,
+  addReview
 };

@@ -9,12 +9,12 @@ const orderSchema = new mongoose.Schema({
   shippingAddress: {
     name: { type: String, required: true },
     mobile: { type: Array, required: true }, 
-    pincode: { type: String, required: true },
+    pincode: { type: Number, required: true },
     locality: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
     landmark: { type: String },
-    type: { type: String },
+    type: { type: String, required: true },
   },
   items: [
     {
@@ -36,7 +36,7 @@ const orderSchema = new mongoose.Schema({
   ],
   paymentMethod: {
     type: String,
-    enum: ["PayPal", "Cash on Delivery"],
+    enum: ["PayPal", "Cash on Delivery", "Wallet"],
     required: true,
   },
   paymentStatus: {

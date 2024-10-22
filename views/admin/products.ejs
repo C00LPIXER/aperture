@@ -151,6 +151,7 @@
                   <th>Product Price</th>
                   <th>Status</th>
                   <th>Category</th>
+                  <th>Stock</th>
                   <th class="text-end">Action</th>
                 </tr>
               </thead>
@@ -174,6 +175,7 @@
                     <% } %>
                   </td>
                   <td><%= product.category.name %></td>
+                  <td><%= product.stock %></td>
                   <td class="text-end">
                     <% if (product.is_Active) { %>
                     <button

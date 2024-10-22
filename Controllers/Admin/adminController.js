@@ -262,16 +262,15 @@ const changeOrderStatus = async (req, res) => {
     const { orderId, status } = req.body;
 
     const order = await Order.findById(orderId);
-    
+
     if (status === "Cancelled" && order.orderStatus !== "Cancelled") {
       for (let item of order.items) {
-        await Product.findByIdAndUpdate(
-          item.product,
-          { $inc: { stock: item.quantity } }
-        );
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: item.quantity },
+        });
       }
     }
-    
+
     order.orderStatus = status;
     await order.save();
 
@@ -283,15 +282,27 @@ const changeOrderStatus = async (req, res) => {
 
 //* User manegement
 const loadUserList = async (req, res) => {
+  const search = req.query.search || "";
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 4;
 
   try {
-    const users = await User.find()
+    let users = await User.find()
       .skip((page - 1) * limit)
       .limit(limit);
 
     const totalUsers = await User.countDocuments();
+    const query = req.query.user;
+
+    if (query) {
+      users = await User.find({
+        $or: [
+          { firstName: { $regex: query, $options: "i" } },
+          { lastName: { $regex: query, $options: "i" } },
+          { email: { $regex: query, $options: "i" } },
+        ],
+      });
+    }
 
     res.render("users", {
       users,
@@ -387,11 +398,19 @@ const loadeditCategory = async (req, res) => {
 const editCategory = async (req, res) => {
   try {
     const { id, name, description } = req.body;
-    await Category.findByIdAndUpdate(id, {
-      name: name,
-      description: description,
-    });
-    res.json({ success: true, message: "Category updated successfully!" });
+    const category = await Category.findById(id);
+    const isExist = await Category.findOne({ name: req.body.name });
+    console.log("from database",category.name,"form body", req.body.name)
+
+    if (isExist && category.name !== req.body.name) {
+      return res.json({ success: false, message: "Category already exists!" });
+    } else {
+      await Category.findByIdAndUpdate(id, {
+        name: name,
+        description: description,
+      });
+      res.json({ success: true, message: "Category updated successfully!" });
+    }
   } catch (error) {
     console.log(error.message);
   }
@@ -461,11 +480,19 @@ const loadeditBrand = async (req, res) => {
 const editBrand = async (req, res) => {
   try {
     const { id, name, description } = req.body;
-    await Brands.findByIdAndUpdate(id, {
-      name: name,
-      description: description,
-    });
-    res.json({ success: true, message: "Brand updated successfully!" });
+    const brand = await Brands.findById(id);
+    const isExist = await Brands.findOne({ name: req.body.name });
+
+    if (isExist && brand.name !== req.body.name) {
+      return res.json({ success: false, message: "Category already exists!" });
+    } else {
+
+      await Brands.findByIdAndUpdate(id, {
+        name: name,
+        description: description,
+      });
+      res.json({ success: true, message: "Brand updated successfully!" });
+    }
   } catch (error) {
     console.log(error.message);
   }

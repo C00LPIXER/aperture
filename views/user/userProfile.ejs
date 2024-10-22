@@ -310,6 +310,8 @@
                   <a
                     href="javascript:void(0);"
                     class="btn btn-primary text-white"
+                    data-bs-toggle="modal"
+                    data-bs-target="#ratingReviewModal"
                     >Rate & Review Product</a
                   >
                   <%} else {%>
@@ -448,32 +450,38 @@
                         </p>
 
                         <!-- Progress Bar for Order Status -->
-                         <div class="d-flex justify-content-around">
-                          <p>Processing</p><p>Shipped</p><p>Delivered</p>
-                         </div>
+                        <div class="d-flex justify-content-around">
+                          <p>Processing</p>
+                          <p>Shipped</p>
+                          <p>Delivered</p>
+                        </div>
                         <div class="progress">
-                          <div class="progress-bar <% if(order.orderStatus ===
-                          'Cancelled') { %> bg-danger <% } else { %> bg-success
-                          <% } %>" role="progressbar" style="width: <%
+                          <div
+                            class="progress-bar <% if(order.orderStatus === 'Cancelled') { %> bg-danger <% } else { %> bg-success <% } %>"
+                            role="progressbar"
+                            style="width: <%
                           if(order.orderStatus === 'Processing') { %> 25% <% }
                           else if(order.orderStatus === 'Shipped') { %> 70% <% }
                           else if(order.orderStatus === 'Delivered' ||
                           order.orderStatus === 'Cancelled') { %> 100% <% } %>;"
-                          aria-valuenow="<% if(order.orderStatus ===
+                            aria-valuenow="<% if(order.orderStatus ===
                           'Processing') { %> 25 <% } else if(order.orderStatus
                           === 'Shipped') { %> 70 <% } else if(order.orderStatus
                           === 'Delivered' || order.orderStatus === 'Cancelled')
-                          { %> 100 <% } %>" aria-valuemin="0"
-                          aria-valuemax="100" > <% if(order.orderStatus ===
-                          'Cancelled') { %> Cancelled <% } else { %> <%=
-                          order.progressPercentage %> <% } %>
+                          { %> 100 <% } %>"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          >
+                            <% if(order.orderStatus === 'Cancelled') { %>
+                            Cancelled <% } else { %> <%=
+                            order.progressPercentage %> <% } %>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
               <% }) %> <% } else { %>
               <p>No order history.</p>
               <% } %>
@@ -629,7 +637,9 @@
                   >
                     <div>
                       <h5 class="card-title"><%= addresses.name %></h5>
-                      <span class="badge rounded-pill bg-dark w-25"><%= addresses.type %></span>
+                      <span class="badge rounded-pill bg-dark w-25"
+                        ><%= addresses.type %></span
+                      >
                       <p class="card-text">
                         <%= addresses.locality %>, <%= addresses.city %> - <%=
                         addresses.pincode %><br />
@@ -664,8 +674,124 @@
         </div>
       </div>
     </div>
+    <div
+    class="modal fade m-5"
+    id="ratingReviewModal"
+    tabindex="-1"
+    aria-labelledby="ratingReviewModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ratingReviewModalLabel">Add Rating and Review</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form class="w-full" id="ratingReviewForm">
+            <div class="flex-w flex-m ">
+              <span class="stext-102 cl3 m-r-16">Your Rating</span>
+  
+              <span class="wrap-rating fs-18 cl11 pointer">
+                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="1"></i>
+                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="2"></i>
+                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="3"></i>
+                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="4"></i>
+                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="5"></i>
+                <input class="dis-none" type="number" id="rating" name="rating" />
+              </span>
+            </div>
+  
+            <div class="row p-b-25">
+              <div class="col-12 p-b-5">
+                <label class="stext-102 cl3" for="review">Your review</label>
+                <textarea
+                  class="size-110 bor8 stext-102 p-lr-20 p-tb-10"
+                  id="review"
+                  name="review"
+                ></textarea>
+              </div>
+            </div>
+  
+            <button
+              type="submit"
+              class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <%- include('partials/footer') %>
+    <script>
+      $(".item-rating").on("click", function () {
+        var rating = $(this).data("rating");
+        $("#rating").val(rating);
+        $(".item-rating").each(function (index) {
+          if (index < rating) {
+            $(this).removeClass("zmdi-star-outline").addClass("zmdi-star");
+          } else {
+            $(this).removeClass("zmdi-star").addClass("zmdi-star-outline");
+          }
+        });
+      });
+
+      $("#ratingReviewForm").on("submit", function (event) {
+        event.preventDefault(); 
+
+        const rating = $("#rating").val();
+        const review = $("#review").val();
+
+        if (!rating) {
+          showValidationError("Please select a rating.");
+          return;
+        }
+
+        if (!review.trim()) {
+          showValidationError("Please enter your review.");
+          return;
+        }
+
+        $.ajax({
+          url: "/Profile/submit-review",
+          type: "POST",
+          data: {
+            rating: rating,
+            review: review,
+          },
+          success: function (response) {
+            if(response.success){
+              showToastifySuccess(response.message);
+
+            let modal = bootstrap.Modal.getInstance(
+              document.getElementById("ratingReviewModal")
+            );
+            modal.hide();
+
+            $("#ratingReviewForm")[0].reset();
+            $(".item-rating")
+              .removeClass("zmdi-star")
+              .addClass("zmdi-star-outline");
+            }else{
+              showValidationError(response.message)
+            }
+          },
+          error: function () {
+            showValidationError(
+              "There was an error submitting your review. Please try again."
+            );
+          },
+        });
+      });
+    </script>
     <script>
       function cancelOrder(element) {
         const orderId = element.getAttribute("data-order-id");
@@ -829,19 +955,54 @@
         }
       });
     </script>
+
     <script>
+      function deleteAddress(id) {
+        showConfirmationDialog(
+          "Are you sure?",
+          "Once deleted, this address cannot be recovered!",
+          "Delete",
+          "Cancel",
+          "btn-success"
+        ).then((isConfirm) => {
+          if (isConfirm) {
+            $.ajax({
+              url: "/Profile/remove-address",
+              type: "DELETE",
+              data: { id: id },
+              success: function (response) {
+                if (response.success) {
+                  showToastifySuccess(response.message);
+                  $("#currentAddresses").load("/Profile #currentAddresses > *");
+                } else {
+                  showToastifyError(response.message);
+                }
+              },
+              error: function (error) {
+                showToastifyError(
+                  "An error occurred while deleting the address."
+                );
+              },
+            });
+          }
+        });
+      }
+
+      function toggleAddAddressForm() {
+        var form = document.getElementById("addAddressForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+
       document
         .getElementById("addAddressForm")
         .addEventListener("submit", function (event) {
           event.preventDefault();
 
-          // Clear previous error styles
           const fields = document.querySelectorAll(".form-control");
           fields.forEach((field) => {
-            field.style.borderColor = ""; // Reset to default border color
+            field.style.borderColor = "";
           });
 
-          // Validation
           let isValid = true;
           const name = document.getElementById("name").value.trim();
           const mobile = document.getElementById("mobile").value.trim();
@@ -951,44 +1112,6 @@
       function clearError(inputField, originalPlaceholder) {
         inputField.classList.remove("error");
         inputField.placeholder = originalPlaceholder;
-      }
-    </script>
-
-    <script>
-      function deleteAddress(id) {
-        showConfirmationDialog(
-          "Are you sure?",
-          "Once deleted, this address cannot be recovered!",
-          "Delete",
-          "Cancel",
-          "btn-success"
-        ).then((isConfirm) => {
-          if (isConfirm) {
-            $.ajax({
-              url: "/Profile/remove-address",
-              type: "DELETE",
-              data: { id: id },
-              success: function (response) {
-                if (response.success) {
-                  showToastifySuccess(response.message);
-                  $("#currentAddresses").load("/Profile #currentAddresses > *");
-                } else {
-                  showToastifyError(response.message);
-                }
-              },
-              error: function (error) {
-                showToastifyError(
-                  "An error occurred while deleting the address."
-                );
-              },
-            });
-          }
-        });
-      }
-
-      function toggleAddAddressForm() {
-        var form = document.getElementById("addAddressForm");
-        form.style.display = form.style.display === "none" ? "block" : "none";
       }
     </script>
   </body>

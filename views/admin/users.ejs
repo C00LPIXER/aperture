@@ -99,7 +99,7 @@
       <div class="content-header">
         <div>
           <h2 class="content-title card-title">Users</h2>
-          <p>Lorem ipsum dolor sit amet.</p>
+          <p>.</p>
         </div>
         <div>
           <input
@@ -111,28 +111,28 @@
       </div>
       <div class="card mb-4">
         <header class="card-header">
-          <div class="row gx-3">
-            <div class="col-lg-4 col-md-6 me-auto">
-              <input type="text" placeholder="Search..." class="form-control" />
-            </div>
+          <div class="row d-flex align-items-center">
+            <form action="/admin/users" method="GET" class="d-flex col-lg-6 col-md-8 me-auto">
+              <div class="flex-grow-1 me-2">
+                <input 
+                  type="text" 
+                  name="user" 
+                  placeholder="Search..." 
+                  class="form-control" 
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Search</button>
+            </form>
             <div class="col-lg-2 col-md-3 col-6">
-              <select class="form-select">
-                <option>Status</option>
-                <option>Active</option>
-                <option>Disabled</option>
-                <option>Show all</option>
+              <select class="form-select" id="limitSelect">
+                <option value="4" <%= limit === 4 ? 'selected' : '' %>>Show 4</option>
+                <option value="8" <%= limit === 8 ? 'selected' : '' %>>Show 8</option>
+                <option value="12" <%= limit === 12 ? 'selected' : '' %>>Show 12</option>
               </select>
             </div>
-            <div class="col-lg-2 col-md-3 col-6">
-                <select class="form-select" id="limitSelect">
-                    <option value="4" <%= limit === 4 ? 'selected' : '' %>>Show 4</option>
-                    <option value="8" <%= limit === 8 ? 'selected' : '' %>>Show 8</option>
-                    <option value="12" <%= limit === 12 ? 'selected' : '' %>>Show 12</option>
-                </select>
-            </div>
-            
           </div>
         </header>
+        
         <!-- card-header end// -->
         <div class="card-body">
           <div class="table-responsive">
