@@ -2,98 +2,7 @@
 
 <body>
   <div class="screen-overlay"></div>
-  <aside class="navbar-aside" id="offcanvas_aside">
-    <div class="aside-top">
-      <a href="/admin" class="brand-wrap">
-        <img
-          src="/images/icons/logo-1.png"
-          class="logo"
-          alt="Evara Dashboard"
-        />
-      </a>
-      <div>
-        <button class="btn btn-icon btn-aside-minimize">
-          <i class="text-muted material-icons md-menu_open"></i>
-        </button>
-      </div>
-    </div>
-    <nav>
-      <ul class="menu-aside">
-        <li class="menu-item">
-          <a class="menu-link" href="/admin">
-            <i class="icon material-icons md-home"></i>
-            <span class="text">Dashboard</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/products">
-            <i class="icon material-icons md-shopping_bag"></i>
-            <span class="text">Products List</span>
-          </a>
-        </li>
-        <li class="menu-item active">
-          <a class="menu-link" href="/admin/orders">
-            <i class="icon material-icons md-shopping_cart"></i>
-            <span class="text">Orders list</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-store"></i>
-            <span class="text">Sales Report</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/add_product">
-            <i class="icon material-icons md-add_box"></i>
-            <span class="text">Add product</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/users">
-            <i class="icon material-icons md-person"></i>
-            <span class="text">Users</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-comment"></i>
-            <span class="text">Reviews</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/brands">
-            <i class="icon material-icons md-stars"></i>
-            <span class="text">Brands</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" disabled href="/admin/categories">
-            <i class="icon material-icons md-pie_chart"></i>
-            <span class="text">Categories</span>
-          </a>
-        </li>
-      </ul>
-      <hr />
-      <ul class="menu-aside">
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-settings"></i>
-            <span class="text">Settings</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link text-danger" onclick="logout()"
-                ><i class="icon material-icons md-exit_to_app"></i>
-                <span class="text">Logout</span>
-              </a>
-        </li>
-      </ul>
-      <br />
-      <br />
-    </nav>
-  </aside>
-
+  <%- include('partials/aside') %>
   <main class="main-wrap">
     <header class="main-header navbar">
       <div class="col-search">
@@ -239,22 +148,19 @@
       <div class="card mb-4">
         <header class="card-header">
           <div class="row gx-3">
-            <div class="col-lg-4 col-md-6 me-auto">
-              <input type="text" placeholder="Search..." class="form-control" />
-            </div>
-            <div class="col-lg-2 col-6 col-md-3">
+            <!-- <div class="col-lg-2 col-6 col-md-3">
               <select class="form-select">
                 <option>Status</option>
                 <option>Active</option>
                 <option>Disabled</option>
                 <option>Show all</option>
               </select>
-            </div>
-            <div class="col-lg-2 col-6 col-md-3">
-              <select class="form-select">
-                <option>Show 20</option>
-                <option>Show 30</option>
-                <option>Show 40</option>
+            </div> -->
+            <div class="col-lg-2 col-md-3 col-6">
+              <select class="form-select" id="limitSelect">
+                <option value="4" <%= limit === 4 ? 'selected' : '' %>>Show 4</option>
+                <option value="8" <%= limit === 8 ? 'selected' : '' %>>Show 8</option>
+                <option value="12" <%= limit === 12 ? 'selected' : '' %>>Show 12</option>
               </select>
             </div>
           </div>
@@ -277,7 +183,12 @@
               <tbody>
                 <% orders.forEach((order) => {%>
                 <tr>
-                  <td><b><%= order.userId.firstName + " " + order.userId.lastName%></b></td>
+                  <td>
+                    <b
+                      ><%= order.userId.firstName + " " +
+                      order.userId.lastName%></b
+                    >
+                  </td>
                   <td><%= order.userId.email %></td>
                   <td>₹ <%= order.totalPrice %></td>
                   <td>
@@ -287,41 +198,70 @@
                   </td>
                   <td><%= new Date(order.placedAt).toDateString() %></td>
                   <td>
-                    <a href="/admin/orders/<%= order._id %>" class="btn btn-md rounded font-sm">Detail</a>
+                    <a
+                      href="/admin/orders/<%= order._id %>"
+                      class="btn btn-md rounded font-sm"
+                      >Detail</a
+                    >
                   </td>
                 </tr>
                 <%})%>
               </tbody>
             </table>
             <%} else {%>
-              <p>No orders</p>
-              <%}%>
+            <p>No orders</p>
+            <%}%>
           </div>
           <!-- table-responsive //end -->
         </div>
         <!-- card-body end// -->
       </div>
       <!-- card end// -->
-      <div class="pagination-area mt-15 mb-50">
+      <div class="pagination-area mt-30 mb-50">
         <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-start">
-            <li class="page-item active">
-              <a class="page-link" href="#">01</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">02</a></li>
-            <li class="page-item"><a class="page-link" href="#">03</a></li>
+          <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
             <li class="page-item">
-              <a class="page-link dot" href="#">...</a>
+              <a
+                class="page-link"
+                href="?page=<%= currentPage - 1 %>&limit=<%= limit %>"
+              >
+                <i class="material-icons md-chevron_left"></i>
+              </a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">16</a></li>
+            <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>">
+                <%= i %>
+              </a>
+            </li>
+            <% } %> <% if (currentPage < totalPages) { %>
             <li class="page-item">
-              <a class="page-link" href="#"
-                ><i class="material-icons md-chevron_right"></i
-              ></a>
+              <a
+                class="page-link"
+                href="?page=<%= currentPage + 1 %>&limit=<%= limit %>"
+              >
+                <i class="material-icons md-chevron_right"></i>
+              </a>
             </li>
+            <% } %>
           </ul>
         </nav>
       </div>
     </section>
     <!-- content-main end// -->
     <%- include('partials/footer') %>
+    <script>
+      document
+        .getElementById("limitSelect")
+        .addEventListener("change", function () {
+          const selectedLimit = this.value; 
+          const url = new URL(window.location.href);
+    
+          url.searchParams.set("limit", selectedLimit);
+    
+          window.location.href = url.toString();
+        });
+    </script>
+  </main>
+</body>

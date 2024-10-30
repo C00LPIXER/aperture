@@ -2,97 +2,7 @@
 
 <body>
   <div class="screen-overlay"></div>
-  <aside class="navbar-aside" id="offcanvas_aside">
-    <div class="aside-top">
-      <a href="admin" class="brand-wrap">
-        <img
-          src="/images/icons/logo-1.png"
-          class="logo"
-          alt="Evara Dashboard"
-        />
-      </a>
-      <div>
-        <button class="btn btn-icon btn-aside-minimize">
-          <i class="text-muted material-icons md-menu_open"></i>
-        </button>
-      </div>
-    </div>
-    <nav>
-      <ul class="menu-aside">
-        <li class="menu-item">
-          <a class="menu-link" href="/admin">
-            <i class="icon material-icons md-home"></i>
-            <span class="text">Dashboard</span>
-          </a>
-        </li>
-        <li class="menu-item active">
-          <a class="menu-link" href="/admin/products">
-            <i class="icon material-icons md-shopping_bag"></i>
-            <span class="text">Products List</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/orders">
-            <i class="icon material-icons md-shopping_cart"></i>
-            <span class="text">Orders list</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-store"></i>
-            <span class="text">Sales Report</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/add_product">
-            <i class="icon material-icons md-add_box"></i>
-            <span class="text">Add product</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/users">
-            <i class="icon material-icons md-person"></i>
-            <span class="text">Users</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-comment"></i>
-            <span class="text">Reviews</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/brands">
-            <i class="icon material-icons md-stars"></i>
-            <span class="text">Brands</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" disabled href="/admin/categories">
-            <i class="icon material-icons md-pie_chart"></i>
-            <span class="text">Categories</span>
-          </a>
-        </li>
-      </ul>
-      <hr />
-      <ul class="menu-aside">
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-settings"></i>
-            <span class="text">Settings</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link text-danger" onclick="logout()"
-                ><i class="icon material-icons md-exit_to_app"></i>
-                <span class="text">Logout</span>
-              </a>
-        </li>
-      </ul>
-      <br />
-      <br />
-    </nav>
-  </aside>
+  <%- include('partials/aside') %>
   <main class="main-wrap">
     <header class="main-header navbar">
     </header>
@@ -110,32 +20,13 @@
       </div>
       <div class="card mb-4">
         <header class="card-header">
-          <div class="row align-items-center">
-            <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-              <select class="form-select">
-                <option selected>All category</option>
-                <% categories.forEach((category) => { %>
-                <option><%= category.name %></option>
-                <% }); %>
-              </select>
-            </div>
-            <div class="col-md-2 col-6">
-              <select class="form-select">
-                <option selected>All Brands</option>
-                <% brands.forEach((brands) => { %>
-                <option><%= brands.name %></option>
-                <% }); %>
-              </select>
-            </div>
+          <div class="row text-end">
             <div class="col-lg-2 col-md-3 col-6">
                 <select class="form-select" id="limitSelect">
                     <option value="4" <%= limit === 4 ? 'selected' : '' %>>Show 4</option>
                     <option value="8" <%= limit === 8 ? 'selected' : '' %>>Show 8</option>
                     <option value="12" <%= limit === 12 ? 'selected' : '' %>>Show 12</option>
                 </select>
-            </div>
-            <div class="col-md-2 col-6">
-              <input type="date" value="" class="form-control" />
             </div>
           </div>
         </header>
@@ -169,34 +60,34 @@
                   <td><%= product.price %></td>
                   <td>
                     <% if (product.is_Active) { %>
-                    <span class="badge rounded-pill bg-success w-50">Active</span>
+                    <span class="badge rounded-pill bg-success w-75">Active</span>
                     <% } else { %>
-                    <span class="badge rounded-pill bg-danger w-50">Blocked</span>
+                    <span class="badge rounded-pill bg-danger w-75">Blocked</span>
                     <% } %>
                   </td>
                   <td><%= product.category.name %></td>
                   <td><%= product.stock %></td>
                   <td class="text-end">
                     <% if (product.is_Active) { %>
-                    <button
+                    <a
                       style="width: 80px"
                       data-product-id="<%= product._id %>"
                       data-action="block"
                       class="btn btn-danger btn-sm btn-block"
                     >
                       Block
-                    </button>
+                    </a>
                     <% } else { %>
-                    <button
+                    <a
                       style="width: 80px"
                       data-product-id="<%= product._id %>"
                       data-action="unblock"
                       class="btn btn-warning btn-sm btn-block"
                     >
                       Unblock
-                    </button>
+                    </a>
                     <% } %>
-                    <a class="btn bg-warning-light btn-sm btn-block" href="edit_product/<%= product._id %>">Edit</a>
+                    <a class="btn bg-warning-light btn-sm" href="edit_product/<%= product._id %>">Edit</a>
                   </td>
                 </tr>
                 <% }) %>
@@ -211,17 +102,17 @@
           <ul class="pagination justify-content-center">
             <% if (currentPage > 1) { %>
             <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage - 1 %>">
+              <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>">
                 <i class="material-icons md-chevron_left"></i>
               </a>
             </li>
             <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
             <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-              <a class="page-link" href="?page=<%= i %>"> <%= i %> </a>
+              <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>"> <%= i %> </a>
             </li>
             <% } %> <% if (currentPage < totalPages) { %>
             <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage + 1 %>">
+              <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= limit %>">
                 <i class="material-icons md-chevron_right"></i>
               </a>
             </li>
@@ -259,14 +150,30 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const tableBody = document.querySelector("tbody");
-
-        tableBody.addEventListener("click", function (e) {
+      
+        tableBody.addEventListener("click", async function (e) {
           const button = e.target;
-
+      
           if (button.classList.contains("btn-block")) {
             const productId = button.dataset.productId;
             const action = button.dataset.action;
-
+      
+            // Use SweetAlert for confirmation
+            const { isConfirmed } = await Swal.fire({
+              title: 'Confirm Action',
+        text: action === "block" ? "Are you sure you want to block this product?" : "Are you sure you want to unblock this product?",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Yes, proceed',
+              cancelButtonText: 'No, cancel',
+            });
+      
+            // If the user cancels the action, return early
+            if (!isConfirmed) {
+              return;
+            }
+      
+            // Proceed with the fetch request
             fetch(`/admin/products/${productId}/${action}`, {
               method: "PATCH",
               headers: {
@@ -278,13 +185,13 @@
                 if (data.success) {
                   const row = button.closest("tr");
                   const statusBadge = row.querySelector("span.badge");
-
+      
                   if (data.status === "blocked") {
                     showToast(data.message);
                     statusBadge.classList.remove("bg-success");
                     statusBadge.classList.add("bg-danger");
                     statusBadge.textContent = "Blocked";
-
+      
                     button.textContent = "Unblock";
                     button.classList.remove("btn-danger");
                     button.classList.add("btn-warning");
@@ -294,20 +201,21 @@
                     statusBadge.classList.remove("bg-danger");
                     statusBadge.classList.add("bg-success");
                     statusBadge.textContent = "Active";
-
+      
                     button.textContent = "Block";
                     button.classList.remove("btn-warning");
                     button.classList.add("btn-danger");
                     button.dataset.action = "block";
                   }
                 } else {
-                  console.error("Failed to update user status");
+                  console.error("Failed to update product status");
                 }
               })
               .catch((error) => console.error("Error:", error));
           }
         });
       });
+
 
       function showToast(message) {
         const toastBody = document.getElementById("toast-body");

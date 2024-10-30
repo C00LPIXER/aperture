@@ -1,0 +1,461 @@
+<%- include('partials/head') %>
+<style>
+  input.error {
+    border-color: red;
+  }
+
+  input.error::placeholder {
+    color: red;
+  }
+
+  textarea.error {
+    border-color: red;
+  }
+
+  textarea.error::placeholder {
+    color: red;
+  }
+  .error-message {
+    color: red;
+    font-size: 12px;
+  }
+  .error-input {
+    border-color: red;
+  }
+</style>
+<body>
+  <div class="screen-overlay"></div>
+  <%- include('partials/aside') %>
+  <main class="main-wrap">
+    <header class="main-header navbar"></header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Offers</h2>
+          <p>Add and delete Offers</p>
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Search Offers"
+            class="form-control bg-white"
+          />
+        </div>
+      </div>
+
+      <div class="card" id="offer-list">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <form
+                id="offerForm"
+                action="/admin/offers/add-offer"
+                method="post"
+              >
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="title" class="form-label">Offer Title</label>
+                    <input
+                      name="title"
+                      type="text"
+                      placeholder="Enter offer title"
+                      class="form-control"
+                      id="title"
+                    />
+                    <small class="error-message" id="titleError"></small>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    <label for="discountType" class="form-label"
+                      >Discount Type</label
+                    >
+                    <select
+                      name="discountType"
+                      id="discountType"
+                      class="form-control"
+                    >
+                      <option value="">Select one</option>
+                      <option value="percentage">Percentage</option>
+                      <option value="fixed">Fixed</option>
+                    </select>
+                    <small class="error-message" id="discountTypeError"></small>
+                  </div>
+                </div>
+
+                <div class="col-md-12 mb-4">
+                  <label for="description" class="form-label"
+                    >Description</label
+                  >
+                  <textarea
+                    name="description"
+                    id="description"
+                    placeholder="Enter offer description"
+                    class="form-control"
+                  ></textarea>
+                  <small class="error-message" id="descriptionError"></small>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="discountValue" class="form-label"
+                      >Maximum limit</label
+                    >
+                    <input
+                      name="maxLimit"
+                      type="number"
+                      placeholder="Enter discount value"
+                      class="form-control"
+                      id="maxLimitValue"
+                    />
+                    <small
+                      class="error-message"
+                      id="maxLimitValueError"
+                    ></small>
+                  </div>
+
+                  <div class="col-md-6 mb-4">
+                    <label for="discountValue" class="form-label"
+                      >Discount Value</label
+                    >
+                    <input
+                      name="discountValue"
+                      type="number"
+                      placeholder="Enter discount value"
+                      class="form-control"
+                      id="discountValue"
+                    />
+                    <small
+                      class="error-message"
+                      id="discountValueError"
+                    ></small>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="applicableTo" class="form-label"
+                      >Applicable To</label
+                    >
+                    <select
+                      name="applicableTo"
+                      id="applicableTo"
+                      class="form-control"
+                    >
+                      <option value="">Select one</option>
+                      <option value="all">All</option>
+                      <option value="product">Product</option>
+                      <option value="brand">Brand</option>
+                      <option value="category">Category</option>
+                    </select>
+                    <small class="error-message" id="applicableToError"></small>
+                  </div>
+
+                  <div class="col-md-6 mb-4">
+                    <label for="minPurchaseAmount" class="form-label"
+                      >Minimum Purchase Amount</label
+                    >
+                    <input
+                      name="minPurchaseAmount"
+                      type="number"
+                      placeholder="Enter minimum purchase amount"
+                      class="form-control"
+                      id="minPurchaseAmount"
+                    />
+                    <small
+                      class="error-message"
+                      id="minPurchaseAmountError"
+                    ></small>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input
+                      name="startDate"
+                      type="date"
+                      class="form-control"
+                      id="startDate"
+                    />
+                    <small class="error-message" id="startDateError"></small>
+                  </div>
+
+                  <div class="col-md-6 mb-4">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input
+                      name="endDate"
+                      type="date"
+                      class="form-control"
+                      id="endDate"
+                    />
+                    <small class="error-message" id="endDateError"></small>
+                  </div>
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">
+                    Add Offer
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="col-md-6">
+              <% if (offers) { %>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Status</th>
+                      <th class="text-end"><span class="me-5">Action</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% offers.forEach(offer => { %>
+                    <tr>
+                      <td><b><%= offer.name %></b></td>
+                      <td><%= offer.description %></td>
+                      <td>
+                        <% if (offer.isActive) { %>
+                        <span class="badge bg-success w-75">Active</span>
+                        <% } else { %>
+                        <span class="badge bg-danger w-75">Blocked</span>
+                        <% } %>
+                      </td>
+                      <td class="text-end">
+                        <% if (offer.isActive) { %>
+                        <a
+                          style="width: 80px"
+                          data-offer-id="<%= offer._id %>"
+                          class="offer-unlist btn btn-danger btn-sm btn-block"
+                        >
+                          Unlist
+                        </a>
+                        <% } else { %>
+                        <a
+                          style="width: 80px"
+                          data-offer-id="<%= offer._id %>"
+                          class="offer-list btn btn-warning btn-sm btn-block"
+                        >
+                          List
+                        </a>
+                        <% } %>
+                        <a
+                          class="btn bg-warning-light btn-sm btn-block ms-3 me-3"
+                          href="/admin/offers/edit/<%= offer._id %>"
+                          >Edit</a
+                        >
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      id="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      class="position-fixed top-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <div
+        id="toast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="toast_error"
+        class="toast align-items-center text-white bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body-error" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
+  </main>
+</body>
+<script>
+  document.getElementById("offerForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    alert(1);
+
+    if (validateOfferForm()) {
+      const formData = $(this).serialize();
+      alert(formData);
+
+      $.ajax({
+        type: "POST",
+        url: "/admin/offers/add-offer",
+        data: formData,
+        success: function (response) {
+          if (response.success) {
+            showToast(response.message);
+            $("#offerForm").load("/admin/offers #offerForm");
+          } else {
+            showToastError(response.message);
+          }
+        },
+        error: function () {
+          showToast("An error occurred. Please try again.");
+        },
+      });
+    }
+
+    function validateOfferForm() {
+      let isValid = true;
+
+      // Title validation
+      const title = document.getElementById("title").value.trim();
+      const titleError = document.getElementById("titleError");
+      if (title === "") {
+        titleError.innerText = "Title is required";
+        isValid = false;
+      } else {
+        titleError.innerText = "";
+      }
+
+      // Applicable To validation
+      const applicableTo = document.getElementById("applicableTo").value.trim();
+      const applicableToError = document.getElementById("applicableToError");
+      if (applicableTo === "") {
+        applicableToError.innerText = "Applicable field is required";
+        isValid = false;
+      } else {
+        applicableToError.innerText = "";
+      }
+
+      // Discount Type validation
+      const discountTypes = document
+        .getElementById("discountType")
+        .value.trim();
+      const discountTypeError = document.getElementById("discountTypeError");
+      if (discountTypes === "") {
+        discountTypeError.innerText = "Discount type required";
+        isValid = false;
+      } else {
+        discountTypeError.innerText = "";
+      }
+
+      // Description validation
+      const description = document.getElementById("description").value.trim();
+      const descriptionError = document.getElementById("descriptionError");
+      if (description === "") {
+        descriptionError.innerText = "Description is required.";
+        isValid = false;
+      } else {
+        descriptionError.innerText = "";
+      }
+
+      // Discount Value validation
+      const discountType = document.getElementById("discountType").value;
+      const discountValue = parseFloat(
+        document.getElementById("discountValue").value
+      );
+      const discountValueError = document.getElementById("discountValueError");
+
+      if (isNaN(discountValue) || discountValue <= 0) {
+        discountValueError.innerText =
+          "Discount value must be a positive number.";
+        isValid = false;
+      } else if (discountType === "percentage" && discountValue > 100) {
+        discountValueError.innerText =
+          "Percentage discount cannot exceed 100%.";
+        isValid = false;
+      } else {
+        discountValueError.innerText = "";
+      }
+
+      // Max Limit Value validation
+      const maxLimitValue = parseFloat(
+        document.getElementById("maxLimitValue").value
+      );
+      const maxLimitValueError = document.getElementById("maxLimitValueError");
+      if (isNaN(maxLimitValue) || maxLimitValue <= 0) {
+        maxLimitValueError.innerText =
+          "Max limit value must be a positive number.";
+        isValid = false;
+      } else {
+        maxLimitValueError.innerText = "";
+      }
+
+      // Minimum Purchase Amount validation
+      const minPurchaseAmount = parseFloat(
+        document.getElementById("minPurchaseAmount").value
+      );
+      const minPurchaseAmountError = document.getElementById(
+        "minPurchaseAmountError"
+      );
+      if (isNaN(minPurchaseAmount) || minPurchaseAmount <= 0) {
+        minPurchaseAmountError.innerText =
+          "Minimum purchase amount must be positive.";
+        isValid = false;
+      } else {
+        minPurchaseAmountError.innerText = "";
+      }
+
+      // Start Date validation
+      const startDateInput = document.getElementById("startDate").value;
+      const startDate = new Date(startDateInput);
+      const today = new Date();
+      const startDateError = document.getElementById("startDateError");
+
+      startDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      if (startDateInput === "") {
+        startDateError.innerText = "Start date is required";
+        isValid = false;
+      } else if (startDate < today) {
+        startDateError.innerText = "Start date cannot be in the past.";
+        isValid = false;
+      } else {
+        startDateError.innerText = "";
+      }
+
+      // End Date validation
+      const endDateInput = document.getElementById("endDate").value;
+      const endDate = new Date(endDateInput);
+      const endDateError = document.getElementById("endDateError");
+
+      if (endDateInput === "") {
+        endDateError.innerText = "End date is required";
+        isValid = false;
+      } else if (endDate < startDate) {
+        endDateError.innerText = "End date must be later than the start date.";
+        isValid = false;
+      } else {
+        endDateError.innerText = "";
+      }
+
+      return isValid;
+    }
+  });
+</script>

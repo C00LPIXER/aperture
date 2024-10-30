@@ -1,5 +1,7 @@
 const express = require("express");
 const adminController = require("../Controllers/Admin/adminController");
+const offerController = require("../Controllers/Admin/offerController");
+const salesController = require("../Controllers/Admin/salesController");
 const adminAuth = require("../middleware/adminAuth");
 const multer  = require('multer');
 const path  = require('path');
@@ -25,25 +27,25 @@ routes.get("/admin/login", adminAuth.isadminLogout, adminController.loadAdminLog
 routes.post("/admin/login", adminAuth.isadminLogout, adminController.adminAuthentication);
 routes.get("/admin/logout", adminController.adminLogout);
 
-// ? [order manegement]
+// ? [order management]
 routes.get("/admin/orders", adminAuth.isAdmin, adminController.loadOrderList);
 routes.get("/admin/orders/:id", adminAuth.isAdmin, adminController.loadOrderDetail);
 routes.patch("/admin/orders/change-status", adminAuth.isAdmin, adminController.changeOrderStatus);
 
-//? [user manegement]
+//? [user management]
 routes.get("/admin/users", adminAuth.isAdmin, adminController.loadUserList);
 routes.post("/admin/user/block_user/:id", adminAuth.isAdmin, adminController.blockUser);
 routes.post("/admin/user/unblock_user/:id", adminAuth.isAdmin, adminController.unblockUser);
 
-//? [category manegement]
+//? [category management]
 routes.get("/admin/categories", adminAuth.isAdmin, adminController.loadCategoryPage);
 routes.post("/admin/categories", adminAuth.isAdmin, adminController.createCategory);
 routes.patch("/admin/categories/:id/list", adminAuth.isAdmin, adminController.listCategory);
 routes.patch("/admin/categories/:id/unlist", adminAuth.isAdmin, adminController.unlistCategory);
-routes.get("/admin/categories/edit/:id", adminAuth.isAdmin, adminController.loadeditCategory);
+routes.get("/admin/categories/edit/:id", adminAuth.isAdmin, adminController.loadEditCategory);
 routes.put("/admin/categories/edit", adminAuth.isAdmin, adminController.editCategory);
 
-//? [brand manegement]
+//? [brand management]
 routes.get("/admin/brands", adminAuth.isAdmin, adminController.loadBrandPage);
 routes.post("/admin/brands", adminAuth.isAdmin, adminController.createBrand);
 routes.patch("/admin/brands/:id/unlist", adminAuth.isAdmin, adminController.unlistBrand);
@@ -51,7 +53,7 @@ routes.patch("/admin/brands/:id/list", adminAuth.isAdmin, adminController.listBr
 routes.get("/admin/brands/edit/:id", adminAuth.isAdmin, adminController.loadeditBrand);
 routes.put("/admin/brands/edit", adminAuth.isAdmin, adminController.editBrand);
 
-//? [product manegement]
+//? [product management]
 routes.get("/admin/products", adminAuth.isAdmin, adminController.loadProductList);
 routes.get("/admin/add_product", adminAuth.isAdmin, adminController.loadAddProduct);
 routes.post("/admin/add_product", adminAuth.isAdmin, upload.array('product_images', 5), adminController.createProduct);
@@ -61,5 +63,20 @@ routes.delete("/admin/edit_product/image", adminAuth.isAdmin, adminController.re
 routes.patch("/admin/products/:id/block", adminAuth.isAdmin, adminController.blockProduct);
 routes.patch("/admin/products/:id/unblock", adminAuth.isAdmin, adminController.unblockProduct);
  
+//? [offer management]
+routes.get("/admin/offers", adminAuth.isAdmin, offerController.loadOfferList)
+routes.post("/admin/offers/add-offer", adminAuth.isAdmin, offerController.createOffer)
+
+//? [offer management]
+routes.get("/admin/coupons", adminAuth.isAdmin, offerController.loadCouponList)
+routes.post("/admin/coupons/add-coupon", adminAuth.isAdmin, offerController.createCoupon)
+routes.delete("/admin/coupons/delete", adminAuth.isAdmin, offerController.deleteCoupon)
+
+//? [sales report]
+routes.get("/admin/sales", adminAuth.isAdmin, salesController.loadSales)
+routes.post("/admin/sales", adminAuth.isAdmin, salesController.generateReport)
+routes.get('/admin/download-pdf-report', salesController.downloadPDFReport);
+routes.get('/admin/download-excel-report', salesController.downloadExcelReport);
+
 
 module.exports = routes;

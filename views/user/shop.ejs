@@ -2,120 +2,7 @@
 <html>
   <body class="animsition">
     <!-- Header -->
-    <header class="header-v4">
-      <!-- Header desktop -->
-      <div class="container-menu-desktop">
-        <div class="wrap-menu-desktop how-shadow1">
-          <nav class="limiter-menu-desktop container">
-            <!-- Logo desktop -->
-            <a href="/" class="logo">
-              <img src="/images/icons/logo-1.png" alt="IMG-LOGO" />
-            </a>
-
-            <!-- Menu desktop -->
-            <div class="menu-desktop">
-              <ul class="main-menu">
-                <li>
-                  <a href="/">Home</a>
-                </li>
-
-                <li class="active-menu">
-                  <a href="/shop">Shop</a>
-                </li>
-
-                <li>
-                  <a href="blog.html">Blog</a>
-                </li>
-
-                <li>
-                  <a href="about.html">About</a>
-                </li>
-
-                <li>
-                  <a href="contact.html">Contact</a>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Icon header -->
-            <div class="wrap-icon-header flex-w flex-r-m">
-              <a href="/cart">
-                <div
-                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-                  data-notify="2"
-                >
-                  <i class="zmdi zmdi-shopping-cart"></i>
-                </div>
-              </a>
-
-              <a
-                href="#"
-                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-                data-notify="0"
-              >
-                <i class="zmdi zmdi-favorite-outline"></i>
-              </a>
-              <div
-                class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 js-show-cart"
-              >
-                <a href="/profile">
-                  <i class="fa-solid fa-circle-user" style="color: #ffffff"></i>
-                </a>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </div>
-
-      <!-- Header Mobile -->
-      <div class="wrap-header-mobile">
-        <!-- Logo moblie -->
-        <div class="logo-mobile">
-          <a href="/"><img src="/images/icons/logo-1.png" alt="IMG-LOGO" /></a>
-        </div>
-
-        <!-- Button show menu -->
-        <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-          <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Menu Mobile -->
-      <div class="menu-mobile">
-        <ul class="main-menu-m">
-          <li>
-            <a href="/">Home</a>
-            <span class="arrow-main-menu-m">
-              <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </span>
-          </li>
-
-          <li>
-            <a href="/shop">Shop</a>
-          </li>
-
-          <li>
-            <a href="/blog">Blog</a>
-          </li>
-
-          <li>
-            <a href="/about">About</a>
-          </li>
-
-          <li>
-            <a href="/contact">Contact</a>
-          </li>
-          <li>
-            <a href="/profile">Account</a>
-          </li>
-          <li>
-            <a href="/cart">Cart</a>
-          </li>
-        </ul>
-      </div>
-    </header>
+    <%- include('partials/navbar') %>
 
     <div class="text-center">
       <h3>Capture the moment with the best gear.</h3>
@@ -125,121 +12,201 @@
       <div class="container">
         <div class="flex-w flex-sb-m p-b-52">
           <div class="flex-w flex-l-m filter-tope-group m-tb-10">
-              <p class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5">
-                  We found <%= totalProducts %> items for you!
-              </p>
+            <p class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5">
+              We found <%= totalProducts %> items for you!
+            </p>
           </div>
-      
-          <div class="flex-w flex-c-m m-tb-10">
-              <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
-                  <i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
-                  <i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-                  Filter
-              </div>
 
-              <div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-search">
-                <i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
-                <i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-                Search
-              </div>
-      
-              <a href="/shop" class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4">
-                  Clear all
-              </a>
+          <div class="flex-w flex-c-m m-tb-10">
+            <div
+              class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter"
+            >
+              <i
+                class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"
+              ></i>
+              <i
+                class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"
+              ></i>
+              Filter
+            </div>
+
+            <div
+              class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-search"
+            >
+              <i
+                class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"
+              ></i>
+              <i
+                class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"
+              ></i>
+              Search
+            </div>
+
+            <a
+              href="/shop"
+              class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4"
+            >
+              Clear all
+            </a>
           </div>
-      
+
           <!-- Search product -->
           <div class="dis-none panel-search w-full p-t-10 p-b-15">
-              <form method="GET" action="/shop">
-                  <div class="bor8 dis-flex p-l-15">
-                      <input class="size-114 plh2 p-r-15" type="text" name="search" placeholder="Search" value="<%= search %>" />
-                      <button class="flex-c-m cl0 size-105 bg1 bor4 hov-btn2 trans-04 m-2" type="submit">
-                          <i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
-                          Search
-                      </button>
-                  </div>
-              </form>
+            <form method="GET" action="/shop">
+              <div class="bor8 dis-flex p-l-15">
+                <input
+                  class="size-114 plh2 p-r-15"
+                  type="text"
+                  name="search"
+                  placeholder="Search"
+                  value="<%= search %>"
+                />
+                <button
+                  class="flex-c-m cl0 size-105 bg1 bor4 hov-btn2 trans-04 m-2"
+                  type="submit"
+                >
+                  <i
+                    class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"
+                  ></i>
+                  Search
+                </button>
+              </div>
+            </form>
           </div>
-      
+
           <!-- Filter -->
           <div class="dis-none panel-filter w-full p-t-10">
-              <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
-                  <div class="filter-col1 p-r-15 p-b-27">
-                      <div class="mtext-102 cl2 p-b-15">Sort By</div>
-                      <ul>
-                          <li class="p-b-6">
-                              <a href="?sort=default&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>" class="filter-link stext-106 trans-04">Default</a>
-                          </li>
-                          <li class="p-b-6">
-                              <a href="?sort=popularity&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>" class="filter-link stext-106 trans-04">Popularity</a>
-                          </li>
-                          <li class="p-b-6">
-                              <a href="?sort=newness&search=<%= search %>&brand=<%= brand.name %>&category=<%= category.join(',') %>" class="filter-link stext-106 trans-04">Newness</a>
-                          </li>
-                          <li class="p-b-6">
-                              <a href="?sort=priceAsc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>" class="filter-link stext-106 trans-04">Price: Low to High</a>
-                          </li>
-                          <li class="p-b-6">
-                              <a href="?sort=priceDesc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>" class="filter-link stext-106 trans-04">Price: High to Low</a>
-                          </li>
-                          <li class="p-b-6">
-                              <a href="?sort=nameAsc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>" class="filter-link stext-106 trans-04">Name: A to Z</a>
-                          </li>
-                          <li class="p-b-6">
-                              <a href="?sort=nameDesc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>" class="filter-link stext-106 trans-04">Name: Z to A</a>
-                          </li>
-                      </ul>
-                  </div>
-      
-                  <div class="filter-col2 p-r-15 p-b-27">
-                    <div class="mtext-102 cl2 p-b-15">Brand</div>
-                    <% if(allBrands.length > 0) { %>
-                    <ul>
-                        <li class="p-b-6">
-                            <a href="?search=<%= search %>&brand=&category=<%= category.join(',') %>&sort=<%= sort %>" class="filter-link stext-106 trans-04 <%= brand.length === 0 ? 'filter-link-active' : '' %>">All</a>
-                        </li>
-                        <% allBrands.forEach((brand) => { %>
-                        <li class="p-b-6">
-                            <a href="?search=<%= search %>&brand=<%= brand.name %>&category=<%= category.join(',') %>&sort=<%= sort %>" class="filter-link stext-106 trans-04 <%= selectedBrands.includes(brand.name) ? 'filter-link-active' : '' %>"><%= brand.name %></a>
-                        </li>
-                        <% }) %>
-                    </ul>
-                    <% } else { %>
-                    <ul>
-                        <li class="p-b-6">
-                            <a href="#" class="filter-link stext-106 trans-04 filter-link-active">No brand found</a>
-                        </li>
-                    </ul>
-                    <% } %>
-                </div>
-                
-                <div class="filter-col2 p-r-15 p-b-27">
-                    <div class="mtext-102 cl2 p-b-15">Categories</div>
-                    <% if(allCategories.length > 0) { %>
-                    <ul>
-                        <li class="p-b-6">
-                            <a href="?search=<%= search %>&brand=<%= brand.join(',') %>&category=&sort=<%= sort %>" class="filter-link stext-106 trans-04 <%= category.length === 0 ? 'filter-link-active' : '' %>">All</a>
-                        </li>
-                        <% allCategories.forEach((category) => { %>
-                        <li class="p-b-6">
-                            <a href="?search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.name %>&sort=<%= sort %>" class="filter-link stext-106 trans-04 <%= selectedCategories.includes(category.name) ? 'filter-link-active' : '' %>"><%= category.name %></a>
-                        </li>
-                        <% }) %>
-                    </ul>
-                    <% } else { %>
-                    <ul>
-                        <li class="p-b-6">
-                            <a href="#" class="filter-link stext-106 trans-04 filter-link-active">No category found</a>
-                        </li>
-                    </ul>
-                    <% } %>
-                </div>
+            <div
+              class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm"
+            >
+              <div class="filter-col1 p-r-15 p-b-27">
+                <div class="mtext-102 cl2 p-b-15">Sort By</div>
+                <ul>
+                  <li class="p-b-6">
+                    <a
+                      href="?sort=default&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>"
+                      class="filter-link stext-106 trans-04"
+                      >Default</a
+                    >
+                  </li>
+                  <li class="p-b-6">
+                    <a
+                      href="?sort=popularity&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>"
+                      class="filter-link stext-106 trans-04"
+                      >Popularity</a
+                    >
+                  </li>
+                  <li class="p-b-6">
+                    <a
+                      href="?sort=newness&search=<%= search %>&brand=<%= brand.name %>&category=<%= category.join(',') %>"
+                      class="filter-link stext-106 trans-04"
+                      >Newness</a
+                    >
+                  </li>
+                  <li class="p-b-6">
+                    <a
+                      href="?sort=priceAsc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>"
+                      class="filter-link stext-106 trans-04"
+                      >Price: Low to High</a
+                    >
+                  </li>
+                  <li class="p-b-6">
+                    <a
+                      href="?sort=priceDesc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>"
+                      class="filter-link stext-106 trans-04"
+                      >Price: High to Low</a
+                    >
+                  </li>
+                  <li class="p-b-6">
+                    <a
+                      href="?sort=nameAsc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>"
+                      class="filter-link stext-106 trans-04"
+                      >Name: A to Z</a
+                    >
+                  </li>
+                  <li class="p-b-6">
+                    <a
+                      href="?sort=nameDesc&search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.join(',') %>"
+                      class="filter-link stext-106 trans-04"
+                      >Name: Z to A</a
+                    >
+                  </li>
+                </ul>
               </div>
+
+              <div class="filter-col2 p-r-15 p-b-27">
+                <div class="mtext-102 cl2 p-b-15">Brand</div>
+                <% if(allBrands.length > 0) { %>
+                <ul>
+                  <li class="p-b-6">
+                    <a
+                      href="?search=<%= search %>&brand=&category=<%= category.join(',') %>&sort=<%= sort %>"
+                      class="filter-link stext-106 trans-04 <%= brand.length === 0 ? 'filter-link-active' : '' %>"
+                      >All</a
+                    >
+                  </li>
+                  <% allBrands.forEach((brand) => { %>
+                  <li class="p-b-6">
+                    <a
+                      href="?search=<%= search %>&brand=<%= brand.name %>&category=<%= category.join(',') %>&sort=<%= sort %>"
+                      class="filter-link stext-106 trans-04 <%= selectedBrands.includes(brand.name) ? 'filter-link-active' : '' %>"
+                      ><%= brand.name %></a
+                    >
+                  </li>
+                  <% }) %>
+                </ul>
+                <% } else { %>
+                <ul>
+                  <li class="p-b-6">
+                    <a
+                      href="#"
+                      class="filter-link stext-106 trans-04 filter-link-active"
+                      >No brand found</a
+                    >
+                  </li>
+                </ul>
+                <% } %>
+              </div>
+
+              <div class="filter-col2 p-r-15 p-b-27">
+                <div class="mtext-102 cl2 p-b-15">Categories</div>
+                <% if(allCategories.length > 0) { %>
+                <ul>
+                  <li class="p-b-6">
+                    <a
+                      href="?search=<%= search %>&brand=<%= brand.join(',') %>&category=&sort=<%= sort %>"
+                      class="filter-link stext-106 trans-04 <%= category.length === 0 ? 'filter-link-active' : '' %>"
+                      >All</a
+                    >
+                  </li>
+                  <% allCategories.forEach((category) => { %>
+                  <li class="p-b-6">
+                    <a
+                      href="?search=<%= search %>&brand=<%= brand.join(',') %>&category=<%= category.name %>&sort=<%= sort %>"
+                      class="filter-link stext-106 trans-04 <%= selectedCategories.includes(category.name) ? 'filter-link-active' : '' %>"
+                      ><%= category.name %></a
+                    >
+                  </li>
+                  <% }) %>
+                </ul>
+                <% } else { %>
+                <ul>
+                  <li class="p-b-6">
+                    <a
+                      href="#"
+                      class="filter-link stext-106 trans-04 filter-link-active"
+                      >No category found</a
+                    >
+                  </li>
+                </ul>
+                <% } %>
+              </div>
+            </div>
           </div>
-      </div>
-      
-      <% if(totalProducts > 0) {%>
-      <div class="row isotope-grid">
+        </div>
+
+        <% if(totalProducts > 0) {%>
+        <div class="row isotope-grid">
           <% activeProducts.forEach((item) => { %>
           <div
             class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%= item.category.name %>"
@@ -254,7 +221,7 @@
                     class="block2-btn flex-c-m stext-103 cl0 size-102 bg10 bor2 hov-btn1 p-lr-15 trans-04"
                   >
                     Add to Cart
-                </a>
+                  </a>
                 </div>
 
                 <div class="block2-txt flex-w flex-t p-t-14">
@@ -271,23 +238,36 @@
                     <span class="cl3"> ₹<%= item.price %> </span>
                     <%}%>
                   </div>
-
                   <div class="block2-txt-child2 flex-r p-t-3">
-                    <a
-                      href="#"
-                      class="btn-addwish-b2 dis-block pos-relative js-addwish-b2"
-                    >
-                      <img
-                        class="icon-heart1 dis-block trans-04"
-                        src="/images/icons/icon-heart-01.png"
-                        alt="ICON"
-                      />
-                      <img
-                        class="icon-heart2 dis-block trans-04 ab-t-l"
-                        src="/images/icons/icon-heart-02.png"
-                        alt="ICON"
-                      />
-                    </a>
+                    <div class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                      <% if(wishlist && wishlist.items.length > 0) {%>
+                        <% if (wishlist.items.some(wishlistItem => wishlistItem.productId.toString() === item._id.toString())) { %>
+                          <!-- If item is in wishlist, show red heart -->
+                          <a
+                            onclick="removeFromWishlist('<%= item._id %>', this)"
+                            class="icon-heart2 dis-block trans-04 ab-t-l"
+                          >
+                            <i class="fa-solid fa-heart" style="color: #ff0000"></i>
+                          </a>
+                        <% } else { %>
+                          <!-- If item is NOT in wishlist, show black heart -->
+                          <a
+                            onclick="addToWishlist('<%= item._id %>', this)"
+                            class="icon-heart1 dis-block trans-04"
+                          >
+                            <i class="fa-regular fa-heart"></i>
+                          </a>
+                        <% } %>
+                      <% } else { %>   
+                        <!-- Default black heart for items not in wishlist -->
+                        <a
+                          onclick="addToWishlist('<%= item._id %>', this)"
+                          class="icon-heart1 dis-block trans-04"
+                        >
+                          <i class="fa-regular fa-heart"></i>
+                        </a>
+                      <% } %>                   
+                    </div>
                   </div>
                 </div>
               </div>
@@ -296,37 +276,43 @@
           <% }); %>
         </div>
         <% } else {%>
-          <h5 class="text-center">No product found</h5>
-          <%}%>
-        <% if(totalProducts > 11) {%>
+        <h5 class="text-center">No product found</h5>
+        <%}%> <% if(totalProducts > 11) {%>
         <div class="pagination-area mt-30 mb-50">
           <nav aria-label="Page navigation example">
-              <ul class="pagination justify-content-center">
-                  <% if (currentPage > 1) { %>
-                  <li class="page-item">
-                      <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>&brand=<%= brand.join(',') %>&sort=<%= sort %>&category=<%= category.join(',') %>">
-                          <i class="fa-solid fa-angle-left"></i>
-                      </a>
-                  </li>
-                  <% } %>
-                  <% for (let i = 1; i <= totalPages; i++) { %>
-                  <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                      <a class="page-link" href="?page=<%= i %>&search=<%= search %>&brand=<%= brand.join(',') %>&sort=<%= sort %>&category=<%= category.join(',') %>"> <%= i %> </a>
-                  </li>
-                  <% } %>
-                  <% if (currentPage < totalPages) { %>
-                  <li class="page-item">
-                      <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>&brand=<%= brand.join(',') %>&sort=<%= sort %>&category=<%= category.join(',') %>">
-                          <i class="fa-solid fa-angle-right"></i>
-                      </a>
-                  </li>
-                  <% } %>
-              </ul>
+            <ul class="pagination justify-content-center">
+              <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="?page=<%= currentPage - 1 %>&search=<%= search %>&brand=<%= brand.join(',') %>&sort=<%= sort %>&category=<%= category.join(',') %>"
+                >
+                  <i class="fa-solid fa-angle-left"></i>
+                </a>
+              </li>
+              <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a
+                  class="page-link"
+                  href="?page=<%= i %>&search=<%= search %>&brand=<%= brand.join(',') %>&sort=<%= sort %>&category=<%= category.join(',') %>"
+                >
+                  <%= i %>
+                </a>
+              </li>
+              <% } %> <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="?page=<%= currentPage + 1 %>&search=<%= search %>&brand=<%= brand.join(',') %>&sort=<%= sort %>&category=<%= category.join(',') %>"
+                >
+                  <i class="fa-solid fa-angle-right"></i>
+                </a>
+              </li>
+              <% } %>
+            </ul>
           </nav>
-      </div>
-      <% } else {%>
-        
-        <%}%>
+        </div>
+        <% } else {%> <%}%>
       </div>
     </div>
 
@@ -340,52 +326,6 @@
       });
     </script>
     <!--===============================================================================================-->
-    <script>
-      $(".js-addwish-b2, .js-addwish-detail").on("click", function (e) {
-        e.preventDefault();
-      });
-
-      $(".js-addwish-b2").each(function () {
-        var nameProduct = $(this).parent().parent().find(".js-name-b2").html();
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to wishlist !", "success");
-
-          $(this).addClass("js-addedwish-b2");
-          $(this).off("click");
-        });
-      });
-
-      $(".js-addwish-detail").each(function () {
-        var nameProduct = $(this)
-          .parent()
-          .parent()
-          .parent()
-          .find(".js-name-detail")
-          .html();
-
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to wishlist !", "success");
-
-          $(this).addClass("js-addedwish-detail");
-          $(this).off("click");
-        });
-      });
-
-      /*---------------------------------------------*/
-
-      $(".js-addcart-detail").each(function () {
-        var nameProduct = $(this)
-          .parent()
-          .parent()
-          .parent()
-          .parent()
-          .find(".js-name-detail")
-          .html();
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to cart !", "success");
-        });
-      });
-    </script>
     <script>
       $(".js-pscroll").each(function () {
         $(this).css("position", "relative");

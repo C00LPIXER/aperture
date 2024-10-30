@@ -1,0 +1,97 @@
+<%- include('partials/head')%>
+<style>
+  .center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+</style>
+<html>
+  <body class="animsition">
+    <%- include('partials/navbar') %>
+
+    <!-- breadcrumb -->
+    <div class="container">
+      <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+        <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+          Home
+          <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+        </a>
+
+        <span class="stext-109 cl4"> Wishlist </span>
+      </div>
+    </div>
+    <!-- Product -->
+    <div class="container" id="cartTable" style="min-height: 75vh">
+      <% if (wishlist && wishlist.items.length > 0) {%>
+      <!-- Product -->
+      <section class="bg0 p-t-23 p-b-140">
+        <div class="container">
+          <div class="row isotope-grid">
+            <% wishlist.items.forEach(item => { %>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
+              <a href="/product-detail/<%= item.productId._id %>">
+                <div class="block2">
+                  <div class="block2-pic hov-img0">
+                    <img
+                      src="<%= item.productId.images[0] %>"
+                      alt="IMG-PRODUCT"
+                    />
+
+                    <a
+                      onclick="addToCart(`<%= item.productId._id %>`)"
+                      class="block2-btn flex-c-m stext-103 cl2 size-102 bg10 bor2 hov-btn1 p-lr-15 trans-04"
+                    >
+                      Add to Cart
+                    </a>
+                  </div>
+
+                  <div class="block2-txt d-flex p-t-14">
+                    <div class="block2-txt-child1 flex-col-l">
+                      <a
+                        href="/product-detail/<%= item.productId._id %>"
+                        class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6"
+                      >
+                        <%= item.productId.name %>
+                      </a>
+                      <%if(item.productId.stock < 1) {%>
+                      <span class="cl3 text-danger">
+                        Currently unavailable
+                      </span>
+                      <%} else {%>
+                      <span class="cl3"> ₹<%= item.productId.price %> </span>
+                      <%}%>
+                    </div>
+
+                    <div class="block2-txt-child2 flex-r p-t-3 pe-4">
+                      <a
+                        onclick="removeFromWishlist(`<%= item.productId._id %>`)"
+                        class="btn-addwish-b2 dis-block pos-relative"
+                      >
+                        <i
+                          class="fa-regular fa-trash-can fa-lg"
+                          style="color: #db0000"
+                        ></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+      </section>
+      <%} else {%>
+      <img
+        class="center-image w-25"
+        src="https://img.freepik.com/free-vector/camera-concept-illustration_114360-28976.jpg?ga=GA1.1.585506705.1729771672&semt=ais_hybrid"
+        alt=""
+      />
+      <h6 class="text-center m-4">Your wishlist is empty</h6>
+      <%}%>
+    </div>
+    <%- include('partials/footer') %>
+  </body>
+</html>

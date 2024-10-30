@@ -18,97 +18,7 @@
 </style>
 <body>
   <div class="screen-overlay"></div>
-  <aside class="navbar-aside" id="offcanvas_aside">
-    <div class="aside-top">
-      <a href="/admin" class="brand-wrap">
-        <img
-          src="/images/icons/logo-1.png"
-          class="logo"
-          alt="Evara Dashboard"
-        />
-      </a>
-      <div>
-        <button class="btn btn-icon btn-aside-minimize">
-          <i class="text-muted material-icons md-menu_open"></i>
-        </button>
-      </div>
-    </div>
-    <nav>
-      <ul class="menu-aside">
-        <li class="menu-item">
-          <a class="menu-link" href="/admin">
-            <i class="icon material-icons md-home"></i>
-            <span class="text">Dashboard</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/products">
-            <i class="icon material-icons md-shopping_bag"></i>
-            <span class="text">Products List</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/orders">
-            <i class="icon material-icons md-shopping_cart"></i>
-            <span class="text">Orders list</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-store"></i>
-            <span class="text">Sales Report</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/add_product">
-            <i class="icon material-icons md-add_box"></i>
-            <span class="text">Add product</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/users">
-            <i class="icon material-icons md-person"></i>
-            <span class="text">Users</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-comment"></i>
-            <span class="text">Reviews</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/admin/brands">
-            <i class="icon material-icons md-stars"></i>
-            <span class="text">Brands</span>
-          </a>
-        </li>
-        <li class="menu-item active">
-          <a class="menu-link" disabled href="/admin/categories">
-            <i class="icon material-icons md-pie_chart"></i>
-            <span class="text">Categories</span>
-          </a>
-        </li>
-      </ul>
-      <hr />
-      <ul class="menu-aside">
-        <li class="menu-item">
-          <a class="menu-link" href="#">
-            <i class="icon material-icons md-settings"></i>
-            <span class="text">Settings</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link text-danger" onclick="logout()"
-                ><i class="icon material-icons md-exit_to_app"></i>
-                <span class="text">Logout</span>
-              </a>
-        </li>
-      </ul>
-      <br />
-      <br />
-    </nav>
-  </aside>
+  <%- include('partials/aside') %>
   <main class="main-wrap">
     <header class="main-header navbar">
       <div class="col-search">
@@ -325,7 +235,11 @@
                           List
                         </a>
                         <% } %>
-                        <a class="btn bg-warning-light btn-sm btn-block ms-3 me-3" href="/admin/categories/edit/<%= category._id %>">Edit</a>
+                        <a
+                          class="btn bg-warning-light btn-sm btn-block ms-3 me-3"
+                          href="/admin/categories/edit/<%= category._id %>"
+                          >Edit</a
+                        >
                       </td>
                     </tr>
                     <% }) %>
@@ -387,8 +301,8 @@
   </main>
 </body>
 <script>
-  $(document).ready( () => {
-    $("#categoryForm").on("submit", function(e) {
+  $(document).ready(() => {
+    $("#categoryForm").on("submit", function (e) {
       e.preventDefault();
 
       if (validateForm()) {
@@ -401,7 +315,7 @@
           success: function (response) {
             if (response.success) {
               showToast(response.message);
-              $('#category-list').load('/admin/categories #category-list');
+              $("#category-list").load("/admin/categories #category-list");
             } else {
               showToastError(response.message);
             }
@@ -414,53 +328,82 @@
     });
   });
 
-$(document).ready(() => {
-  $(document).on("click", ".category-unlist",(e) => {
+  $(document).ready(() => {
+  $(document).on("click", ".category-unlist", async (e) => {
     e.preventDefault();
 
     const categoryId = $(e.currentTarget).data("category-id");
+
+    // SweetAlert confirmation
+    const result = await Swal.fire({
+      title: 'Confirm Action',
+      text: "Are you sure you want to unlist this category?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, unlist',
+      cancelButtonText: 'No, cancel',
+    });
+
+    // If the user cancels the action, return early
+    if (!result.isConfirmed) {
+      return;
+    }
 
     $.ajax({
       type: "patch",
       url: `/admin/categories/${categoryId}/unlist`,
       success: (response) => {
         if (response.success) {
-              showToast(response.message);
-              $('#category-list').load('/admin/categories #category-list');
-            } else {
-              showToastError(response.message);
-            }
+          showToast(response.message);
+          $("#category-list").load("/admin/categories #category-list");
+        } else {
+          showToastError(response.message);
+        }
       },
       error: function () {
-            showToast("An error occurred. Please try again.");
+        showToast("An error occurred. Please try again.");
       },
-    })
-  })
-})
+    });
+  });
 
-$(document).ready(() => {
-  $(document).on("click", ".category-listed",(e) => {
+  $(document).on("click", ".category-listed", async (e) => {
     e.preventDefault();
 
     const categoryId = $(e.currentTarget).data("category-id");
+
+    // SweetAlert confirmation
+    const result = await Swal.fire({
+      title: 'Confirm Action',
+      text: "Are you sure you want to list this category?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, list',
+      cancelButtonText: 'No, cancel',
+    });
+
+    // If the user cancels the action, return early
+    if (!result.isConfirmed) {
+      return;
+    }
 
     $.ajax({
       type: "patch",
       url: `/admin/categories/${categoryId}/list`,
       success: (response) => {
         if (response.success) {
-              showToast(response.message);
-              $('#category-list').load('/admin/categories #category-list');
-            } else {
-              showToastError(response.message);
-            }
+          showToast(response.message);
+          $("#category-list").load("/admin/categories #category-list");
+        } else {
+          showToastError(response.message);
+        }
       },
       error: function () {
-            showToast("An error occurred. Please try again.");
+        showToast("An error occurred. Please try again.");
       },
-    })
-  })
-})
+    });
+  });
+});
+
 
   function validateForm() {
     let isValid = true;

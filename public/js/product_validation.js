@@ -103,69 +103,81 @@ $(document).ready(() => {
 function validateForm() {
   let isValid = true;
 
+  const positiveNumberPattern = /^(?!0)([0-9]+(\.[0-9]+)?|[0-9]*\.[0-9]+)$/;
+  const nonNegativeStockPattern = /^(0|[1-9][0-9]*)$/;
+
   const name = document.getElementById("product_name");
-  if (name.value.trim() === "") {
-    displayError(name, "Product title is required");
-    isValid = false;
-  } else {
-    clearError(name, "Type here");
-  }
+if (name.value.trim() === "") {
+  displayError(name, "Product title is required");
+  isValid = false;
+} else {
+  clearError(name, "Type here");
+}
 
-  const description = document.getElementById("description");
-  if (description.value.trim() === "") {
-    displayError(description, "Full description is required");
-    isValid = false;
-  } else {
-    clearError(description, "Type here");
-  }
+const description = document.getElementById("description");
+if (description.value.trim() === "") {
+  displayError(description, "Full description is required");
+  isValid = false;
+} else {
+  clearError(description, "Type here");
+}
 
-  const price = document.querySelector('input[name="price"]');
-  if (price.value.trim() === "") {
-    displayError(price, "Promotional price is required");
-    isValid = false;
-  } else {
-    clearError(price, "₹");
-  }
+const price = document.querySelector('input[name="price"]');
+if (price.value.trim() === "") {
+  displayError(price, "Promotional price is required");
+  isValid = false;
+} else if (!positiveNumberPattern.test(price.value.trim())) {
+  displayError(price, "Promotional price must be a positive number above 0");
+  isValid = false;
+} else {
+  clearError(price, "₹");
+}
 
-  const originalPrice = document.querySelector('input[name="orginal_price"]');
-  if (originalPrice.value.trim() === "") {
-    displayError(originalPrice, "Regular price is required");
-    isValid = false;
-  } else {
-    clearError(originalPrice, "₹");
-  }
+const originalPrice = document.querySelector('input[name="orginal_price"]');
+if (originalPrice.value.trim() === "") {
+  displayError(originalPrice, "Regular price is required");
+  isValid = false;
+} else if (!positiveNumberPattern.test(originalPrice.value.trim())) {
+  displayError(originalPrice, "Regular price must be a positive number above 0");
+  isValid = false;
+} else {
+  clearError(originalPrice, "₹");
+}
 
-  const stock = document.querySelector('input[name="stock"]');
-  if (stock.value.trim() === "") {
-    displayError(stock, "Stock is required");
-    isValid = false;
-  } else {
-    clearError(stock, "Enter stock");
-  }
+const stock = document.querySelector('input[name="stock"]');
+if (stock.value.trim() === "") {
+  displayError(stock, "Stock is required");
+  isValid = false;
+} else if (!nonNegativeStockPattern.test(stock.value.trim())) {
+  displayError(stock, "Stock must be a non-negative integer (0 or positive)");
+  isValid = false;
+} else {
+  clearError(stock, "Enter stock");
+}
 
-  const category = document.querySelector('select[name="category"]');
-  if (category.value === "") {
-    displayError(category, "Category is required");
-    isValid = false;
-  } else {
-    clearError(category, "Select Category");
-  }
+const category = document.querySelector('select[name="category"]');
+if (category.value === "") {
+  displayError(category, "Category is required");
+  isValid = false;
+} else {
+  clearError(category, "Select Category");
+}
 
-  const brand = document.querySelector('select[name="brands"]');
-  if (brand.value === "") {
-    displayError(brand, "Brand is required");
-    isValid = false;
-  } else {
-    clearError(brand, "Select Brand");
-  }
+const brand = document.querySelector('select[name="brands"]');
+if (brand.value === "") {
+  displayError(brand, "Brand is required");
+  isValid = false;
+} else {
+  clearError(brand, "Select Brand");
+}
 
-  const highlights = document.querySelector('input[name="highlights"]');
-  if (highlights.value.trim() === "") {
-    displayError(highlights, "Tags are required");
-    isValid = false;
-  } else {
-    clearError(highlights, "Enter highlights");
-  }
+const highlights = document.querySelector('input[name="highlights"]');
+if (highlights.value.trim() === "") {
+  displayError(highlights, "Tags are required");
+  isValid = false;
+} else {
+  clearError(highlights, "Enter highlights");
+}
 
   const imageInput1 = document.getElementById("imageInput1");
   const imageInput2 = document.getElementById("imageInput2");
@@ -208,7 +220,7 @@ function validateForm() {
 }
 
 function validateImage(imageInput) {
-  const maxSize = 5 * 1024 * 1024; 
+  const maxSize = 5 * 1024 * 1024;
   const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
   if (imageInput.files.length === 0) {

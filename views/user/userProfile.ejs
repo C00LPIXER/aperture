@@ -21,123 +21,20 @@
     #containers {
       min-height: 100vh;
     }
+    .modal-body {
+      z-index: 4;
+    }
   </style>
   <body id="full-body">
     <!-- Header -->
-    <header class="header-v4">
-      <!-- Header desktop -->
-      <div class="container-menu-desktop">
-        <div class="wrap-menu-desktop how-shadow1">
-          <nav class="limiter-menu-desktop container">
-            <!-- Logo desktop -->
-            <a href="/" class="logo">
-              <img src="/images/icons/logo-1.png" alt="IMG-LOGO" />
-            </a>
-
-            <!-- Menu desktop -->
-            <div class="menu-desktop">
-              <ul class="main-menu">
-                <li>
-                  <a href="/">Home</a>
-                </li>
-
-                <li>
-                  <a href="/shop">Shop</a>
-                </li>
-
-                <li>
-                  <a href="/blog">Blog</a>
-                </li>
-
-                <li>
-                  <a href="/about">About</a>
-                </li>
-
-                <li>
-                  <a href="/contact">Contact</a>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Icon header -->
-            <div class="wrap-icon-header flex-w flex-r-m">
-              <a href="/cart">
-                <div
-                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-                >
-                  <i class="zmdi zmdi-shopping-cart"></i>
-                </div>
-              </a>
-              <a
-                href="/"
-                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-              >
-                <i class="zmdi zmdi-favorite-outline"></i>
-              </a>
-              <a
-                href="/profile"
-                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-              >
-                <i class="fa-solid fa-circle-user"></i>
-              </a>
-            </div>
-          </nav>
-        </div>
-      </div>
-
-      <!-- Header Mobile -->
-      <div class="wrap-header-mobile">
-        <!-- Logo moblie -->
-        <div class="logo-mobile">
-          <a href="/"><img src="/images/icons/logo-1.png" alt="IMG-LOGO" /></a>
-        </div>
-
-        <!-- Button show menu -->
-        <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-          <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Menu Mobile -->
-      <div class="menu-mobile">
-        <ul class="main-menu-m">
-          <li>
-            <a href="/">Home</a>
-          </li>
-
-          <li>
-            <a href="/shop">Shop</a>
-          </li>
-
-          <li>
-            <a href="/blog">Blog</a>
-          </li>
-
-          <li>
-            <a href="/about">About</a>
-          </li>
-
-          <li>
-            <a href="/contact">Contact</a>
-          </li>
-          <li>
-            <a href="/profile">Contact</a>
-          </li>
-          <li>
-            <a href="/wishlist">Contact</a>
-          </li>
-        </ul>
-      </div>
-    </header>
+    <%- include('partials/navbar') %>
 
     <div id="containers" class="container">
       <h2>My Account</h2>
       <hr />
       <div class="row">
         <!-- Sidebar for Navigation Tabs -->
-        <div class="col-md-3">
+        <div class="col-md-3 mb-4">
           <div class="list-group" id="profileTabs" role="tablist">
             <a
               class="list-group-item list-group-item-action active"
@@ -170,9 +67,9 @@
               class="list-group-item list-group-item-action"
               id="password-reset-tab"
               data-bs-toggle="list"
-              href="#password-reset"
+              href="#wallet-management"
               role="tab"
-              aria-controls="password-reset"
+              aria-controls="wallet-management"
               >Wallet</a
             >
             <a
@@ -304,17 +201,17 @@
                   </button>
 
                   <!-- Button to cancel the order -->
-                  <%if(order.orderStatus=== 'Cancelled') {%>
+                  <%if(order.orderStatus === 'Shipped') {%>
                   <a type="hidden"></a>
-                  <%} else if(order.orderStatus === 'Delivered'){%>
+                  <%} else if(order.orderStatus=== 'Delivered') {%>
                   <a
                     href="javascript:void(0);"
-                    class="btn btn-primary text-white"
-                    data-bs-toggle="modal"
-                    data-bs-target="#ratingReviewModal"
-                    >Rate & Review Product</a
+                    class="btn btn-danger text-white"
+                    data-order-id="<%= order._id %>"
+                    onclick="returnOrder(this)"
+                    >Return Order</a
                   >
-                  <%} else {%>
+                  <%} else if(order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned'){%>
                   <a
                     href="javascript:void(0);"
                     class="btn btn-danger text-white"
@@ -392,6 +289,9 @@
                               <th scope="col">Quantity</th>
                               <th scope="col">Price</th>
                               <th scope="col">Subtotal</th>
+                              <%if(order.orderStatus === 'Delivered'){%>
+                              <th>Rate</th>
+                              <%}%>
                             </tr>
                           </thead>
                           <tbody>
@@ -409,13 +309,41 @@
                               <td><%= item.quantity %></td>
                               <td>₹ <%= item.price %></td>
                               <td>₹ <%= item.price * item.quantity %></td>
+                              <%if(order.orderStatus === 'Delivered'){%>
+                              <td>
+                                <a
+                                  href="javascript:void(0);"
+                                  class="btn btn-dark text-white"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#ratingReviewModal"
+                                  data-productId-id="<%= item.product._id %>"
+                                  onclick="setProductId(this)"
+                                >
+                                  Add Review
+                                </a>
+                              </td>
+                              <%}%>
                             </tr>
                             <% }) %>
                           </tbody>
                           <tfoot>
                             <tr>
+                              <th colspan="4" class="text-end">Subtotal:</th>
+                              <th>
+                                ₹ <%= order.totalPrice + order.discount %>
+                              </th>
+                            </tr>
+                            <tr>
+                              <% if(order.discount && order.couponCode){%>
+                              <th colspan="1" class="text-end">Coupon:</th>
+                              <th><%= order.couponCode %></th>
+                              <th colspan="2" class="text-end">Discount:</th>
+                              <th>₹ <%= order.discount.toFixed(2) %></th>
+                              <%} else if(order.discount) {%> <%}%>
+                            </tr>
+                            <tr>
                               <th colspan="4" class="text-end">Total:</th>
-                              <th>₹ <%= order.totalPrice %></th>
+                              <th>₹ <%= order.totalPrice.toFixed(2) %></th>
                             </tr>
                             <tr>
                               <th colspan="4" class="text-end">
@@ -443,13 +371,27 @@
                           order.shippingAddress.pincode %> <br />
                           <%= "Mobile " + order.shippingAddress.mobile %> <br />
                         </p>
+                        <% if(order.orderStatus !== 'Cancelled' &&
+                        order.orderStatus !== 'Delivered') { %>
                         <p class="py-2">
                           <strong>Estimated Delivery Date: </strong>
                           <%= new Date(new Date(order.placedAt).getTime() + 7 *
                           24 * 60 * 60 * 1000).toDateString() %>
                         </p>
+                        <% } else if(order.orderStatus === 'Cancelled'){ %>
+                        <p class="py-2">
+                          <strong>Cancelled Date: </strong>
+                          <%= new Date(order.placedAt).toDateString() %>
+                        </p>
+                        <% } else if(order.orderStatus === 'Delivered'){ %>
+                        <p class="py-2">
+                          <strong>Cancelled Date: </strong>
+                          <%= new Date(order.placedAt).toDateString() %>
+                        </p>
+                        <% } %>
 
                         <!-- Progress Bar for Order Status -->
+                        <% if(order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned') {%>
                         <div class="d-flex justify-content-around">
                           <p>Processing</p>
                           <p>Shipped</p>
@@ -477,6 +419,7 @@
                             order.progressPercentage %> <% } %>
                           </div>
                         </div>
+                        <%}%>
                       </div>
                     </div>
                   </div>
@@ -653,14 +596,20 @@
                       <!-- Buttons on the left -->
                       <a
                         href="/Profile/edit-address/<%= addresses._id %>"
-                        class="btn btn-warning btn-sm"
-                        >Edit</a
-                      >
+                        class="btn btn-sm"
+                        ><i
+                          class="fa-solid fa-pen-to-square fa-lg"
+                          style="color: #000000"
+                        ></i
+                      ></a>
                       <button
-                        class="btn btn-danger btn-sm"
+                        class="btn btn-sm"
                         onclick="deleteAddress('<%= addresses._id %>')"
                       >
-                        Delete
+                        <i
+                          class="fa-solid fa-trash-can fa-lg"
+                          style="color: #000000"
+                        ></i>
                       </button>
                     </div>
                   </div>
@@ -670,68 +619,242 @@
                 <% } %>
               </div>
             </div>
+
+            <!-- Wallet Management Section -->
+            <% if (wallet) { %>
+            <!-- Wallet Management Section -->
+            <div
+              class="tab-pane fade"
+              id="wallet-management"
+              role="tabpanel"
+              aria-labelledby="wallet-management-tab"
+            >
+              <!-- Wallet Balance Section -->
+              <div class="mb-3">
+                <h5 class="alert alert-success text-center" role="alert">
+                  Wallet Balance: ₹<span id="walletBalance"
+                    ><%= wallet.balance %></span
+                  >
+                </h5>
+              </div>
+
+              <!-- Button to Add Amount to Wallet -->
+              <div
+                class="btn w-100 mb-3 border p-3"
+                onclick="toggleAddAmountForm()"
+                id="showAddAmountButton"
+              >
+                <p>
+                  <strong
+                    ><i class="fa-solid fa-plus"></i> Add Amount to
+                    Wallet</strong
+                  >
+                </p>
+              </div>
+
+              <!-- Add Amount Form (Hidden initially) -->
+              <form
+                id="addAmountForm"
+                action="/Profile/add-amount"
+                method="post"
+                style="display: none"
+              >
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="amount"
+                      name="amount"
+                      placeholder="Enter amount"
+                      required
+                    />
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary mb-5">
+                  Add Amount
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary mb-5"
+                  onclick="toggleAddAmountForm()"
+                >
+                  Cancel
+                </button>
+              </form>
+
+              <!-- Wallet History Section -->
+              <div id="walletHistory">
+                <!-- Table for displaying wallet history -->
+                <table class="table table-striped">
+                  <thead>
+                    <tr class="justify-content-between">
+                      <th>No</th>
+                      <th class="text-center">Date</th>
+                      <th class="text-center">Description</th>
+                      <th class="text-center">Amount</th>
+                      <th class="text-center">Transaction</th>
+                    </tr>
+                  </thead>
+                  <tbody id="walletHistoryBody">
+                    <% wallet.walletHistory.forEach((walletHistory, num) => { %>
+                    <tr>
+                      <td><%= num + 1 %></td>
+                      <td class="text-center">
+                        <%= walletHistory.date.toDateString() %>
+                      </td>
+                      <td class="text-center">
+                        <%= walletHistory.description %>
+                      </td>
+                      <td class="text-center">₹<%= walletHistory.amount %></td>
+                      <% if(walletHistory.transactionType === "credit") { %>
+                      <td class="text-success text-center">
+                        <%= walletHistory.transactionType %>
+                      </td>
+                      <% } else { %>
+                      <td class="text-danger text-center">
+                        <%= walletHistory.transactionType %>
+                      </td>
+                      <% } %>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+
+                <!-- Pagination for Wallet History -->
+                <nav>
+                  <ul class="pagination justify-content-end">
+                    <li class="page-item">
+                      <a class="page-link" href="#" onclick="changePage(-1)">
+                        <i
+                          class="fa-solid fa-chevron-left"
+                          style="color: #000000"
+                        ></i>
+                      </a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="#" onclick="changePage(1)">
+                        <i
+                          class="fa-solid fa-chevron-right"
+                          style="color: #000000"
+                        ></i>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+            <% } else { %>
+            <!-- Display if no wallet data is available -->
+            <div
+              class="tab-pane fade"
+              id="wallet-management"
+              role="tabpanel"
+              aria-labelledby="wallet-management-tab"
+            >
+              <div class="mb-3">
+                <h5 class="alert alert-success text-center" role="alert">
+                  Wallet Balance: ₹<span id="walletBalance">0.00</span>
+                </h5>
+              </div>
+            </div>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
     <div
-    class="modal fade m-5"
-    id="ratingReviewModal"
-    tabindex="-1"
-    aria-labelledby="ratingReviewModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog ">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="ratingReviewModalLabel">Add Rating and Review</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <form class="w-full" id="ratingReviewForm">
-            <div class="flex-w flex-m ">
-              <span class="stext-102 cl3 m-r-16">Your Rating</span>
-  
-              <span class="wrap-rating fs-18 cl11 pointer">
-                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="1"></i>
-                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="2"></i>
-                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="3"></i>
-                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="4"></i>
-                <i class="item-rating pointer zmdi zmdi-star-outline" data-rating="5"></i>
-                <input class="dis-none" type="number" id="rating" name="rating" />
-              </span>
-            </div>
-  
-            <div class="row p-b-25">
-              <div class="col-12 p-b-5">
-                <label class="stext-102 cl3" for="review">Your review</label>
-                <textarea
-                  class="size-110 bor8 stext-102 p-lr-20 p-tb-10"
-                  id="review"
-                  name="review"
-                ></textarea>
-              </div>
-            </div>
-  
+      class="modal fade m-5"
+      id="ratingReviewModal"
+      tabindex="-1"
+      aria-labelledby="ratingReviewModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ratingReviewModalLabel">
+              Add Rating and Review
+            </h5>
             <button
-              type="submit"
-              class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10"
-            >
-              Submit
-            </button>
-          </form>
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form class="w-full" id="ratingReviewForm">
+              <div class="flex-w flex-m">
+                <span class="stext-102 cl3 m-r-16">Your Rating</span>
+
+                <span class="wrap-rating fs-18 cl11 pointer">
+                  <i
+                    class="item-rating pointer zmdi zmdi-star-outline"
+                    data-rating="1"
+                  ></i>
+                  <i
+                    class="item-rating pointer zmdi zmdi-star-outline"
+                    data-rating="2"
+                  ></i>
+                  <i
+                    class="item-rating pointer zmdi zmdi-star-outline"
+                    data-rating="3"
+                  ></i>
+                  <i
+                    class="item-rating pointer zmdi zmdi-star-outline"
+                    data-rating="4"
+                  ></i>
+                  <i
+                    class="item-rating pointer zmdi zmdi-star-outline"
+                    data-rating="5"
+                  ></i>
+                  <input
+                    class="dis-none"
+                    type="number"
+                    id="rating"
+                    name="rating"
+                  />
+                </span>
+              </div>
+
+              <div class="row p-b-25">
+                <div class="col-12 p-b-5">
+                  <label class="stext-102 cl3" for="review">Your review</label>
+                  <textarea
+                    class="size-110 bor8 stext-102 p-lr-20 p-tb-10"
+                    id="review"
+                    name="review"
+                  ></textarea>
+                  <input
+                    type="hidden"
+                    value=""
+                    name="productId"
+                    id="hiddenProductId"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
     <%- include('partials/footer') %>
     <script>
+      function setProductId(buttonElement) {
+        const productId = buttonElement.getAttribute("data-productId-id");
+        document.getElementById("hiddenProductId").value = productId;
+      }
+
       $(".item-rating").on("click", function () {
         var rating = $(this).data("rating");
         $("#rating").val(rating);
@@ -745,10 +868,12 @@
       });
 
       $("#ratingReviewForm").on("submit", function (event) {
-        event.preventDefault(); 
+        event.preventDefault();
 
         const rating = $("#rating").val();
         const review = $("#review").val();
+        const productId = $("#hiddenProductId").val();
+        alert(productId);
 
         if (!rating) {
           showValidationError("Please select a rating.");
@@ -766,22 +891,23 @@
           data: {
             rating: rating,
             review: review,
+            productId: productId,
           },
           success: function (response) {
-            if(response.success){
+            if (response.success) {
               showToastifySuccess(response.message);
 
-            let modal = bootstrap.Modal.getInstance(
-              document.getElementById("ratingReviewModal")
-            );
-            modal.hide();
+              let modal = bootstrap.Modal.getInstance(
+                document.getElementById("ratingReviewModal")
+              );
+              modal.hide();
 
-            $("#ratingReviewForm")[0].reset();
-            $(".item-rating")
-              .removeClass("zmdi-star")
-              .addClass("zmdi-star-outline");
-            }else{
-              showValidationError(response.message)
+              $("#ratingReviewForm")[0].reset();
+              $(".item-rating")
+                .removeClass("zmdi-star")
+                .addClass("zmdi-star-outline");
+            } else {
+              showValidationError(response.message);
             }
           },
           error: function () {
@@ -807,11 +933,50 @@
             $.ajax({
               url: `/Profile/cancel-order`,
               type: "PATCH",
-              data: { orederId: orderId },
+              data: { orderId: orderId },
               success: function (response) {
                 if (response.status) {
                   showToastifySuccess(response.message);
                   $("#orders").load("/Profile #orders > *");
+                  $("#wallet-management").load(
+                    "/Profile #wallet-management > *"
+                  );
+                } else {
+                  showToastifyError(response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                showToastifyError(
+                  "An error occurred while cancelling the order."
+                );
+              },
+            });
+          }
+        });
+      }
+
+      function returnOrder(element) {
+        const orderId = element.getAttribute("data-order-id");
+
+        showConfirmationDialog(
+          "Return order",
+          "Are you sure you want to return this order?",
+          "Confirm",
+          "Cancel",
+          "btn-success"
+        ).then((isConfirm) => {
+          if (isConfirm) {
+            $.ajax({
+              url: `/Profile/return-order`,
+              type: "PATCH",
+              data: { orderId: orderId },
+              success: function (response) {
+                if (response.status) {
+                  showToastifySuccess(response.message);
+                  $("#orders").load("/Profile #orders > *");
+                  $("#wallet-management").load(
+                    "/Profile #wallet-management > *"
+                  );
                 } else {
                   showToastifyError(response.message);
                 }
@@ -955,7 +1120,38 @@
         }
       });
     </script>
+    <script>
+      function toggleAddAmountForm() {
+        const form = document.getElementById("addAmountForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
 
+      let currentPage = 1;
+      const rowsPerPage = 4;
+      const tableBody = document.getElementById("walletHistoryBody");
+
+      function changePage(direction) {
+        currentPage += direction;
+        updateTable();
+      }
+
+      function updateTable() {
+        const rows = tableBody.getElementsByTagName("tr");
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        currentPage = Math.max(1, Math.min(totalPages, currentPage));
+
+        for (let i = 0; i < totalRows; i++) {
+          rows[i].style.display =
+            i >= (currentPage - 1) * rowsPerPage &&
+            i < currentPage * rowsPerPage
+              ? ""
+              : "none";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => updateTable());
+    </script>
     <script>
       function deleteAddress(id) {
         showConfirmationDialog(

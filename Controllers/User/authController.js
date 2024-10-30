@@ -16,7 +16,7 @@ const securePasswd = async (password) => {
     const Hash = await bcrypt.hash(password, 10);
     return Hash;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -56,7 +56,7 @@ const SendVerificationEmail = async (email, OTP) => {
       }
     });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -97,7 +97,7 @@ const sendResetPasswdEmail = async (email, OTP) => {
       }
     });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -105,14 +105,14 @@ const loadErrorPage = async (req, res) => {
   try {
     res.render("errorPage");
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
 //* user authentication
 const loadLandingPage = async (req, res) => {
   try {
-    const activeProducts = await Product.find({ is_Active: true })
+    const activeProducts = await Product.find({ is_Active: true, stock: {$gt : 0} })
       .populate({
         path: "category",
         select: "name",
@@ -127,7 +127,7 @@ const loadLandingPage = async (req, res) => {
 
     res.render("landing", { product });
   } catch (error) {
-    console.log(error);
+    console.error(error.message);
   }
 };
 
@@ -135,7 +135,7 @@ const loadLoginPage = async (req, res) => {
   try {
     res.render("login");
   } catch (error) {
-    console.log(error);
+    console.error(error.message);
   }
 };
 
@@ -143,7 +143,7 @@ const loadSignupPage = async (req, res) => {
   try {
     res.render("signup");
   } catch (error) {
-    console.log(error);
+    console.error(error.message);
   }
 };
 
@@ -155,7 +155,7 @@ const loadotpVerification = async (req, res) => {
       res.redirect("/signup");
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -188,7 +188,7 @@ const reSendOtp = async (req, res) => {
     req.flash("success_msg", "New OTP has been resent to your email.");
     res.redirect("/verification");
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -227,7 +227,7 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -268,7 +268,7 @@ const userAuthentication = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -277,7 +277,7 @@ const loadLogout = async (req, res) => {
     req.session.user = null;
     res.redirect("/login");
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -302,7 +302,7 @@ const googleCallback = async (req, res) => {
       res.redirect("/");
     }
   } catch (error) {
-    console.error("Error during Google callback:", error.message);
+    console.error(error.message);
     res.status(500).send("Internal server error");
   }
 };
@@ -311,7 +311,7 @@ const loadForgotPasswordPage = (req, res) => {
   try {
     res.render("forgotPassword");
   } catch (error) {
-    console.error("Error loading forgot password page: ", error.message);
+    console.error(error.message);
   }
 };
 
@@ -336,8 +336,7 @@ const sendResetPasswordOtp = async (req, res) => {
 
     res.json({ success: true, message: "OTP sent to your email" });
   } catch (error) {
-    console.error("Error sending OTP: ", error.message);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error(error.message);
   }
 };
 
@@ -349,7 +348,7 @@ const loadOtpVerificationPage = (req, res) => {
       res.redirect("/reset-password");
     }
   } catch (error) {
-    console.error("Error loading OTP verification page: ", error.message);
+    console.error(error.message);
   }
 };
 
@@ -376,7 +375,7 @@ const verifyResetPasswordOtp = (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error verifying OTP: ", error.message);
+    console.error(error.message);
   }
 };
 
@@ -396,7 +395,7 @@ const resendResetPasswordOtp = async (req, res) => {
       res.redirect("/forgot-password");
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 

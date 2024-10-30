@@ -118,7 +118,7 @@ $(document).ready(() => {
         success: function (response) {
           if (response.success) {
             showToast(response.message);
-            window.location.href = "/admin/products";
+              window.history.back();
           } else {
             showToastError(response.message);
           }
@@ -207,7 +207,8 @@ function validateForm() {
     isValid = false;
   }
 
-  // Perform field-specific validations
+  const positiveNumberPattern = /^(?!0)([0-9]+(\.[0-9]+)?|[0-9]*\.[0-9]+)$/; 
+  const nonNegativeStockPattern = /^(0|[1-9][0-9]*)$/; 
   if (name.value.trim() === "") {
     displayError(name, "Product title is required");
     isValid = false;
@@ -225,6 +226,9 @@ function validateForm() {
   if (price.value.trim() === "") {
     displayError(price, "Promotional price is required");
     isValid = false;
+  } else if (!positiveNumberPattern.test(price.value.trim())) {
+    displayError(price, "Promotional price must be a positive number above 0");
+    isValid = false;
   } else {
     clearError(price, "₹");
   }
@@ -232,12 +236,21 @@ function validateForm() {
   if (originalPrice.value.trim() === "") {
     displayError(originalPrice, "Regular price is required");
     isValid = false;
+  } else if (!positiveNumberPattern.test(originalPrice.value.trim())) {
+    displayError(
+      originalPrice,
+      "Regular price must be a positive number above 0"
+    );
+    isValid = false;
   } else {
     clearError(originalPrice, "₹");
   }
 
   if (stock.value.trim() === "") {
     displayError(stock, "Stock is required");
+    isValid = false;
+  } else if (!nonNegativeStockPattern.test(stock.value.trim())) {
+    displayError(stock, "Stock must be a non-negative integer (0 or positive)");
     isValid = false;
   } else {
     clearError(stock, "Enter stock");
@@ -268,7 +281,7 @@ function validateForm() {
 }
 
 function validateImage(imageInput) {
-  const maxSize = 5 * 1024 * 1024; 
+  const maxSize = 5 * 1024 * 1024;
   const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
   if (imageInput.files.length === 0) {
@@ -346,3 +359,7 @@ function clearErrorMessage(inputElement) {
     errorElement.textContent = "";
   }
 }
+
+function goBack() {
+  window.history.back();
+}  

@@ -1,0 +1,473 @@
+<%- include('partials/head') %>
+<style>
+  input.error {
+    border-color: red;
+  }
+
+  input.error::placeholder {
+    color: red;
+  }
+
+  textarea.error {
+    border-color: red;
+  }
+
+  textarea.error::placeholder {
+    color: red;
+  }
+  .error-message {
+    color: red;
+    font-size: 12px;
+  }
+  .error-input {
+    border-color: red;
+  }
+</style>
+<body>
+  <div class="screen-overlay"></div>
+  <%- include('partials/aside') %>
+  <main class="main-wrap">
+    <header class="main-header navbar"></header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Coupon</h2>
+          <p>Add and delete Coupon</p>
+        </div>
+      </div>
+
+      <div class="card" id="offer-list">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-5">
+              <form
+                id="couponForm"
+                action="/admin/coupons/add-coupon"
+                method="post"
+              >
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="title" class="form-label">Coupon code</label>
+                    <input
+                      name="code"
+                      type="text"
+                      placeholder="Enter coupon code"
+                      class="form-control"
+                      id="code"
+                    />
+                    <small class="error-message" id="codeError"></small>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    <label for="usageLimit" class="form-label"
+                      >usage Limit</label
+                    >
+                    <input
+                      name="usageLimit"
+                      type="number"
+                      placeholder="Enter usage limit"
+                      class="form-control"
+                      id="usageLimit"
+                    />
+                    <small class="error-message" id="usageLimitError"></small>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="discountType" class="form-label"
+                      >Discount Type</label
+                    >
+                    <select
+                      name="discountType"
+                      id="discountType"
+                      class="form-control"
+                    >
+                      <option value="">Select one</option>
+                      <option value="percentage">Percentage</option>
+                      <option value="fixed">Fixed</option>
+                    </select>
+                    <small class="error-message" id="discountTypeError"></small>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    <label for="discountValue" class="form-label"
+                      >Discount Value</label
+                    >
+                    <input
+                      name="discountValue"
+                      type="number"
+                      placeholder="Enter discount value"
+                      class="form-control"
+                      id="discountValue"
+                    />
+                    <small
+                      class="error-message"
+                      id="discountValueError"
+                    ></small>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="minPurchaseAmount" class="form-label"
+                      >Minimum Purchase Amount</label
+                    >
+                    <input
+                      name="minPurchaseAmount"
+                      type="number"
+                      placeholder="Enter minimum purchase amount"
+                      class="form-control"
+                      id="minPurchaseAmount"
+                    />
+                    <small
+                      class="error-message"
+                      id="minPurchaseAmountError"
+                    ></small>
+                  </div>
+
+                  <div class="col-md-6 mb-4">
+                    <label for="maxPurchaseAmount" class="form-label"
+                      >Maximum Purchase amount</label
+                    >
+                    <input
+                      name="maxPurchaseAmount"
+                      type="number"
+                      placeholder="Enter Maximum purchase amount"
+                      class="form-control"
+                      id="maxPurchaseAmount"
+                    />
+                    <small
+                      class="error-message"
+                      id="maxPurchaseAmountError"
+                    ></small>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input
+                      name="startDate"
+                      type="date"
+                      class="form-control"
+                      id="startDate"
+                    />
+                    <small class="error-message" id="startDateError"></small>
+                  </div>
+
+                  <div class="col-md-6 mb-4">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input
+                      name="endDate"
+                      type="date"
+                      class="form-control"
+                      id="endDate"
+                    />
+                    <small class="error-message" id="endDateError"></small>
+                  </div>
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">
+                    Add Coupon
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="col-md-7">
+              <% if (coupon) { %>
+              <div class="table-responsive">
+                <table id="couponTable" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Discount</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Used</th>
+                      <th>Limit</th>
+                      <th class="text-end"><span class="me-2">Action</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% coupon.forEach(coupon => { %>
+                    <tr>
+                      <td><span class="fw-bold"><%= coupon.code %></span></td>
+                      <%if(coupon.discountType === 'percentage') {%>
+                      <td><%= coupon.discountValue %>%</td>
+                      <%}else {%>
+                      <td>₹<%= coupon.discountValue %></td>
+                      <%}%>
+                      <td><%= new Date(coupon.startDate).toDateString() %></td>
+                      <td><%= new Date(coupon.endDate).toDateString() %></td>
+                      <td><%= coupon.usedCount %></td>
+                      <td><%= coupon.usageLimit %></td>
+                      <td class="text-end">
+                        <a
+                          class="me-4"
+                          onclick="deleteCoupon('<%= coupon._id %>')"
+                          ><i
+                            class="fa-solid fa-trash"
+                            style="color: #000000"
+                          ></i
+                        ></a>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      id="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      class="position-fixed top-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <div
+        id="toast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="toast_error"
+        class="toast align-items-center text-white bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body-error" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
+  </main>
+</body>
+<script>
+  function deleteCoupon(id) {
+    swal({
+    title: "Are you sure?",
+    text: "Once logged out, you will need to log in again!",
+    showCancelButton: true,
+    confirmButtonText: "Delete",
+    cancelButtonText: "Cancel",
+    closeOnConfirm: true,
+    closeOnCancel: true
+  },
+  function(isConfirm) {
+    if (isConfirm) {
+        $.ajax({
+          url: "/admin/coupons/delete",
+          type: "DELETE",
+          data: { id: id },
+          success: function (response) {
+            if (response.success) {
+              showToast(response.message);
+              $("#couponTable").load("/admin/coupons #couponTable");
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: function (error) {
+            showToastError(response.message);
+          },
+        });
+    }
+  });
+}
+
+  document
+    .getElementById("couponForm")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (validateOfferForm()) {
+        const formData = $(this).serialize();
+
+        $.ajax({
+          type: "POST",
+          url: "/admin/coupons/add-coupon",
+          data: formData,
+          success: function (response) {
+            if (response.success) {
+              showToast(response.message);
+              $("#couponTable").load("/admin/coupons #couponTable");
+              $("#couponForm")[0].reset();
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: function () {
+            showToast("An error occurred. Please try again.");
+          },
+        });
+      }
+
+      function validateOfferForm() {
+        let isValid = true;
+
+        // code validation
+        const code = document.getElementById("code").value.trim();
+        const titleError = document.getElementById("codeError");
+        if (code === "") {
+          codeError.innerText = "Coupon code  is required";
+          isValid = false;
+        } else {
+          codeError.innerText = "";
+        }
+
+        // usage limit validation
+        const usageLimit = parseFloat(
+          document.getElementById("usageLimit").value
+        );
+        const usageLimitError = document.getElementById("usageLimitError");
+
+        if (isNaN(usageLimit) || usageLimit <= 0) {
+          usageLimitError.innerText = "Enter a valid number.";
+          isValid = false;
+        } else {
+          usageLimitError.innerText = "";
+        }
+
+        //  discount type validation
+        const discountType = document
+          .getElementById("discountType")
+          .value.trim();
+        const discountTypeError = document.getElementById("discountTypeError");
+        if (discountType === "") {
+          discountTypeError.innerText = "Discount type is required";
+          isValid = false;
+        } else {
+          discountTypeError.innerText = "";
+        }
+
+        // Discount Value validation
+        const discountValue = parseFloat(
+          document.getElementById("discountValue").value.trim()
+        );
+        const discountValueError =
+          document.getElementById("discountValueError");
+
+        if (isNaN(discountValue) || discountValue <= 0) {
+          discountValueError.innerText = "Enter a valid input";
+          isValid = false;
+        } else if (discountType === "percentage" && discountValue > 100) {
+          discountValueError.innerText =
+            "Percentage discount cannot exceed 100%.";
+          isValid = false;
+        } else {
+          discountValueError.innerText = "";
+        }
+
+        // Minimum Purchase Amount validation
+        const minPurchaseAmount = parseFloat(
+          document.getElementById("minPurchaseAmount").value
+        );
+        const minPurchaseAmountError = document.getElementById(
+          "minPurchaseAmountError"
+        );
+
+        if (isNaN(minPurchaseAmount) || minPurchaseAmount <= 0) {
+          minPurchaseAmountError.innerText = "Enter a valid amount.";
+          isValid = false;
+        } else {
+          minPurchaseAmountError.innerText = "";
+        }
+
+        // Maximum Purchase Amount validation
+        const maxPurchaseAmount = parseFloat(
+          document.getElementById("maxPurchaseAmount").value
+        );
+        const maxPurchaseAmountError = document.getElementById(
+          "maxPurchaseAmountError"
+        );
+
+        if (isNaN(maxPurchaseAmount) || maxPurchaseAmount <= 0) {
+          maxPurchaseAmountError.innerText = "Enter a valid amount.";
+          isValid = false;
+        } else {
+          maxPurchaseAmountError.innerText = "";
+        }
+
+        // Start Date validation
+        const startDateInput = document.getElementById("startDate").value;
+        const startDate = new Date(startDateInput);
+        const today = new Date();
+        const startDateError = document.getElementById("startDateError");
+
+        startDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        if (startDateInput === "") {
+          startDateError.innerText = "Start date is required";
+          isValid = false;
+        } else if (startDate < today) {
+          startDateError.innerText = "Start date cannot be in the past.";
+          isValid = false;
+        } else {
+          startDateError.innerText = "";
+        }
+
+        // End Date validation
+        const endDateInput = document.getElementById("endDate").value;
+        const endDate = new Date(endDateInput);
+        const endDateError = document.getElementById("endDateError");
+
+        if (endDateInput === "") {
+          endDateError.innerText = "End date is required";
+          isValid = false;
+        } else if (endDate < startDate) {
+          endDateError.innerText =
+            "End date must be later than the start date.";
+          isValid = false;
+        } else {
+          endDateError.innerText = "";
+        }
+
+        return isValid;
+      }
+    });
+
+    function showToast(message) {
+        const toastBody = document.getElementById("toast-body");
+        toastBody.textContent = message;
+
+        const toastElement = document.getElementById("toast");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+
+      function showToastError(message) {
+        const toastBody = document.getElementById("toast-body-error");
+        toastBody.textContent = message;
+
+        const toastElement = document.getElementById("toast_error");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+
+</script>

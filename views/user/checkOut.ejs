@@ -23,57 +23,7 @@
   </style>
   <body class="animsition">
     <!-- Header -->
-    <header class="header-v4">
-      <div class="container-menu-desktop">
-        <div class="wrap-menu-desktop how-shadow1">
-          <nav class="limiter-menu-desktop container">
-            <!-- Logo desktop -->
-            <a href="/" class="logo">
-              <img src="/images/icons/logo-1.png" alt="IMG-LOGO" />
-            </a>
-
-            <!-- Menu desktop -->
-            <div class="menu-desktop">
-              <ul class="main-menu">
-                <li>
-                  <a href="/">Home</a>
-                </li>
-                <li>
-                  <a href="/shop">Shop</a>
-                </li>
-                <li>
-                  <a href="/blog">Blog</a>
-                </li>
-                <li>
-                  <a href="/about">About</a>
-                </li>
-                <li>
-                  <a href="/contact">Contact</a>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Icon header -->
-            <div class="wrap-icon-header flex-w flex-r-m">
-              <a href="/cart">
-                <div
-                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-                >
-                  <i class="zmdi zmdi-shopping-cart"></i>
-                </div>
-              </a>
-              <a
-                href="/profile"
-                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-              >
-                <i class="fa-solid fa-circle-user"></i>
-              </a>
-            </div>
-          </nav>
-        </div>
-      </div>
-    </header>
-
+    <%- include('partials/navbar') %>
     <!-- breadcrumb -->
     <div class="container">
       <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
@@ -104,12 +54,7 @@
           <tbody>
             <tr>
               <td><%= item.productId.name %></td>
-              <td>
-                <%= item.price.toFixed(2) %>
-                <span style="text-decoration: line-through" class="p-3"
-                  >₹<%= item.productId.promotional_price.toFixed(2) %>
-                </span>
-              </td>
+              <td><%= item.price.toFixed(2) %></td>
               <td><%= item.quantity %></td>
               <td>₹<%= (item.price * item.quantity).toFixed(2)%></td>
             </tr>
@@ -249,8 +194,50 @@
           </form>
         </div>
         <div class="col-lg-5">
-          <div class="btn w-100 mb-3 border p-3">
-            <p class=""><%= user.email %></p>
+          <div class="btn w-100 mb-3 border">
+            <% if(cart.couponCode && cart.discount) {%>
+            <form class="row" id="removeCoupon">
+              <div class="w-75 px-3">
+                <input
+                  type="text"
+                  name="couponCode"
+                  class="form-control"
+                  id="couponInput"
+                  value="<%= cart.couponCode %>"
+                />
+                <input
+                  type="hidden"
+                  id="cartId"
+                  name="cartId"
+                  value="<%= cart._id %>"
+                />
+              </div>
+              <div class="">
+                <button class="btn btn-dark text-white">Remove</button>
+              </div>
+            </form>
+            <%} else {%>
+            <form class="row" id="couponForm">
+              <div class="w-75 px-3">
+                <input
+                  type="text"
+                  name="couponCode"
+                  class="form-control"
+                  id="couponInput"
+                  placeholder="Enter Coupon"
+                />
+                <input
+                  type="hidden"
+                  id="cartId"
+                  name="cartId"
+                  value="<%= cart._id %>"
+                />
+              </div>
+              <div class="">
+                <button type="submit" class="btn btn-dark">Add Coupon</button>
+              </div>
+            </form>
+            <%}%>
           </div>
         </div>
       </div>
@@ -293,9 +280,12 @@
                       <div class="button-group" style="display: flex">
                         <a
                           href="/Profile/edit-address/<%= addresses._id %>"
-                          class="btn btn-warning btn-sm"
-                          >Edit</a
-                        >
+                          class="btn btn-sm"
+                          ><i
+                            class="fa-solid fa-pen-to-square fa-lg"
+                            style="color: #000000"
+                          ></i
+                        ></a>
                       </div>
 
                       <!-- Radio Button for Selecting Default Address -->
@@ -334,8 +324,18 @@
                   >
                 </div>
               </div>
-
               <div class="flex-w flex-t p-b-13">
+                <div class="size-208">
+                  <span class="stext-110 cl22">Discount:</span>
+                </div>
+                <div class="size-209">
+                  <span class="mtext-110 cl22"
+                    >₹ <%= cart.discount.toFixed(2) %></span
+                  >
+                </div>
+              </div>
+
+              <div class="flex-w flex-t">
                 <div class="size-208">
                   <span class="stext-110 cl22">Shipping:</span>
                 </div>
@@ -343,24 +343,30 @@
                   <span class="mtext-110 cl22">Free</span>
                 </div>
               </div>
-
-              <div class="flex-w flex-t p-t-27 p-b-33">
+              <hr />
+              <div class="flex-w flex-t p-b-33">
                 <div class="size-208">
                   <span class="mtext-101 cl22">Total:</span>
                 </div>
                 <input
                   type="hidden"
-                  value="<%= cart.totalPrice %>"
+                  value="<%= cart.totalPrice - cart.discount  %>"
                   name="totalPrice"
                 />
                 <div class="size-209">
                   <span class="mtext-110 cl22"
-                    >$ <%= cart.totalPrice.toFixed(2) %></span
+                    >₹ <%= (cart.totalPrice - cart.discount).toFixed(2) %></span
                   >
                 </div>
               </div>
 
-              <h4 class="ltext-320 p-b-30">Payment</h4>
+              <h4 class="ltext-320 p-b-30">
+                Payment
+                <i
+                  class="fa-solid fa-credit-card fa-md"
+                  style="color: #000000"
+                ></i>
+              </h4>
               <div class="form-group">
                 <label for="payment-method">Select Payment Method</label>
                 <select
@@ -392,34 +398,138 @@
     </div>
     <%- include('partials/footer') %>
     <script>
+// Event listener for adding a coupon
+document.getElementById("couponForm")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const couponInput = document.getElementById("couponInput");
+  const cartId = document.getElementById("cartId");
+
+  if (couponInput.value.trim() !== "") {
+    const formData = {
+      couponCode: couponInput.value,
+      cartId: cartId.value,
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/checkout/use-coupon",
+      data: formData,
+      success: function (response) {
+        if (response.success) {
+          showToastifySuccess(response.message);
+          // Optional: Reload or update page content to reflect the coupon
+          location.reload();
+        } else {
+          showToastifyError(response.message);
+        }
+      },
+      error: function () {
+        showToast("An error occurred. Please try again.");
+      },
+    });
+  } else {
+    showValidationError("couponInput", "Enter a valid coupon!");
+  }
+});
+
+// Event listener for removing a coupon
+document.getElementById("removeCoupon")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const couponInput = document.getElementById("couponInput");
+  const cartId = document.getElementById("cartId");
+
+  const formData = {
+    couponCode: couponInput.value,
+    cartId: cartId.value,
+  };
+
+  $.ajax({
+    type: "PATCH",
+    url: "/checkout/remove-coupon",
+    data: formData,
+    success: function (response) {
+      if (response.success) {
+        showToastifySuccess(response.message);
+        // Optional: Reload or update page content to reflect the removed coupon
+        location.reload();
+      } else {
+        showToastifyError(response.message);
+      }
+    },
+    error: function () {
+      showToast("An error occurred. Please try again.");
+    },
+  });
+});
+
       document
         .getElementById("checkOutForm")
         .addEventListener("submit", function (event) {
           event.preventDefault();
 
+          const paymentMethod = document.getElementById("payment-method").value;
           const formData = $(this).serialize();
 
-          $.ajax({
-            url: "/checkout/complete",
-            type: "POST",
-            data: formData,
-            success: function (response) {
-              if (response.success) {
-                window.location.href = "/order-placed";
-              } else {
+          if (paymentMethod === "Cash on Delivery") {
+            $.ajax({
+              url: "/checkout/complete",
+              type: "POST",
+              data: formData,
+              success: function (response) {
+                if (response.success) {
+                  window.location.href = "/order-placed";
+                } else {
+                  Toastify({
+                    text: response.message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                  }).showToast();
+                }
+              },
+              error: function () {
                 Toastify({
-                  text: response.message,
+                  text: "An error occurred",
                   duration: 3000,
                   gravity: "top",
                   position: "right",
                   backgroundColor: "#dc3545",
                 }).showToast();
-              }
-            },
-            error: function (xhr, status, error) {
-              showToastifyError(response.message);
-            },
-          });
+              },
+            });
+          } else if (paymentMethod === "PayPal") {
+            // PayPal AJAX request
+            $.ajax({
+              url: "/checkout/pay-with-paypal",
+              type: "POST",
+              data: formData,
+              success: function (response) {
+                if (response.success && response.redirectUrl) {
+                  window.location.href = response.redirectUrl;
+                } else {
+                  Toastify({
+                    text: "Payment error",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#dc3545",
+                  }).showToast();
+                }
+              },
+              error: function () {
+                Toastify({
+                  text: "An error occurred",
+                  duration: 3000,
+                  gravity: "top",
+                  position: "right",
+                  backgroundColor: "#dc3545",
+                }).showToast();
+              },
+            });
+          }
         });
 
       document

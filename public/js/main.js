@@ -256,10 +256,9 @@
 function showToastifySuccess(message) {
   Toastify({
     text: message,
-    close: true,
-    duration: 3000,
+    duration: 2000,
     gravity: "top",
-    position: "center",
+    position: "right",
     backgroundColor: "#28a745",
   }).showToast();
 }
@@ -267,8 +266,7 @@ function showToastifySuccess(message) {
 function showToastifyError(message) {
   Toastify({
     text: message,
-    close: true,
-    duration: 3000,
+    duration: 2000,
     gravity: "top",
     position: "right",
     backgroundColor: "#dc3545",
@@ -278,8 +276,7 @@ function showToastifyError(message) {
 function showToastify(message) {
   Toastify({
     text: message,
-    close: true,
-    duration: 3000,
+    duration: 2000,
     gravity: "top",
     position: "right",
     backgroundColor: "#f39c12",

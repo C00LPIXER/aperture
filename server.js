@@ -4,11 +4,10 @@ const flash = require("connect-flash");
 const nocache = require("nocache");
 const session = require("express-session");
 const userRoutes = require("./Routes/userRoutes");
-const adminRoutes = require('./Routes/adminRoutes');
+const adminRoutes = require("./Routes/adminRoutes");
 const passport = require("./middleware/passportOAuth");
-const path = require('path')
-const app = express();   
-
+const path = require("path");
+const app = express();
 
 require("dotenv").config();
 const port = process.env.PORT || 3000;
@@ -25,14 +24,18 @@ const connectDB = async () => {
 connectDB();
 
 app.set("view engine", "ejs");
-app.set('views',[path.join(__dirname,"views/auth") , path.join(__dirname , "views/admin") , path.join(__dirname,"views/user")]);
+app.set("views", [
+  path.join(__dirname, "views/auth"),
+  path.join(__dirname, "views/admin"),
+  path.join(__dirname, "views/user"),
+]);
 
 app.use(
   session({
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { secure: false },
   })
 );
 
@@ -51,13 +54,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./public"));
 
 app.use("/", userRoutes);
-app.use("/", adminRoutes); 
+app.use("/", adminRoutes);
 
 app.get("*", (req, res) => {
-  res.redirect("/not-found");
+  res.render("errorPage");
 });
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`server running on http://127.0.0.1:${port}`);
 });
-

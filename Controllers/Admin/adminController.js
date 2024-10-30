@@ -8,13 +8,14 @@ const Order = require("../../Models/orderModel");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const fs = require("fs");
+const { create } = require("../../Models/offerModel");
 
 //* admin authentication
 const loadAdminPage = async (req, res) => {
   try {
     res.render("admin");
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -22,7 +23,7 @@ const loadAdminLogin = async (req, res) => {
   try {
     res.render("adminLogin");
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -57,7 +58,7 @@ const adminAuthentication = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -66,7 +67,7 @@ const adminLogout = async (req, res) => {
     req.session.admin = null;
     res.redirect("/admin/login");
   } catch (error) {
-    console.lof(error.message);
+    console.error(error.message);
   }
 };
 
@@ -94,7 +95,7 @@ const loadProductList = async (req, res) => {
       limit,
     });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -105,7 +106,7 @@ const blockProduct = async (req, res) => {
     req.session.user = null;
     res.json({ success: true, message: "Product blocked", status: "blocked" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -115,7 +116,7 @@ const unblockProduct = async (req, res) => {
     await Product.findByIdAndUpdate(productId, { is_Active: true });
     res.json({ success: true, message: "Product unblocked", status: "active" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -125,12 +126,13 @@ const loadAddProduct = async (req, res) => {
     const brands = await Brands.find();
     res.render("add_product", { categories, brands });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
 const createProduct = async (req, res) => {
   try {
+    console.log(req.body);
     const isExist = await Product.findOne({ name: req.body.name });
 
     if (isExist) {
@@ -157,7 +159,7 @@ const createProduct = async (req, res) => {
       return res.json({ success: true, message: "New product added!" });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -171,7 +173,7 @@ const LoadEditProduct = async (req, res) => {
       .populate("brand", "name");
     res.render("editProduct", { product, categories, brands });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -225,8 +227,7 @@ const editProduct = async (req, res) => {
 
     res.json({ success: true, message: "Product updated successfully!" });
   } catch (error) {
-    console.log(error.message);
-    res.json({ success: false, message: "Failed to update product." });
+    console.error(error.message);
   }
 };
 
@@ -241,19 +242,32 @@ const loadOrderDetail = async (req, res) => {
       .populate("shippingAddress");
     res.render("orderDetail", { order });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
 const loadOrderList = async (req, res) => {
   try {
-    const userId = req.session.user;
+    const search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+
+    const totalOrders = await Order.countDocuments();
     const orders = await Order.find()
       .populate("items.product")
-      .populate("userId");
-    res.render("orders", { orders });
+      .populate("userId")
+      .sort({ placedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.render("orders", {
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      limit,
+    });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -276,7 +290,7 @@ const changeOrderStatus = async (req, res) => {
 
     res.json({ success: true, message: `Oreder ststus changed to ${status}` });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -311,7 +325,7 @@ const loadUserList = async (req, res) => {
       limit,
     });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -321,7 +335,7 @@ const blockUser = async (req, res) => {
     await User.findByIdAndUpdate(userId, { is_blocked: true });
     res.json({ success: true, message: "User blocked", status: "blocked" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -331,7 +345,7 @@ const unblockUser = async (req, res) => {
     await User.findByIdAndUpdate(userId, { is_blocked: false });
     res.json({ success: true, message: "User unblocked", status: "active" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -341,13 +355,12 @@ const loadCategoryPage = async (req, res) => {
     const categories = await Category.find();
     res.render("categories", { categories });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
 const createCategory = async (req, res) => {
   try {
-    console.log(req.body);
     const isExist = await Category.findOne({ name: req.body.name });
     if (isExist) {
       return res.json({ success: false, message: "Category already exists!" });
@@ -360,7 +373,7 @@ const createCategory = async (req, res) => {
       return res.json({ success: true, message: "New category created!" });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -370,7 +383,7 @@ const listCategory = async (req, res) => {
     await Category.findByIdAndUpdate(userId, { is_Active: true });
     res.json({ success: true, message: "Category listed successfully" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -380,18 +393,18 @@ const unlistCategory = async (req, res) => {
     await Category.findByIdAndUpdate(userId, { is_Active: false });
     res.json({ success: true, message: "Category Unlisted successfully" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
-const loadeditCategory = async (req, res) => {
+const loadEditCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
     const category = await Category.findById(categoryId);
 
     res.render("editCategory", { category });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -399,8 +412,10 @@ const editCategory = async (req, res) => {
   try {
     const { id, name, description } = req.body;
     const category = await Category.findById(id);
-    const isExist = await Category.findOne({ name: req.body.name });
-    console.log("from database",category.name,"form body", req.body.name)
+    const isExist = await Category.findOne({
+      name: { $regex: new RegExp(req.body.name, "i") },
+    });
+    console.log("from database", category.name, "form body", req.body.name);
 
     if (isExist && category.name !== req.body.name) {
       return res.json({ success: false, message: "Category already exists!" });
@@ -412,7 +427,7 @@ const editCategory = async (req, res) => {
       res.json({ success: true, message: "Category updated successfully!" });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -422,7 +437,7 @@ const loadBrandPage = async (req, res) => {
     const brands = await Brands.find();
     res.render("brands", { brands });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -440,7 +455,7 @@ const createBrand = async (req, res) => {
       return res.json({ success: true, message: "New Brand added!" });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -451,7 +466,7 @@ const listBrand = async (req, res) => {
     await Brands.findByIdAndUpdate(userId, { is_Active: true });
     return res.json({ success: true, message: "Brand listed successfully" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -462,7 +477,7 @@ const unlistBrand = async (req, res) => {
     await Brands.findByIdAndUpdate(userId, { is_Active: false });
     return res.json({ success: true, message: "Brand Unlisted successfully" });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -473,7 +488,7 @@ const loadeditBrand = async (req, res) => {
 
     res.render("editBrand", { brand });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -481,12 +496,13 @@ const editBrand = async (req, res) => {
   try {
     const { id, name, description } = req.body;
     const brand = await Brands.findById(id);
-    const isExist = await Brands.findOne({ name: req.body.name });
+    const isExist = await Brands.findOne({
+      name: { $regex: new RegExp(req.body.name, "i") },
+    });
 
     if (isExist && brand.name !== req.body.name) {
       return res.json({ success: false, message: "Category already exists!" });
     } else {
-
       await Brands.findByIdAndUpdate(id, {
         name: name,
         description: description,
@@ -494,7 +510,7 @@ const editBrand = async (req, res) => {
       res.json({ success: true, message: "Brand updated successfully!" });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 
@@ -521,7 +537,7 @@ module.exports = {
   unblockProduct,
   blockProduct,
   LoadEditProduct,
-  loadeditCategory,
+  loadEditCategory,
   editCategory,
   loadeditBrand,
   editBrand,

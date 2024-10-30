@@ -39,6 +39,9 @@ const orderSchema = new mongoose.Schema({
     enum: ["PayPal", "Cash on Delivery", "Wallet"],
     required: true,
   },
+  paymentId: {
+    type: String,
+  },
   paymentStatus: {
     type: String,
     enum: ["Pending", "Completed", "Failed"],
@@ -46,7 +49,7 @@ const orderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
+    enum: ["Processing", "Shipped", "Delivered", "Cancelled", "Returned"],
     default: "Processing",
   },
   totalPrice: {
@@ -56,6 +59,14 @@ const orderSchema = new mongoose.Schema({
   shippingFee: {
     type: Number,
     default: 0,
+  },
+  discount: {
+    type: Number,
+    default: 0
+  },
+  couponCode: {
+    type: String,
+    default: null
   },
   placedAt: {
     type: Date,

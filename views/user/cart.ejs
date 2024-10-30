@@ -1,114 +1,7 @@
 <%- include('partials/head') %>
 <html>
   <body class="animsition">
-    <!-- Header -->
-    <header class="header-v4">
-      <!-- Header desktop -->
-      <div class="container-menu-desktop">
-        <div class="wrap-menu-desktop how-shadow1">
-          <nav class="limiter-menu-desktop container">
-            <!-- Logo desktop -->
-            <a href="/" class="logo">
-              <img src="/images/icons/logo-1.png" alt="IMG-LOGO" />
-            </a>
-
-            <!-- Menu desktop -->
-            <div class="menu-desktop">
-              <ul class="main-menu">
-                <li>
-                  <a href="/">Home</a>
-                </li>
-
-                <li>
-                  <a href="/shop">Shop</a>
-                </li>
-
-                <li>
-                  <a href="/blog">Blog</a>
-                </li>
-
-                <li>
-                  <a href="/about">About</a>
-                </li>
-
-                <li>
-                  <a href="/contact">Contact</a>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Icon header -->
-            <div class="wrap-icon-header flex-w flex-r-m">
-              <a href="/cart">
-                <div
-                  class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-                >
-                  <i class="zmdi zmdi-shopping-cart"></i>
-                </div>
-              </a>
-              <a
-                href="/"
-                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-              >
-                <i class="zmdi zmdi-favorite-outline"></i>
-              </a>
-              <a
-                href="/profile"
-                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11"
-              >
-                <i class="fa-solid fa-circle-user"></i>
-              </a>
-            </div>
-          </nav>
-        </div>
-      </div>
-
-      <!-- Header Mobile -->
-      <div class="wrap-header-mobile">
-        <!-- Logo moblie -->
-        <div class="logo-mobile">
-          <a href="/"><img src="/images/icons/logo-1.png" alt="IMG-LOGO" /></a>
-        </div>
-
-        <!-- Button show menu -->
-        <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
-          <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Menu Mobile -->
-      <div class="menu-mobile">
-        <ul class="main-menu-m">
-          <li>
-            <a href="/">Home</a>
-          </li>
-
-          <li>
-            <a href="/shop">Shop</a>
-          </li>
-
-          <li>
-            <a href="/blog">Blog</a>
-          </li>
-
-          <li>
-            <a href="/about">About</a>
-          </li>
-
-          <li>
-            <a href="/contact">Contact</a>
-          </li>
-          <li>
-            <a href="/profile">Contact</a>
-          </li>
-          <li>
-            <a href="/wishlist">Contact</a>
-          </li>
-        </ul>
-      </div>
-    </header>
+	<%- include('partials/navbar') %>
 
     <!-- breadcrumb -->
     <div class="container">
@@ -157,7 +50,8 @@
                       </td>
                       <td class="column-4">
                         <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                          <div onclick="updateCartQuantity(`<%= item.productId._id %>`, 0)"
+                          <div
+                            onclick="updateCartQuantity(`<%= item.productId._id %>`, 0)"
                             class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
                           >
                             <i class="fs-16 zmdi zmdi-minus"></i>
@@ -167,10 +61,11 @@
                             type="number"
                             name="num-product<%= item.productId._id %>"
                             value="<%= item.quantity %>"
-							disabled
+                            disabled
                           />
 
-                          <div onclick="updateCartQuantity(`<%= item.productId._id %>`, 1)"
+                          <div
+                            onclick="updateCartQuantity(`<%= item.productId._id %>`, 1)"
                             class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
                           >
                             <i class="fs-16 zmdi zmdi-plus"></i>
@@ -212,7 +107,7 @@
                   </div>
                   <div class="size-209">
                     <span class="mtext-110 cl22"
-                      >$ <%= cart.totalPrice.toFixed(2) %></span
+                      >₹ <%= cart.totalPrice.toFixed(2) %></span
                     >
                   </div>
                 </div>
@@ -221,9 +116,7 @@
                     <span class="stext-110 cl22">Shipping:</span>
                   </div>
                   <div class="size-209">
-                    <span class="mtext-110 cl22"
-                      >Free</span
-                    >
+                    <span class="mtext-110 cl22">Free</span>
                   </div>
                 </div>
 
@@ -233,16 +126,18 @@
                   </div>
                   <div class="size-209">
                     <span class="mtext-110 cl22"
-                      >$ <%= cart.totalPrice.toFixed(2) %></span
+                      >₹ <%= cart.totalPrice.toFixed(2) %></span
                     >
                   </div>
                 </div>
 
-                <a href="/checkout"
+                <a
+                  href="/checkout"
+                  onclick="goToCheckout()"
                   class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
                 >
                   Proceed to Checkout
-			</a>
+                </a>
               </div>
             </div>
           </div>
@@ -265,7 +160,7 @@
           },
           success: function (response) {
             if (response.success) {
-			  $("#cartTable").load("/cart #cartTable > *");
+              $("#cartTable").load("/cart #cartTable > *");
             } else {
               showToastifyError(response.message);
             }
@@ -305,6 +200,17 @@
             });
           }
         });
+      }
+
+      function goToCheckout() {
+        $("#cartTable").load(
+          "/cart #cartTable > *",
+          function (response, status) {
+            if (status === "success") {
+              window.location.href = "/checkout";
+            }
+          }
+        );
       }
     </script>
   </body>

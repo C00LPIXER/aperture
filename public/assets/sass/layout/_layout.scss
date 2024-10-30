@@ -19,35 +19,41 @@ body.offcanvas-active{
     background-color: #f8f9fa;
 }
 
-.navbar-aside{
+.navbar-aside {
     max-width: 300px;
-	display: block;
+    display: block;
     position: fixed;
     top: 0;
     bottom: 0;
     width: 100%;
-    overflow-y: auto;
-    background-color:$white;
-    box-shadow:none;
+    // overflow-y: auto;
+    background-color: $white;
+    box-shadow: none;
     z-index: 10;
     border-right: 1px solid $border-color;
 
-    .aside-top{
-        padding:12px .5rem; 
-        display:flex; 
-        align-items:center;
-        justify-content:space-between;
+
+    .aside-top {
+        padding: 12px 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         border-bottom: 1px solid #eee;
         min-height: 72px;
-        .brand-wrap{
-            padding-left:$spacer/2;
-            padding-right:$spacer/2;
-            display:inline-block;
-        }
-        .logo{ max-width:120px; margin-top: 5px; min-width: 120px;}
-    }
 
+        .brand-wrap {
+            padding-left: $spacer / 2;
+            padding-right: $spacer / 2;
+            display: inline-block;
+        }
+        .logo {
+            max-width: 120px;
+            margin-top: 5px;
+            min-width: 120px;
+        }
+    }
 }
+
 
 .main-header{
     padding-left:3%;

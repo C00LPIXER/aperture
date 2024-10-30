@@ -271,7 +271,7 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 
 .wrap-menu-desktop {
   position: fixed;
-  z-index: 1100;
+  z-index: 1000;
   background-color: transparent;
   width: 100%;
   height: 84px;
@@ -2067,25 +2067,25 @@ input.num-product::-webkit-inner-spin-button {
   width: 30px;
 }
 
-.btn-addwish-b2 .icon-heart2 {
+/* .btn-addwish-b2 .icon-heart2 {
   opacity: 0;
 }
 
 .btn-addwish-b2:hover .icon-heart2 {
   opacity: 1;
-}
+} */
 
-.btn-addwish-b2:hover .icon-heart1 {
+/* .btn-addwish-b2:hover .icon-heart1 {
   opacity: 0;
-}
+} */
 
-.js-addedwish-b2 .icon-heart2 {
+/* .js-addedwish-b2 .icon-heart2 {
   opacity: 1;
-}
+} */
 
-.js-addedwish-b2 .icon-heart1 {
+/* .js-addedwish-b2 .icon-heart1 {
   opacity: 0;
-}
+} */
 
 /*---------------------------------------------*/
 .label-new {
@@ -2716,6 +2716,12 @@ input.num-product::-webkit-inner-spin-button {
 .bor7 {
   border: 1px solid #ccc;
   border-radius: 15px;
+}
+.bor123 {
+  padding: 7px;
+  border: 1px solid #232323;
+  border-radius: 5px;
+  background-color: #c3c3c3;
 }
 
 .bor8 {
