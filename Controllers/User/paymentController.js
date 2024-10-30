@@ -147,7 +147,7 @@ const paymentSuccess = async (req, res) => {
 
 const paymentCancel = async (req, res) => {
   try {
-      
+      res.redirect("/checkout")
   } catch (error) {
       console.error("paymentCancel:",error.message);
   }
