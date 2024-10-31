@@ -133,25 +133,21 @@
         </button>
         <button onclick="goBack()" type="button" class="btn btn-secondary mb-5">Back</button>
       </form>
-      <% } else { %>
-        <div style="height: 67vh;">
-          <h1>404</h1>
-        </div>
       <% } %>
     </div>
     <%- include('partials/footer') %>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
         const originalData = {
-          name: "<%= address.name %>",
-          mobile: "<%= address.mobile[0] %>",
-          pincode: "<%= address.pincode %>",
-          locality: "<%= address.locality %>",
-          city: "<%= address.city %>",
-          state: "<%= address.state %>",
-          landmark: "<%= address.landmark %>",
-          type: "<%= address.type %>",
-          secondmobile: "<%= address.mobile[1] %>",
+          name: document.getElementById("name").value,
+          mobile: document.getElementById("mobile").value,
+          pincode: document.getElementById("pincode").value,
+          locality: document.getElementById("locality").value,
+          city: document.getElementById("city").value,
+          state: document.getElementById("state").value,
+          landmark: document.getElementById("landmark").value,
+          type: document.getElementById("type").value,
+          secondmobile: document.getElementById("secondmobile").value,
         };
       
         function validateForm() {
@@ -260,7 +256,6 @@
                  data: formData,
                  success: function (response) {
                    if (response.success) {
-                     showToastifySuccess(response.message);
                      window.history.back();
                    } else {
                      showToastifyError(response.message);
@@ -283,105 +278,5 @@
       }  
 
     </script>
-    <!-- <script>
-        $(document).ready(function () {
-          const originalData = {
-            name: "<%= address.name %>",
-            mobile: "<%= address.mobile[0] %>",
-            pincode: "<%= address.pincode %>",
-            locality: "<%= address.locality %>",
-            city: "<%= address.city %>",
-            state: "<%= address.state %>",
-            landmark: "<%= address.landmark %>",
-            type: "<%= address.type %>",
-            secondmobile: "<%= address.mobile[1] %>",
-          };
-      
-          function validateForm() {
-            let valid = true;
-      
-            const mobile = $("#mobile");
-            const pincode = $("#pincode");
-      
-            $(".error-message").remove();
-      
-            if (mobile.val().length < 10 || isNaN(mobile.val())) {
-              valid = false;
-              showErrorMessage(mobile, "Please enter a valid 10-digit mobile number.");
-            }
-      
-            if (pincode.val().length !== 6 || isNaN(pincode.val())) {
-              valid = false;
-              showErrorMessage(pincode, "Please enter a valid 6-digit pincode.");
-            }
-      
-            return valid;
-          }
-      
-          function showErrorMessage(inputElement, message) {
-            const errorMessage = $('<div class="error-message text-danger"></div>');
-            errorMessage.text(message);
-            errorMessage.css("font-size", "0.9em");
-            inputElement.parent().append(errorMessage);
-          }
-      
-          function formDataChanged() {
-            const currentData = {
-              name: $("#name").val(),
-              mobile: $("#mobile").val(),
-              pincode: $("#pincode").val(),
-              locality: $("#locality").val(),
-              city: $("#city").val(),
-              state: $("#state").val(),
-              landmark: $("#landmark").val(),
-              type: $("#type").val(),
-              secondmobile: $("#secondmobile").val(),
-            };
-
-            return JSON.stringify(originalData) !== JSON.stringify(currentData);
-          }
-      
-          $("#submitBtn").on("click", function (event) {
-            event.preventDefault();
-      
-            if (formDataChanged()) {
-              if (validateForm()) {
-                const formData = {
-                  name: $("#name").val(),
-                  mobile: $("#mobile").val(),
-                  pincode: $("#pincode").val(),
-                  locality: $("#locality").val(),
-                  city: $("#city").val(),
-                  state: $("#state").val(),
-                  landmark: $("#landmark").val(),
-                  type: $("#type").val(),
-                  secondmobile: $("#secondmobile").val(),
-                  addressId: $("#addressId").val(),
-                };
-      
-                $.ajax({
-                  url: "/Profile/edit-address",
-                  type: "PUT",
-                  data: formData,
-                  success: function (response) {
-                    if (response.success) {
-                      showToastifySuccess(response.message);
-                    } else {
-                      showToastifyError(response.message);
-                    }
-                  },
-                  error: function () {
-                    showToastifyError("Error: Could not connect to the server.");
-                  },
-                });
-              } else {
-                showToastifyError("Please fix the validation errors.");
-              }
-            } else {
-              showToastify("No changes detected.");
-            }
-          });
-        });
-    </script> -->
-  </body>
+   </body>
 </html>

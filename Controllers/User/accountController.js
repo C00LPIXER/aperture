@@ -143,7 +143,6 @@ const addAddress = async (req, res) => {
 
 const editAddress = async (req, res) => {
   try {
-    console.log(req.body);
     const {
       addressId,
       name,
@@ -212,7 +211,6 @@ const loadEditAddress = async (req, res) => {
 
 const addReview = async (req, res) => {
   try {
-    console.log(req.body);
     const userId = req.session.user;
     const { productId, rating, review } = req.body;
 

@@ -52,7 +52,7 @@ const SendVerificationEmail = async (email, OTP) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error);
+        console.error(error);
       }
     });
   } catch (error) {
@@ -93,7 +93,7 @@ const sendResetPasswdEmail = async (email, OTP) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error);
+        console.error(error);
       }
     });
   } catch (error) {
@@ -214,7 +214,6 @@ const verifyOtp = async (req, res) => {
         req.session.otpTimestamp = null;
         res.json({ success: true });
       } else {
-        console.log("not verified");
         res.json({ success: false, message: "Invalid OTP!" });
       }
     } else {
@@ -290,7 +289,7 @@ const googleCallback = async (req, res) => {
     if (userData.is_blocked == 1) {
       req.logOut((err) => {
         if (err) {
-          console.log("Error while logging out", err.message);
+          console.error("Error while logging out", err.message);
         }
         req.session.user = null;
         res.clearCookie("connect.sid");
@@ -303,7 +302,6 @@ const googleCallback = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
   }
 };
 
@@ -332,7 +330,7 @@ const sendResetPasswordOtp = async (req, res) => {
 
     await sendResetPasswdEmail(email, otp);
 
-    console.log(`OTP sent to ${email}: ${otp}`);
+    console.log(otp);
 
     res.json({ success: true, message: "OTP sent to your email" });
   } catch (error) {
@@ -388,7 +386,7 @@ const resendResetPasswordOtp = async (req, res) => {
       req.session.resetPasswordOtp = otp;
       req.session.otpTimestamp = Date.now();
       await sendResetPasswdEmail(email, otp);
-      console.log(`OTP sent to ${email}: ${otp}`);
+      console.log(otp);
       req.flash("success_msg", "New OTP has been resent to your email.");
       res.redirect("/verify-email");
     } else {

@@ -4,7 +4,6 @@ const Category = require("../../Models/categoryModel");
 const Cart = require("../../Models/cartModel");
 const Brands = require("../../Models/brandsModel");
 const Product = require("../../Models/productModel");
-const { findByIdAndDelete } = require("../../Models/userAddress");
 
 //* offer manegement
 const loadOfferList = async (req, res) => {
@@ -18,7 +17,6 @@ const loadOfferList = async (req, res) => {
 
 const createOffer = async (req, res) => {
   try {
-    console.log(req.body);
     const {
       title,
       discountType,
@@ -58,13 +56,6 @@ const createOffer = async (req, res) => {
   }
 };
 
-const editOffer = async (req, res) => {
-  try {
-  } catch (error) {
-    console.error(error.message);
-  }
-};
-
 const deleteOffer = async (req, res) => {
   try {
   } catch (error) {
@@ -84,7 +75,6 @@ const loadCouponList = async (req, res) => {
 
 const createCoupon = async (req, res) => {
   try {
-    console.log(req.body);
     const {
       code,
       usageLimit,
@@ -124,18 +114,10 @@ const createCoupon = async (req, res) => {
   }
 };
 
-const editCoupon = async (req, res) => {
-  try {
-  } catch (error) {
-    console.error(error.message);
-  }
-};
-
 const deleteCoupon = async (req, res) => {
   try {
     const id = req.body.id;
     const coupon = await Coupon.findByIdAndDelete(id);
-    console.log(coupon);
     res.json({ success: true, message: "Coupon removed!" });
   } catch (error) {
     console.error(error.message);
@@ -144,11 +126,9 @@ const deleteCoupon = async (req, res) => {
 
 const useCoupon = async (req, res) => {
   try {
-    console.log(req.body);
     const { cartId, couponCode } = req.body;
 
     const coupon = await Coupon.findOne({ code: couponCode });
-    console.log(coupon);
 
     if (!coupon) {
       return res.json({ success: false, message: "Invalid coupon Code!" });
@@ -165,14 +145,14 @@ const useCoupon = async (req, res) => {
     if (cart.totalPrice < coupon.minPurchaseAmount) {
       return res.json({
         success: false,
-        message: `Minimum purchase of ${coupon.minPurchaseAmount} required for this coupon`,
+        message: `Minimum purchase of ₹${coupon.minPurchaseAmount} required for this coupon`,
       });
     }
 
     if (cart.totalPrice > coupon.maxPurchaseAmount) {
       return res.json({
         success: false,
-        message: `This coupon not applicable for this amoumt ${coupon.minPurchaseAmount}`,
+        message: `This coupon not applicable for this amoumt`,
       });
     }
 
@@ -240,11 +220,9 @@ const removeCoupon = async (req, res) => {
 module.exports = {
   loadOfferList,
   createOffer,
-  editOffer,
   deleteOffer,
   loadCouponList,
   createCoupon,
-  editCoupon,
   deleteCoupon,
   useCoupon,
   removeCoupon,

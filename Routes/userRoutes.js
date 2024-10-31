@@ -34,7 +34,7 @@ routes.post("/reset-password/submit", userAuthentication.isLogout, authControlle
 routes.get("/logout", authController.loadLogout);
 
 // * shop and product detail
-routes.get("/product-detail/:id", storeController.productDetail);
+routes.get("/product-detail", storeController.productDetail);
 routes.get("/shop", storeController.loadShopPage);
 routes.get("/cart", userAuthentication.pleaseLogin, storeController.loadCartPage);
 routes.post("/add-to-cart", storeController.addToCart);

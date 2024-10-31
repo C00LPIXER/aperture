@@ -86,19 +86,20 @@
                 <span class="text-danger">Sold Out</span>
                 <%} else {%>
                 <span class="text-success"
-                  >Special price: ₹<%= product.price.toFixed(2) %></span
+                  >Price: ₹<%= product.price.toFixed(2) %></span
                 >
+                <% if(product.discount_price > 0) {%>
                 <span style="text-decoration: line-through" class="p-3"
-                  >₹<%= product.promotional_price.toFixed(2) %></span
+                  >₹<%= (product.discount_price + product.price).toFixed(2) %></span
                 >
+                <%}%>
               </div>
 
               <!-- Discounts / Coupons -->
-              <% if (product.price < product.promotional_price) { %>
-              <p class="stext-102 cl6 p-t-10 text-success">
+              <% if (product.discount_price > 0) { %>
+              <p class="stext-102 cl6 p-t-1 text-success">
                 <strong>Discount Applied:</strong> Save <%=
-                Math.round(((product.promotional_price - product.price) /
-                product.promotional_price) * 100) %>%
+                Math.round((product.discount_price / product.price) * 100) %>%
               </p>
               <% } %> <%}%>
               <p class="stext-102 cl6 text-dark">
@@ -146,8 +147,8 @@
             </button>
 
             <!-- Add to Wishlist Button -->
-            <button 
-              onclick="addToWishlist(`<%= product._id %>`)"
+            <button
+              onclick="addToWishlist(`<%= product._id %>`,this)"
               class="stext-102 cl0 size-102 bg2 bor1 hov-btn1 p-lr-15 trans-04"
             >
               Add to Wishlist
@@ -272,13 +273,11 @@
 
                 <div class="block2-txt flex-w flex-t p-t-14">
                   <div class="block2-txt-child1 flex-col-l">
-                    <a
-                      href="/product-detail/<%= item._id %>"
+                    <p
                       class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6"
                     >
                       <%= item.name %>
-                    </a>
-
+                  </p>
                     <span class="stext-105 cl3">₹<%= item.price %></span>
                   </div>
                 </div>
@@ -395,17 +394,6 @@
       }
     </script>
     <script>
-      $(".js-select2").each(function () {
-        $(this).select2({
-          minimumResultsForSearch: 20,
-          dropdownParent: $(this).next(".dropDownSelect2"),
-        });
-      });
-    </script>
-    <script>
-      $(".parallax100").parallax100();
-    </script>
-    <script>
       $(".gallery-lb").each(function () {
         // the containers for all your galleries
         $(this).magnificPopup({
@@ -415,67 +403,6 @@
             enabled: true,
           },
           mainClass: "mfp-fade",
-        });
-      });
-    </script>
-    <script>
-      $(".js-addwish-b2").on("click", function (e) {
-        e.preventDefault();
-      });
-
-      $(".js-addwish-b2").each(function () {
-        var nameProduct = $(this).parent().parent().find(".js-name-b2").html();
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to wishlist !", "success");
-
-          $(this).addClass("js-addedwish-b2");
-          $(this).off("click");
-        });
-      });
-
-      $(".js-addwish-detail").each(function () {
-        var nameProduct = $(this)
-          .parent()
-          .parent()
-          .parent()
-          .find(".js-name-detail")
-          .html();
-
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to wishlist !", "success");
-
-          $(this).addClass("js-addedwish-detail");
-          $(this).off("click");
-        });
-      });
-
-      /*---------------------------------------------*/
-
-      $(".js-addcart-detail").each(function () {
-        var nameProduct = $(this)
-          .parent()
-          .parent()
-          .parent()
-          .parent()
-          .find(".js-name-detail")
-          .html();
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to cart !", "success");
-        });
-      });
-    </script>
-    <script>
-      $(".js-pscroll").each(function () {
-        $(this).css("position", "relative");
-        $(this).css("overflow", "hidden");
-        var ps = new PerfectScrollbar(this, {
-          wheelSpeed: 1,
-          scrollingThreshold: 1000,
-          wheelPropagation: false,
-        });
-
-        $(window).on("resize", function () {
-          ps.update();
         });
       });
     </script>

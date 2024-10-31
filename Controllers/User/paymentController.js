@@ -7,8 +7,8 @@ const Address = require("../../Models/userAddress");
 const Brand = require("../../Models/brandsModel");
 const Cart = require("../../Models/cartModel");
 const Order = require("../../Models/orderModel");
-const { PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
 
+const { PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
 paypal.configure({
   mode: PAYPAL_MODE,
   client_id: PAYPAL_CLIENT_ID,
@@ -32,12 +32,12 @@ const convertCurrency = async (amountInINR) => {
   }
 };
 
+//* order with paypal 
 const payWithPaypal = async (req, res) => {
   try {
     req.session.payment = req.body;
-    const { paymentMethod, totalPrice, shippingAddressId } = req.body;
+    const totalPrice = req.body.totalPrice;
     let total = await convertCurrency(totalPrice);
-    console.log(total);
 
     const create_payment_json = {
       intent: "sale",
@@ -60,10 +60,8 @@ const payWithPaypal = async (req, res) => {
 
     paypal.payment.create(create_payment_json, function (error, payment) {
       if (error) {
-        console.error("Payment creation error:", error.message);
-        return res
-          .status(500)
-          .json({ success: false, message: "Payment creation failed" });
+        console.error(error.message);
+        return res.json({ success: false, message: "Payment creation failed" });
       } else {
         for (let i = 0; i < payment.links.length; i++) {
           if (payment.links[i].rel === "approval_url") {
@@ -86,9 +84,9 @@ const payWithPaypal = async (req, res) => {
 
 const paymentSuccess = async (req, res) => {
   try {
-    const { paymentMethod, totalPrice, shippingAddressId } = req.session.payment;
+    const { paymentMethod, totalPrice, shippingAddressId } =
+      req.session.payment;
     const { paymentId, PayerID, token } = req.query;
-    console.log(req.query)
 
     const userId = req.session.user;
     const cart = await Cart.findOne({ userId });
@@ -137,24 +135,23 @@ const paymentSuccess = async (req, res) => {
         });
       }
     }
-    
-    console.log(savedOrder)
-    res.redirect("/order-placed")
+
+    res.redirect("/order-placed");
   } catch (error) {
-    console.error("paymentSuccess:",error.message);
+    console.error("paymentSuccess:", error.message);
   }
 };
 
 const paymentCancel = async (req, res) => {
   try {
-      res.redirect("/checkout")
+    res.redirect("/checkout");
   } catch (error) {
-      console.error("paymentCancel:",error.message);
+    console.error("paymentCancel:", error.message);
   }
-}
+};
 
 module.exports = {
   payWithPaypal,
   paymentSuccess,
-  paymentCancel
+  paymentCancel,
 };

@@ -8,7 +8,7 @@ const Order = require("../../Models/orderModel");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const fs = require("fs");
-const { create } = require("../../Models/offerModel");
+const Offer = require("../../Models/offerModel");
 
 //* admin authentication
 const loadAdminPage = async (req, res) => {
@@ -147,7 +147,7 @@ const createProduct = async (req, res) => {
         name: req.body.name,
         description: req.body.description,
         price: req.body.price,
-        promotional_price: req.body.orginal_price,
+        discount_price: req.body.discount_price || 0,
         category: req.body.category,
         brand: req.body.brands,
         stock: req.body.stock,
@@ -217,7 +217,7 @@ const editProduct = async (req, res) => {
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
-      promotional_price: req.body.orginal_price,
+      discount_price: req.body.discount_price || 0,
       category: req.body.category,
       brand: req.body.brands,
       stock: req.body.stock,

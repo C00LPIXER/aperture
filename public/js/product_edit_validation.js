@@ -145,7 +145,7 @@ function validateForm() {
     .getElementById("price")
     ?.getAttribute("data-original");
   const originalRegularPrice = document
-    .getElementById("orginal_price")
+    .getElementById("discount_price")
     ?.getAttribute("data-original");
   const originalCategory = document
     .getElementById("category")
@@ -163,7 +163,7 @@ function validateForm() {
   const name = document.getElementById("product_name");
   const description = document.getElementById("description");
   const price = document.getElementById("price");
-  const originalPrice = document.getElementById("orginal_price");
+  const discountlPrice = document.getElementById("discount_price");
   const stock = document.getElementById("stock");
   const category = document.getElementById("category");
   const brand = document.getElementById("brands");
@@ -172,7 +172,7 @@ function validateForm() {
   const nameChanged = name.value !== originalName;
   const descriptionChanged = description.value !== originalDescription;
   const priceChanged = price.value !== originalListingPrice;
-  const originalPriceChanged = originalPrice.value !== originalRegularPrice;
+  const discountlPriceChanged = discountlPrice.value !== originalRegularPrice;
   const categoryChanged =
     category.options[category.selectedIndex].text !== originalCategory;
   const brandChanged =
@@ -198,7 +198,7 @@ function validateForm() {
     !priceChanged &&
     !categoryChanged &&
     !brandChanged &&
-    !originalPriceChanged &&
+    !discountlPriceChanged &&
     !stockChanged &&
     !highlightsChanged &&
     !imageChanged
@@ -233,17 +233,16 @@ function validateForm() {
     clearError(price, "₹");
   }
 
-  if (originalPrice.value.trim() === "") {
-    displayError(originalPrice, "Regular price is required");
-    isValid = false;
-  } else if (!positiveNumberPattern.test(originalPrice.value.trim())) {
-    displayError(
-      originalPrice,
-      "Regular price must be a positive number above 0"
-    );
-    isValid = false;
-  } else {
-    clearError(originalPrice, "₹");
+  if (discountlPrice.value.trim() !== "") {
+    if (!nonNegativeStockPattern.test(discountlPrice.value.trim())) {
+      displayError(
+        discountlPrice,
+        "Regular price must be a non-negative integer (0 or positive)"
+      );
+      isValid = false;
+    } else {
+      clearError(discountlPrice, "₹");
+    }
   }
 
   if (stock.value.trim() === "") {

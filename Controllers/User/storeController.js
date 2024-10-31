@@ -8,6 +8,7 @@ const Order = require("../../Models/orderModel");
 const Wishlist = require("../../Models/wishlistModel");
 const Review = require("../../Models/reviewModel");
 const Wallet = require("../../Models/walletModel");
+const Coupon = require("../../Models/couponModel");
 const mongoose = require("mongoose");
 const ejs = require("ejs");
 const path = require("path");
@@ -117,7 +118,6 @@ const loadShopPage = async (req, res) => {
 };
 
 const getSortOrder = (sort) => {
-  console.log(sort);
   switch (sort) {
     case "popularity":
       return { ratings: -1 };
@@ -138,14 +138,16 @@ const getSortOrder = (sort) => {
 
 const productDetail = async (req, res) => {
   try {
-    const productId = req.params.id;
-    const product = await Product.findById(productId)
-      .populate("category", "name")
-      .populate("brand", "name");
+    const productId = req.query.product;
+    const userId = req.session.user;
+    let wishlist =  await Wishlist.findOne({ userId });
+    console.log(req.query)
+    const product = await Product.findOne({_id: productId})
+      .populate("category")
+      .populate("brand");
     const reviews = await Review.find({ productId: productId }).populate(
       "userId"
     );
-    console.log("review", reviews);
 
     const relatedProduct = await Product.find({
       category: product.category._id,
@@ -153,7 +155,7 @@ const productDetail = async (req, res) => {
       _id: { $ne: product._id },
     }).limit(8);
 
-    res.render("productDetail", { product, relatedProduct, reviews });
+    res.render("productDetail", { product, relatedProduct, reviews, wishlist });
   } catch (error) {
     console.error(error.message);
   }
@@ -314,13 +316,14 @@ const loadCheckOutPage = async (req, res) => {
     const userId = req.session.user;
     const user = await User.findById(userId).populate("addresses");
     const cart = await Cart.findOne({ userId }).populate("items.productId");
+    const coupon = await Coupon.find();
     if (cart && cart.items.length > 0) {
       cart.totalPrice = cart.items.reduce(
         (total, item) => total + item.productId.price * item.quantity,
         0
       );
       cart.save();
-      res.render("checkOut", { cart, user });
+      res.render("checkOut", { cart, user, coupon });
     } else {
       res.redirect("/cart");
     }
@@ -332,9 +335,18 @@ const loadCheckOutPage = async (req, res) => {
 const createOrder = async (req, res) => {
   try {
     const { shippingAddressId, paymentMethod, totalPrice } = req.body;
+
+    if (totalPrice > 5000 && paymentMethod === "Cash on Delivery") {
+      return res.json({
+        success: false,
+        message: "Order above ₹5000 does not support Cash on Delivery",
+      });
+    }
+
     const userId = req.session.user;
     const cart = await Cart.findOne({ userId });
     const shippingAddress = await Address.findById(shippingAddressId);
+
     if (!shippingAddress) {
       return res.json({
         success: false,
@@ -366,7 +378,29 @@ const createOrder = async (req, res) => {
       discount: cart.discount,
       couponCode: cart.couponCode,
     });
-    const savedOrder = await newOrder.save();
+
+    let savedOrder
+
+    if (paymentMethod === "Wallet") {
+      const wallet = await Wallet.findOne({ userId });
+      if (wallet.balance < totalPrice) {
+        return res.json({
+          success: false,
+          message: `Your account currently has insufficient balance`,
+        });
+      }
+      wallet.balance -= totalPrice;
+      wallet.walletHistory.push({
+        transactionType: "debit",
+        amount: totalPrice,
+        description: "Purchase",
+      });
+      newOrder.paymentStatus = "Completed"
+      savedOrder = await newOrder.save();
+      await wallet.save();
+    }else{
+      savedOrder = await newOrder.save();
+    }
     if (savedOrder) {
       await Cart.findByIdAndDelete({ _id: cart._id });
 
@@ -386,10 +420,8 @@ const createOrder = async (req, res) => {
 const cancelOrder = async (req, res) => {
   try {
     const orderId = req.body.orderId;
-    console.log("orderId:",req.body)
     const userId = req.session.user;
     const findedOrder = await Order.findById(orderId);
-    console.log("findedOrder:",findedOrder)
     const amount = findedOrder.totalPrice;
 
     if (findedOrder.orderStatus !== "Cancelled") {
@@ -437,7 +469,7 @@ const cancelOrder = async (req, res) => {
       res.json({ status: true, message: "This order is already cancelled" });
     }
   } catch (error) {
-    console.error("cancelOrder:",error.message);
+    console.error("cancelOrder:", error.message);
   }
 };
 
@@ -493,7 +525,7 @@ const returnOrder = async (req, res) => {
       res.json({ status: true, message: "This order is already Returned" });
     }
   } catch (error) {
-    console.error("cancelOrder:",error.message);
+    console.error("cancelOrder:", error.message);
   }
 };
 
@@ -518,4 +550,4 @@ module.exports = {
   cancelOrder,
   successPage,
   returnOrder,
-}; 
+};

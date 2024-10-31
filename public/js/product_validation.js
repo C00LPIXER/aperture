@@ -133,15 +133,17 @@ if (price.value.trim() === "") {
   clearError(price, "₹");
 }
 
-const originalPrice = document.querySelector('input[name="orginal_price"]');
-if (originalPrice.value.trim() === "") {
-  displayError(originalPrice, "Regular price is required");
-  isValid = false;
-} else if (!positiveNumberPattern.test(originalPrice.value.trim())) {
-  displayError(originalPrice, "Regular price must be a positive number above 0");
-  isValid = false;
-} else {
-  clearError(originalPrice, "₹");
+const discountlPrice = document.querySelector('input[name="discount_price"]');
+if (discountlPrice.value.trim() !== "") {
+  if (!nonNegativeStockPattern.test(discountlPrice.value.trim())) {
+    displayError(
+      discountlPrice,
+      "Regular price must be a non-negative integer (0 or positive)"
+    );
+    isValid = false;
+  } else {
+    clearError(discountlPrice, "₹");
+  }
 }
 
 const stock = document.querySelector('input[name="stock"]');

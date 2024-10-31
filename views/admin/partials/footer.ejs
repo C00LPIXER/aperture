@@ -1,38 +1,38 @@
 <!-- views/partials/footer.ejs -->
 <footer class="main-footer font-xs">
-    <div class="row pb-30 pt-15">
-        <div class="col-sm-6">
-            <script>
-                document.write(new Date().getFullYear())
-            </script> ©, Aperture 
-        </div>
-        <div class="col-sm-6">
-            <div class="text-sm-end">
-                All rights reserved
-            </div>
-        </div>
+  <div class="row pb-30 pt-15">
+    <div class="col-sm-6">
+      <script>
+        document.write(new Date().getFullYear());
+      </script>
+      ©, Aperture
     </div>
+    <div class="col-sm-6">
+      <div class="text-sm-end">All rights reserved</div>
+    </div>
+  </div>
 </footer>
-</main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function logout() {
-  swal({
-    title: "Are you sure?",
-    text: "Once logged out, you will need to log in again!",
-    showCancelButton: true,
-    confirmButtonText: "Logout",
-    cancelButtonText: "Cancel",
-    closeOnConfirm: false,
-    closeOnCancel: true
-  },
-  function(isConfirm) {
-    if (isConfirm) {
-      window.location.href = "/admin/logout";
-    }
-  });
-}
+  function logout() {
+    swal(
+      {
+        title: "Are you sure?",
+        text: "Once logged out, you will need to log in again!",
+        showCancelButton: true,
+        confirmButtonText: "Logout",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: false,
+        closeOnCancel: true,
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          window.location.href = "/admin/logout";
+        }
+      }
+    );
+  }
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
@@ -52,5 +52,3 @@ function logout() {
 <script src="/assets/js/custom-chart.js" type="text/javascript"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
-</body>
-</html>
