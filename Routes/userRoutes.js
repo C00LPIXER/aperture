@@ -62,6 +62,7 @@ routes.patch("/profile/cancel-order", userAuthentication.isLogin, storeControlle
 routes.patch("/Profile/return-order", userAuthentication.isLogin, storeController.returnOrder);
 routes.get("/profile/edit-address/:id", userAuthentication.isLogin, accountController.loadEditAddress);
 routes.put("/profile/edit-address", userAuthentication.isLogin, accountController.editAddress);
+routes.get("/profile/download-invoice/:id", userAuthentication.isLogin, accountController.invoiceDownload);
 routes.post("/profile/submit-review", userAuthentication.isLogin, accountController.addReview);
 routes.get("/wishlist", userAuthentication.pleaseLogin, accountController.loadWishlistPage);
 routes.post("/add-to-wishlist", accountController.addToWishlist);

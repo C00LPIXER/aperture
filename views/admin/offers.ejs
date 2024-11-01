@@ -15,10 +15,12 @@
   textarea.error::placeholder {
     color: red;
   }
+
   .error-message {
     color: red;
     font-size: 12px;
   }
+
   .error-input {
     border-color: red;
   }
@@ -96,20 +98,19 @@
 
                 <div class="row">
                   <div class="col-md-6 mb-4">
-                    <label for="discountValue" class="form-label"
-                      >Maximum limit</label
+                    <label for="applicableTo" class="form-label"
+                      >Applicable To</label
                     >
-                    <input
-                      name="maxLimit"
-                      type="number"
-                      placeholder="Enter discount value"
+                    <select
+                      name="applicableTo"
+                      id="applicableTo"
                       class="form-control"
-                      id="maxLimitValue"
-                    />
-                    <small
-                      class="error-message"
-                      id="maxLimitValueError"
-                    ></small>
+                    >
+                      <option value="">Select one</option>
+                      <option value="brand">Brands</option>
+                      <option value="category">Category</option>
+                    </select>
+                    <small class="error-message" id="applicableToError"></small>
                   </div>
 
                   <div class="col-md-6 mb-4">
@@ -132,21 +133,20 @@
 
                 <div class="row">
                   <div class="col-md-6 mb-4">
-                    <label for="applicableTo" class="form-label"
-                      >Applicable To</label
+                    <label for="maxPurchaseAmount" class="form-label"
+                      >Maximum Purchase Amount</label
                     >
-                    <select
-                      name="applicableTo"
-                      id="applicableTo"
+                    <input
+                      name="maxLimit"
+                      type="number"
+                      placeholder="Enter discount value"
                       class="form-control"
-                    >
-                      <option value="">Select one</option>
-                      <option value="all">All</option>
-                      <option value="product">Product</option>
-                      <option value="brand">Brand</option>
-                      <option value="category">Category</option>
-                    </select>
-                    <small class="error-message" id="applicableToError"></small>
+                      id="maxPurchaseAmount"
+                    />
+                    <small
+                      class="error-message"
+                      id="maxPurchaseAmountError"
+                    ></small>
                   </div>
 
                   <div class="col-md-6 mb-4">
@@ -191,6 +191,17 @@
                   </div>
                 </div>
 
+                <input
+                  type="hidden"
+                  name="selectedBrands"
+                  id="selectedBrands"
+                />
+                <input
+                  type="hidden"
+                  name="selectedCategories"
+                  id="selectedCategories"
+                />
+
                 <div class="d-grid">
                   <button type="submit" class="btn btn-primary">
                     Add Offer
@@ -201,50 +212,40 @@
             <div class="col-md-6">
               <% if (offers) { %>
               <div class="table-responsive">
-                <table class="table table-hover">
+                <table id="offerTable" class="table table-hover">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>Status</th>
-                      <th class="text-end"><span class="me-5">Action</span></th>
+                      <th>Offer</th>
+                      <th>Discount</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Used</th>
+                      <th>Limit</th>
+                      <th class="text-end"><span class="me-2">Action</span></th>
                     </tr>
                   </thead>
                   <tbody>
                     <% offers.forEach(offer => { %>
                     <tr>
-                      <td><b><%= offer.name %></b></td>
-                      <td><%= offer.description %></td>
-                      <td>
-                        <% if (offer.isActive) { %>
-                        <span class="badge bg-success w-75">Active</span>
-                        <% } else { %>
-                        <span class="badge bg-danger w-75">Blocked</span>
-                        <% } %>
-                      </td>
+                      <td><span class="fw-bold"><%= offer.title %></span></td>
+                      <%if(offer.discountType === 'percentage') {%>
+                      <td><%= offer.discountValue %>%</td>
+                      <%}else {%>
+                      <td>₹<%= offer.discountValue %></td>
+                      <%}%>
+                      <td><%= new Date(offer.startDate).toDateString() %></td>
+                      <td><%= new Date(offer.endDate).toDateString() %></td>
+                      <td><%= offer.usedCount %></td>
+                      <td><%= offer.usageLimit %></td>
                       <td class="text-end">
-                        <% if (offer.isActive) { %>
                         <a
-                          style="width: 80px"
-                          data-offer-id="<%= offer._id %>"
-                          class="offer-unlist btn btn-danger btn-sm btn-block"
-                        >
-                          Unlist
-                        </a>
-                        <% } else { %>
-                        <a
-                          style="width: 80px"
-                          data-offer-id="<%= offer._id %>"
-                          class="offer-list btn btn-warning btn-sm btn-block"
-                        >
-                          List
-                        </a>
-                        <% } %>
-                        <a
-                          class="btn bg-warning-light btn-sm btn-block ms-3 me-3"
-                          href="/admin/offers/edit/<%= offer._id %>"
-                          >Edit</a
-                        >
+                          class="me-4"
+                          onclick="deleteCoupon('<%= offer._id %>')"
+                          ><i
+                            class="fa-solid fa-trash"
+                            style="color: #000000"
+                          ></i
+                        ></a>
                       </td>
                     </tr>
                     <% }) %>
@@ -301,161 +302,397 @@
     </div>
     <%- include('partials/footer') %>
   </main>
-</body>
-<script>
-  document.getElementById("offerForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    alert(1);
 
-    if (validateOfferForm()) {
-      const formData = $(this).serialize();
-      alert(formData);
+  <!-- Brand Modal -->
+  <div
+    class="modal fade"
+    id="selectBrandModal"
+    tabindex="-1"
+    aria-labelledby="selectBrandModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="selectBrandModalLabel">Select Brands</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <h6>Brands</h6>
+          <% if(brands && brands.length > 0) {%>
+          <div id="brandsContainer">
+            <% brands.forEach((brand) => { %>
+            <div class="d-flex">
+              <input type="checkbox" id="brand1" value="<%= brand.name %>" />
+              <label class="m-2"><%= brand.name %></label>
+            </div>
+            <% }) %>
+          </div>
+          <%}else{%>
+          <p>NO categories available</p>
+          <%}%>
+          <small class="error-message text-danger" id="brandError"></small>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" id="saveBrandSelection">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      $.ajax({
-        type: "POST",
-        url: "/admin/offers/add-offer",
-        data: formData,
-        success: function (response) {
-          if (response.success) {
-            showToast(response.message);
-            $("#offerForm").load("/admin/offers #offerForm");
-          } else {
-            showToastError(response.message);
+  <!-- Category Modal -->
+  <div
+    class="modal fade"
+    id="selectCategoryModal"
+    tabindex="-1"
+    aria-labelledby="selectCategoryModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="selectCategoryModalLabel">
+            Select Categories
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <h6>Categories</h6>
+          <% if(categories && categories.length > 0) {%>
+          <div id="categoriesContainer">
+            <% categories.forEach((category) => { %>
+            <div class="d-flex">
+              <input
+                type="checkbox"
+                id="<%= category.name %>"
+                value="<%= category.name %>"
+              />
+              <label class="m-2"><%= category.name %></label>
+            </div>
+            <% }) %>
+          </div>
+          <%}else{%>
+          <p>NO categories available</p>
+          <%}%>
+          <small class="error-message text-danger" id="categoryError"></small>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="saveCategorySelection"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Input Fields -->
+  <input type="hidden" id="selectedBrands" name="selectedBrands" />
+  <input type="hidden" id="selectedCategories" name="selectedCategories" />
+
+  <script>
+    document
+      .getElementById("offerForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        if (validateOfferForm()) {
+          const formData = $(this).serialize();
+
+          const serializedData = $(this).serializeArray();
+          const formObject = {};
+
+          serializedData.forEach((item) => {
+            if (
+              item.name === "selectedBrands" ||
+              item.name === "selectedCategories"
+            ) {
+              formObject[item.name] = item.value;
+            }
+          });
+
+          const applicableToError =
+            document.getElementById("applicableToError");
+          if (!formObject.selectedBrands && !formObject.selectedCategories) {
+            applicableToError.innerText = "Applicable field is required";
+            return;
           }
-        },
-        error: function () {
-          showToast("An error occurred. Please try again.");
-        },
+
+          $.ajax({
+            type: "POST",
+            url: "/admin/offers/add-offer",
+            data: formData,
+            success: function (response) {
+              if (response.success) {
+                showToast(response.message);
+                $("#offerForm").load("/admin/offers #offerForm");
+              } else {
+                showToastError(response.message);
+              }
+            },
+            error: function () {
+              showToast("An error occurred. Please try again.");
+            },
+          });
+        }
+
+        function validateOfferForm() {
+          let isValid = true;
+
+          // Title validation
+          const title = document.getElementById("title").value.trim();
+          const titleError = document.getElementById("titleError");
+          if (title === "") {
+            titleError.innerText = "Title is required";
+            isValid = false;
+          } else {
+            titleError.innerText = "";
+          }
+
+          // Applicable To validation
+          const applicableTo = document
+            .getElementById("applicableTo")
+            .value.trim();
+          const applicableToError =
+            document.getElementById("applicableToError");
+          if (applicableTo === "") {
+            applicableToError.innerText = "Applicable field is required";
+            isValid = false;
+          } else {
+            applicableToError.innerText = "";
+          }
+
+          // Discount Type validation
+          const discountTypes = document
+            .getElementById("discountType")
+            .value.trim();
+          const discountTypeError =
+            document.getElementById("discountTypeError");
+          if (discountTypes === "") {
+            discountTypeError.innerText = "Discount type required";
+            isValid = false;
+          } else {
+            discountTypeError.innerText = "";
+          }
+
+          // Description validation
+          const description = document
+            .getElementById("description")
+            .value.trim();
+          const descriptionError = document.getElementById("descriptionError");
+          if (description === "") {
+            descriptionError.innerText = "Description is required.";
+            isValid = false;
+          } else {
+            descriptionError.innerText = "";
+          }
+
+          // Discount Value validation
+          const discountType = document.getElementById("discountType").value;
+          const discountValue = parseFloat(
+            document.getElementById("discountValue").value
+          );
+          const discountValueError =
+            document.getElementById("discountValueError");
+
+          if (isNaN(discountValue) || discountValue <= 0) {
+            discountValueError.innerText =
+              "Discount value must be a positive number.";
+            isValid = false;
+          } else if (discountType === "percentage" && discountValue > 100) {
+            discountValueError.innerText =
+              "Percentage discount cannot exceed 100%.";
+            isValid = false;
+          } else {
+            discountValueError.innerText = "";
+          }
+
+          // Max Limit Value validation
+          const maxPurchaseAmount = parseFloat(
+            document.getElementById("maxPurchaseAmount").value
+          );
+          const maxPurchaseAmountError =
+            document.getElementById("maxPurchaseAmountError");
+          if (isNaN(maxPurchaseAmount) || maxPurchaseAmount <= 0) {
+            maxPurchaseAmountError.innerText =
+              "Max limit value must be a positive number.";
+            isValid = false;
+          } else {
+            maxPurchaseAmountError.innerText = "";
+          }
+
+          // Minimum Purchase Amount validation
+          const minPurchaseAmount = parseFloat(
+            document.getElementById("minPurchaseAmount").value
+          );
+          const minPurchaseAmountError = document.getElementById(
+            "minPurchaseAmountError"
+          );
+          if (isNaN(minPurchaseAmount) || minPurchaseAmount <= 0) {
+            minPurchaseAmountError.innerText =
+              "Minimum purchase amount must be positive.";
+            isValid = false;
+          } else {
+            minPurchaseAmountError.innerText = "";
+          }
+
+          // Start Date validation
+          const startDateInput = document.getElementById("startDate").value;
+          const startDate = new Date(startDateInput);
+          const today = new Date();
+          const startDateError = document.getElementById("startDateError");
+
+          startDate.setHours(0, 0, 0, 0);
+          today.setHours(0, 0, 0, 0);
+
+          if (startDateInput === "") {
+            startDateError.innerText = "Start date is required";
+            isValid = false;
+          } else if (startDate < today) {
+            startDateError.innerText = "Start date cannot be in the past.";
+            isValid = false;
+          } else {
+            startDateError.innerText = "";
+          }
+
+          // End Date validation
+          const endDateInput = document.getElementById("endDate").value;
+          const endDate = new Date(endDateInput);
+          const endDateError = document.getElementById("endDateError");
+
+          if (endDateInput === "") {
+            endDateError.innerText = "End date is required";
+            isValid = false;
+          } else if (endDate < startDate) {
+            endDateError.innerText =
+              "End date must be later than the start date.";
+            isValid = false;
+          } else {
+            endDateError.innerText = "";
+          }
+
+          return isValid;
+        }
       });
+
+    function showToast(message) {
+      const toastBody = document.getElementById("toast-body");
+      toastBody.textContent = message;
+
+      const toastElement = document.getElementById("toast");
+      const toast = new bootstrap.Toast(toastElement);
+      toast.show();
     }
 
-    function validateOfferForm() {
-      let isValid = true;
+    function showToastError(message) {
+      const toastBody = document.getElementById("toast-body-error");
+      toastBody.textContent = message;
 
-      // Title validation
-      const title = document.getElementById("title").value.trim();
-      const titleError = document.getElementById("titleError");
-      if (title === "") {
-        titleError.innerText = "Title is required";
-        isValid = false;
-      } else {
-        titleError.innerText = "";
-      }
-
-      // Applicable To validation
-      const applicableTo = document.getElementById("applicableTo").value.trim();
-      const applicableToError = document.getElementById("applicableToError");
-      if (applicableTo === "") {
-        applicableToError.innerText = "Applicable field is required";
-        isValid = false;
-      } else {
-        applicableToError.innerText = "";
-      }
-
-      // Discount Type validation
-      const discountTypes = document
-        .getElementById("discountType")
-        .value.trim();
-      const discountTypeError = document.getElementById("discountTypeError");
-      if (discountTypes === "") {
-        discountTypeError.innerText = "Discount type required";
-        isValid = false;
-      } else {
-        discountTypeError.innerText = "";
-      }
-
-      // Description validation
-      const description = document.getElementById("description").value.trim();
-      const descriptionError = document.getElementById("descriptionError");
-      if (description === "") {
-        descriptionError.innerText = "Description is required.";
-        isValid = false;
-      } else {
-        descriptionError.innerText = "";
-      }
-
-      // Discount Value validation
-      const discountType = document.getElementById("discountType").value;
-      const discountValue = parseFloat(
-        document.getElementById("discountValue").value
-      );
-      const discountValueError = document.getElementById("discountValueError");
-
-      if (isNaN(discountValue) || discountValue <= 0) {
-        discountValueError.innerText =
-          "Discount value must be a positive number.";
-        isValid = false;
-      } else if (discountType === "percentage" && discountValue > 100) {
-        discountValueError.innerText =
-          "Percentage discount cannot exceed 100%.";
-        isValid = false;
-      } else {
-        discountValueError.innerText = "";
-      }
-
-      // Max Limit Value validation
-      const maxLimitValue = parseFloat(
-        document.getElementById("maxLimitValue").value
-      );
-      const maxLimitValueError = document.getElementById("maxLimitValueError");
-      if (isNaN(maxLimitValue) || maxLimitValue <= 0) {
-        maxLimitValueError.innerText =
-          "Max limit value must be a positive number.";
-        isValid = false;
-      } else {
-        maxLimitValueError.innerText = "";
-      }
-
-      // Minimum Purchase Amount validation
-      const minPurchaseAmount = parseFloat(
-        document.getElementById("minPurchaseAmount").value
-      );
-      const minPurchaseAmountError = document.getElementById(
-        "minPurchaseAmountError"
-      );
-      if (isNaN(minPurchaseAmount) || minPurchaseAmount <= 0) {
-        minPurchaseAmountError.innerText =
-          "Minimum purchase amount must be positive.";
-        isValid = false;
-      } else {
-        minPurchaseAmountError.innerText = "";
-      }
-
-      // Start Date validation
-      const startDateInput = document.getElementById("startDate").value;
-      const startDate = new Date(startDateInput);
-      const today = new Date();
-      const startDateError = document.getElementById("startDateError");
-
-      startDate.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
-
-      if (startDateInput === "") {
-        startDateError.innerText = "Start date is required";
-        isValid = false;
-      } else if (startDate < today) {
-        startDateError.innerText = "Start date cannot be in the past.";
-        isValid = false;
-      } else {
-        startDateError.innerText = "";
-      }
-
-      // End Date validation
-      const endDateInput = document.getElementById("endDate").value;
-      const endDate = new Date(endDateInput);
-      const endDateError = document.getElementById("endDateError");
-
-      if (endDateInput === "") {
-        endDateError.innerText = "End date is required";
-        isValid = false;
-      } else if (endDate < startDate) {
-        endDateError.innerText = "End date must be later than the start date.";
-        isValid = false;
-      } else {
-        endDateError.innerText = "";
-      }
-
-      return isValid;
+      const toastElement = document.getElementById("toast_error");
+      const toast = new bootstrap.Toast(toastElement);
+      toast.show();
     }
-  });
-</script>
+
+    document
+      .getElementById("applicableTo")
+      .addEventListener("change", function () {
+        const applicableValue = this.value;
+        if (applicableValue === "brand") {
+          $("#selectBrandModal").modal("show");
+        } else if (applicableValue === "category") {
+          $("#selectCategoryModal").modal("show");
+        }
+      });
+
+    document
+      .getElementById("saveBrandSelection")
+      .addEventListener("click", function () {
+        const brandCheckboxes = document.querySelectorAll(
+          "#brandsContainer input[type='checkbox']"
+        );
+        let atLeastOneChecked = false;
+        brandCheckboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            atLeastOneChecked = true;
+          }
+        });
+        if (!atLeastOneChecked) {
+          document.getElementById("brandError").innerText =
+            "Please select at least one brand.";
+          return;
+        } else {
+          document.getElementById("brandError").innerText = "";
+        }
+
+        const selectedBrands = [];
+        brandCheckboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            selectedBrands.push(checkbox.value);
+          }
+        });
+        document.getElementById("selectedBrands").value =
+          JSON.stringify(selectedBrands);
+        $("#selectBrandModal").modal("hide");
+      });
+
+    document
+      .getElementById("saveCategorySelection")
+      .addEventListener("click", function () {
+        const categoryCheckboxes = document.querySelectorAll(
+          "#categoriesContainer input[type='checkbox']"
+        );
+        let atLeastOneChecked = false;
+        categoryCheckboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            atLeastOneChecked = true;
+          }
+        });
+        if (!atLeastOneChecked) {
+          document.getElementById("categoryError").innerText =
+            "Please select at least one category.";
+          return;
+        } else {
+          document.getElementById("categoryError").innerText = ""; // Clear error message
+        }
+
+        const selectedCategories = [];
+        categoryCheckboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            selectedCategories.push(checkbox.value);
+          }
+        });
+        document.getElementById("selectedCategories").value =
+          JSON.stringify(selectedCategories);
+        $("#selectCategoryModal").modal("hide");
+      });
+  </script>
+</body>

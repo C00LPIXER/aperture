@@ -68,9 +68,9 @@
           <tbody>
             <tr>
               <td><%= item.productId.name %></td>
-              <td><%= item.price.toFixed(2) %></td>
+              <td><%= item.productId.price.toFixed(2) %></td>
               <td><%= item.quantity %></td>
-              <td>₹<%= (item.price * item.quantity).toFixed(2)%></td>
+              <td>₹<%= (item.productId.price * item.quantity).toFixed(2)%></td>
             </tr>
           </tbody>
           <%})%>
@@ -211,13 +211,14 @@
           <div class="btn w-100 mb-3 border">
             <% if(cart.couponCode && cart.discount) {%>
             <form class="row" id="removeCoupon">
-              <div class="w-75 px-3">
+              <div class="w-50 px-3">
                 <input
                   type="text"
                   name="couponCode"
                   class="form-control"
                   id="couponInput"
                   value="<%= cart.couponCode %>"
+                  disabled
                 />
                 <input
                   type="hidden"
@@ -228,6 +229,16 @@
               </div>
               <div class="">
                 <button class="btn btn-dark text-white">Remove</button>
+                <%if(coupon.length > 0){%>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#couponModal"
+                >
+                  View Coupons
+                </button>
+                <%}%>
               </div>
             </form>
             <%} else {%>
@@ -407,7 +418,8 @@
                 </select>
               </div>
               <button
-                type="submit" id="purchase-button"
+                type="submit"
+                id="purchase-button"
                 class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-3"
               >
                 Complete Purchase
@@ -504,6 +516,7 @@
               success: function (response) {
                 if (response.success) {
                   showToastifySuccess(response.message);
+                  $("#order-summery").load("/checkout #order-summery > *");
                   location.reload();
                 } else {
                   showToastifyError(response.message);
@@ -538,7 +551,7 @@
             success: function (response) {
               if (response.success) {
                 showToastifySuccess(response.message);
-                // Optional: Reload or update page content to reflect the removed coupon
+                $("#order-summery").load("/checkout #order-summery > *");
                 location.reload();
               } else {
                 showToastifyError(response.message);
@@ -558,7 +571,10 @@
           const paymentMethod = document.getElementById("payment-method").value;
           const formData = $(this).serialize();
 
-          if (paymentMethod === "Cash on Delivery" || paymentMethod === "Wallet") {
+          if (
+            paymentMethod === "Cash on Delivery" ||
+            paymentMethod === "Wallet"
+          ) {
             $.ajax({
               url: "/checkout/complete",
               type: "POST",
@@ -718,16 +734,6 @@
         const field = document.getElementById(fieldId);
         field.style.borderColor = "#dc3545";
         showToastifyError(message);
-      }
-
-      function showToastifySuccess(message) {
-        Toastify({
-          text: message,
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "#28a745",
-        }).showToast();
       }
 
       function showToastifyError(message) {

@@ -14,7 +14,12 @@
         </div>
         <div class="card mb-4">
           <header class="card-header">
-            <form id="" method="POST" action="/admin/sales" class="row gx-3">
+            <form
+              id="reportForm"
+              method="POST"
+              action="/admin/sales"
+              class="row gx-3"
+            >
               <div class="col-lg-2 col-md-6">
                 <select name="reportType" class="form-select">
                   <option value="" disabled selected>Select report type</option>
@@ -46,16 +51,17 @@
                 </button>
               </div>
               <div class="d-flex col-lg-3 col-md- text-end">
-                <a
+                <button
                   onclick="downloadReport('pdf')"
-                  style="background-color: gray; align-content: center;"
+                  style="background-color: gray; align-content: center"
                   class="btn btn-xs me-2"
                   target="_blank"
-                  >Download PDF</a
                 >
+                  Download PDF
+                </button>
                 <a
                   onclick="downloadReport('excel')"
-                  style="background-color: gray; align-content: center;"
+                  style="background-color: gray; align-content: center"
                   class="btn btn-xs me-2"
                   target="_blank"
                   >Download Excel</a
@@ -123,19 +129,112 @@
           <!-- card-body end// -->
         </div>
       </section>
+      <div
+        id="toast-container"
+        aria-live="polite"
+        aria-atomic="true"
+        class="position-fixed top-0 end-0 p-3"
+        style="z-index: 11"
+      >
+        <div
+          id="toast"
+          class="toast align-items-center text-white bg-success border-0"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div id="toast-body" class="toast-body"></div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+        <div
+          id="toast_error"
+          class="toast align-items-center text-white bg-danger border-0"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div id="toast-body-error" class="toast-body"></div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
       <!-- content-main end// -->
       <%- include('partials/footer') %>
     </main>
     <!-- main-wrap end// -->
     <script>
-      function downloadReport(format) {
+      document
+        .getElementById("reportForm")
+        .addEventListener("submit", function (event) {
+          const form = document.getElementById("reportForm");
+          const reportType = form.reportType.value;
+          const startDate = form.startDate.value;
+          const endDate = form.endDate.value;
+
+          if (!reportType) {
+            showToastError("Please select a report type.");
+            event.preventDefault();
+            return false;
+          }
+
+          if (reportType === "custom" && (!startDate || !endDate)) {
+            showToastError(
+              "Please select both start and end dates for a custom report."
+            );
+            event.preventDefault();
+            return false;
+          }
+        });
+
+      function downloadReport(type) {
         const form = document.getElementById("reportForm");
         const reportType = form.reportType.value;
         const startDate = form.startDate.value;
         const endDate = form.endDate.value;
 
-        const url = `/admin/download-${format}-report?reportType=${reportType}&startDate=${startDate}&endDate=${endDate}`;
-        window.location.href = url;
+        if (!reportType) {
+          showToastError("Please select a report type.");
+          return false;
+        }
+
+        if (reportType === "custom" && (!startDate || !endDate)) {
+          showToastError("Please select both start and end dates for a custom report.");
+          return false;
+        }
+
+        const url = `/admin/download-${type}-report?reportType=${reportType}&startDate=${startDate}&endDate=${endDate}`;
+        window.open(url, "_blank");
+      }
+
+      function showToast(message) {
+        const toastBody = document.getElementById("toast-body");
+        toastBody.textContent = message;
+
+        const toastElement = document.getElementById("toast");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+
+      function showToastError(message) {
+        const toastBody = document.getElementById("toast-body-error");
+        toastBody.textContent = message;
+
+        const toastElement = document.getElementById("toast_error");
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
       }
     </script>
   </body>

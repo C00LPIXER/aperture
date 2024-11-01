@@ -6,15 +6,15 @@
   $(".animsition").animsition({
     inClass: "fade-in",
     outClass: "fade-out",
-    inDuration: 1500,
-    outDuration: 800,
+    inDuration: 1000,
+    outDuration: 1000,
     linkElement: ".animsition-link",
     loading: true,
     loadingParentElement: "html",
     loadingClass: "animsition-loading-1",
     loadingInner: '<div class="loader05"></div>',
     timeout: false,
-    timeoutCountdown: 5000,
+    timeoutCountdown: 1000,
     onLoadEvent: true,
     browser: ["animation-duration", "-webkit-animation-duration"],
     overlay: false,
@@ -182,26 +182,6 @@
   });
 
   /*==================================================================
-    [ Cart ]*/
-  $(".js-show-cart").on("click", function () {
-    $(".js-panel-cart").addClass("show-header-cart");
-  });
-
-  $(".js-hide-cart").on("click", function () {
-    $(".js-panel-cart").removeClass("show-header-cart");
-  });
-
-  /*==================================================================
-    [ Cart ]*/
-  $(".js-show-sidebar").on("click", function () {
-    $(".js-sidebar").addClass("show-sidebar");
-  });
-
-  $(".js-hide-sidebar").on("click", function () {
-    $(".js-sidebar").removeClass("show-sidebar");
-  });
-
-  /*==================================================================
     [ Rating ]*/
   $(".wrap-rating").each(function () {
     var item = $(this).find(".item-rating");
@@ -255,31 +235,40 @@
 
 function showToastifySuccess(message) {
   Toastify({
-    text: message,
+    text: `<i class="fa-regular fa-circle-check fa-lg"></i> ${message}&emsp;`,
     duration: 2000,
-    gravity: "top",
-    position: "right",
+    gravity: "bottom",
+    position: "center",
     backgroundColor: "#28a745",
+    className: "custom-toast",
+    escapeMarkup: false,
+    close: true,
   }).showToast();
 }
 
 function showToastifyError(message) {
   Toastify({
-    text: message,
+    text: `<i class="fa-regular fa-circle-xmark fa-lg"></i> ${message}&emsp;`,
     duration: 2000,
-    gravity: "top",
-    position: "right",
+    gravity: "bottom",
+    position: "center",
     backgroundColor: "#dc3545",
+    className: "custom-toast",
+    escapeMarkup: false,
+    close: true,
   }).showToast();
 }
 
 function showToastify(message) {
   Toastify({
-    text: message,
+    text: `<i class="fa-solid fa-circle-exclamation fa-lg"></i> ${message}&emsp;`,
     duration: 2000,
-    gravity: "top",
-    position: "right",
+    gravity: "bottom",
+    position: "center",
     backgroundColor: "#f39c12",
+    className: "custom-toast",
+    escapeMarkup: false,
+    close: true,
   }).showToast();
 }
 

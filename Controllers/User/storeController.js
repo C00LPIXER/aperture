@@ -9,11 +9,6 @@ const Wishlist = require("../../Models/wishlistModel");
 const Review = require("../../Models/reviewModel");
 const Wallet = require("../../Models/walletModel");
 const Coupon = require("../../Models/couponModel");
-const mongoose = require("mongoose");
-const ejs = require("ejs");
-const path = require("path");
-const fs = require("fs");
-const { deflate } = require("zlib");
 require("dotenv").config();
 
 //* shop
@@ -141,7 +136,6 @@ const productDetail = async (req, res) => {
     const productId = req.query.product;
     const userId = req.session.user;
     let wishlist =  await Wishlist.findOne({ userId });
-    console.log(req.query)
     const product = await Product.findOne({_id: productId})
       .populate("category")
       .populate("brand");
@@ -166,6 +160,7 @@ const loadCartPage = async (req, res) => {
   try {
     const userId = req.session.user;
     let cart = await Cart.findOne({ userId }).populate("items.productId");
+    const coupon = await Coupon.findOne({ code: cart.couponCode });
 
     if (cart && cart.items.length > 0) {
       const items = cart.items.map((item) => ({
@@ -173,10 +168,12 @@ const loadCartPage = async (req, res) => {
         _id: item._id,
       }));
 
-      if (cart && cart.items.length > 0) {
+      if (cart && cart.items.length > 0 && cart.couponCode) {
         cart.discount = 0;
         cart.couponCode = null;
         await cart.save();
+        coupon.usedCount -= 1;
+        await coupon.save();
       }
 
       for (let i = 0; i < items.length; i++) {

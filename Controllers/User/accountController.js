@@ -7,6 +7,7 @@ const Wishlist = require("../../Models/wishlistModel");
 const Review = require("../../Models/reviewModel");
 const Product = require("../../Models/productModel");
 const Wallet = require("../../Models/walletModel");
+const PDFDocument = require("pdfkit");
 require("dotenv").config();
 
 const securePasswd = async (password) => {
@@ -24,7 +25,7 @@ const loadProfilePage = async (req, res) => {
     if (req.session.user) {
       const userId = req.session.user;
       const user = await User.findById(userId).populate("addresses");
-      const wallet = await Wallet.findOne({userId})
+      const wallet = await Wallet.findOne({ userId });
       const order = await Order.find({ userId })
         .sort({ placedAt: -1 })
         .populate("items.product")
@@ -245,6 +246,110 @@ const addReview = async (req, res) => {
   }
 };
 
+const invoiceDownload = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await Order.findById(orderId)
+      .populate("userId")
+      .populate("items.product");
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const doc = new PDFDocument();
+    const filename = `order_invoice_${Date.now()}.pdf`;
+    res.setHeader("Content-disposition", `attachment; filename=${filename}`);
+    res.setHeader("Content-type", "application/pdf");
+
+    doc.pipe(res);
+
+    doc.fontSize(20).text("Invoice", { align: "center" }).moveDown();
+    doc.fontSize(12).text(`Order ID: ${order._id}`, { align: "center" });
+    doc
+      .fontSize(12)
+      .text(`Order Date: ${new Date(order.placedAt).toDateString()}`, {
+        align: "center",
+      });
+    doc.moveDown();
+
+    doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke().moveDown();
+
+    doc
+      .fontSize(14)
+      .text("Customer Details", { underline: true })
+      .moveDown(0.5);
+    doc
+      .fontSize(12)
+      .text(`Customer Email: ${order.userId.email}`)
+      .text(`Order Status: ${order.orderStatus}`)
+      .moveDown();
+
+    doc
+      .fontSize(14)
+      .text("Shipping Address", { underline: true })
+      .moveDown(0.5);
+    doc
+      .fontSize(12)
+      .text(`Name: ${order.shippingAddress.name}`)
+      .text(`Mobile: ${order.shippingAddress.mobile.join(", ")}`)
+      .text(`Pincode: ${order.shippingAddress.pincode}`)
+      .text(`Locality: ${order.shippingAddress.locality}`)
+      .text(`City: ${order.shippingAddress.city}`)
+      .text(`State: ${order.shippingAddress.state}`)
+      .text(`Landmark: ${order.shippingAddress.landmark || "N/A"}`)
+      .text(`Address Type: ${order.shippingAddress.type}`)
+      .moveDown();
+
+    doc.fontSize(14).text("Order Items", { underline: true }).moveDown(0.5);
+    order.items.forEach((item, index) => {
+      doc
+        .fontSize(12)
+        .text(`Item ${index + 1}: ${item.product.name || "Product Name"}`)
+        .text(`Quantity: ${item.quantity}`)
+        .text(`Price per Unit: ${item.price.toFixed(2)}`)
+        .text(`Total: ${(item.price * item.quantity).toFixed(2)}`)
+        .moveDown();
+    });
+
+    doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke().moveDown();
+
+    doc.fontSize(14).text("Payment Details", { underline: true }).moveDown(0.5);
+    doc
+      .fontSize(12)
+      .text(`Payment Method: ${order.paymentMethod}`)
+      .text(`Payment Status: ${order.paymentStatus}`)
+      .text(`Payment ID: ${order.paymentId || "N/A"}`)
+      .moveDown();
+
+    doc.fontSize(14).text("Pricing Summary", { underline: true }).moveDown(0.5);
+    doc
+      .fontSize(12)
+      .text(`Subtotal: ${order.totalPrice.toFixed(2)}`)
+      .text(`Shipping Fee: ${order.shippingFee.toFixed(2)}`)
+      .text(`Discount: ${order.discount.toFixed(2)}`)
+      .text(`Coupon Code: ${order.couponCode || "N/A"}`)
+      .text(
+        `Total Amount: ${(
+          order.totalPrice +
+          order.shippingFee -
+          order.discount
+        ).toFixed(2)}`
+      )
+      .moveDown();
+
+    // Footer Note
+    doc
+      .fontSize(10)
+      .text("Thank you for your purchase!", { align: "center" })
+      .moveDown();
+
+    doc.end();
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
 //* wishlist
 const loadWishlistPage = async (req, res) => {
   try {
@@ -314,6 +419,7 @@ const removeFromWishlist = async (req, res) => {
     console.error(error.message);
   }
 };
+
 module.exports = {
   loadProfilePage,
   editUserInfo,
@@ -325,4 +431,5 @@ module.exports = {
   loadWishlistPage,
   addToWishlist,
   removeFromWishlist,
+  invoiceDownload,
 };

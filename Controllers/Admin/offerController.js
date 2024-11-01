@@ -9,7 +9,9 @@ const Product = require("../../Models/productModel");
 const loadOfferList = async (req, res) => {
   try {
     const offers = await Offer.find();
-    res.render("offers", { offers });
+    const brands = await Brands.find();
+    const categories = await Category.find();
+    res.render("offers", { offers, categories, brands });
   } catch (error) {
     console.error(error.message);
   }
@@ -21,34 +23,46 @@ const createOffer = async (req, res) => {
       title,
       discountType,
       description,
-      maxLimit,
+      maxPurchaseAmount,
       discountValue,
       applicableTo,
       minPurchaseAmount,
       startDate,
       endDate,
+      selectedBrands,
+      selectedCategories
+
     } = req.body;
 
     const isExist = await Offer.findOne({ title: title });
-
     if (isExist) {
       return res.json({
         success: false,
         message: "This offer already exists!",
       });
-    }
+    };
+
+    const brandsArray = JSON.parse(selectedBrands || '[]');
+    const categoriesArray = JSON.parse(selectedCategories || '[]');
+
+    const brands = await Brands.find({ name: { $in: brandsArray } });
+    const categories = await Category.find({ name: { $in: categoriesArray } });
+    console.log(categories)
 
     const offer = new Offer({
       title,
       discountType,
       description,
-      maxLimit,
+      maxPurchaseAmount,
       discountValue,
       applicableTo,
       minPurchaseAmount,
       startDate,
       endDate,
+      brands,
+      categories,
     });
+
     await offer.save();
     return res.json({ success: true, message: "New offer created!" });
   } catch (error) {

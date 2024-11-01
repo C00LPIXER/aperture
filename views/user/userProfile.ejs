@@ -231,10 +231,8 @@
               <div class="card mb-3">
                 <div class="card-body">
                   <h5 class="card-title">Order #<%= order._id %></h5>
-                  <p class="card-text m-2">
-                    Date: <%= new Date(order.placedAt).toDateString() %>
-                  </p>
-                  <p class="card-text m-2">Status: <%= order.orderStatus %></p>
+                    <a class="card-text m-2" href="/profile/download-invoice/<%= order._id %>">Download Invoice</a>
+                    <p class="card-text m-2">Status: <%= order.orderStatus %></p>
 
                   <!-- Button to view order details -->
                   <button
