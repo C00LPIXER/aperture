@@ -71,7 +71,7 @@ const payWithPaypal = async (req, res) => {
             });
           }
         }
-        res.status(400).json({
+        res.json({
           success: false,
           message: "Approval URL not found in PayPal response",
         });

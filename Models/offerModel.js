@@ -24,7 +24,6 @@ const offerSchema = new mongoose.Schema(
     applicableTo: {
       type: String,
       enum: ["brand", "category"],
-      default: "all",
     },
     brands: [
       {
@@ -38,14 +37,6 @@ const offerSchema = new mongoose.Schema(
         ref: "Category",
       },
     ],
-    minPurchaseAmount: {
-      type: Number,
-      default: 0,
-    },
-    maxPurchaseAmount: {
-      type: Number,
-      default: 1,
-    },
     startDate: {
       type: Date,
       required: true,

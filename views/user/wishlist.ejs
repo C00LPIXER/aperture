@@ -31,7 +31,7 @@
           <div class="row isotope-grid">
             <% wishlist.items.forEach(item => { %>
             <div class="col-6 col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
-              <a href="/product-detail/<%= item.productId._id %>">
+              <a href="/product-detail?product=<%= item.productId._id %>">
                 <div class="block2">
                   <div class="block2-pic hov-img0">
                     <img
@@ -50,7 +50,7 @@
                   <div class="block2-txt d-flex p-t-14">
                     <div class="block2-txt-child1 flex-col-l">
                       <a
-                        href="/product-detail/<%= item.productId._id %>"
+                        href="/product-detail?product=<%= item.productId._id %>"
                         class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6"
                       >
                         <%= item.productId.name %>

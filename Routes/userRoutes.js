@@ -68,8 +68,10 @@ routes.get("/wishlist", userAuthentication.pleaseLogin, accountController.loadWi
 routes.post("/add-to-wishlist", accountController.addToWishlist);
 routes.delete("/wishlist/remove-from-wishlist", userAuthentication.isLogin, accountController.removeFromWishlist); 
 
-//! sutter space
+//ToDo sutter space
 routes.get("/sutter-space", shutterSpaceController.loadShutterSpace);
+routes.post("/sutter-space/create-art", shutterSpaceController.createArt);
+routes.delete("/sutter-space/delete-art", shutterSpaceController.removeArt);
 
 //* error page
 routes.get("/not-found", authController.loadErrorPage);

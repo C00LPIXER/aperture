@@ -23,15 +23,12 @@ const createOffer = async (req, res) => {
       title,
       discountType,
       description,
-      maxPurchaseAmount,
       discountValue,
       applicableTo,
-      minPurchaseAmount,
       startDate,
       endDate,
       selectedBrands,
-      selectedCategories
-
+      selectedCategories,
     } = req.body;
 
     const isExist = await Offer.findOne({ title: title });
@@ -40,23 +37,20 @@ const createOffer = async (req, res) => {
         success: false,
         message: "This offer already exists!",
       });
-    };
+    }
 
-    const brandsArray = JSON.parse(selectedBrands || '[]');
-    const categoriesArray = JSON.parse(selectedCategories || '[]');
+    const brandsArray = JSON.parse(selectedBrands || "[]");
+    const categoriesArray = JSON.parse(selectedCategories || "[]");
 
     const brands = await Brands.find({ name: { $in: brandsArray } });
     const categories = await Category.find({ name: { $in: categoriesArray } });
-    console.log(categories)
 
     const offer = new Offer({
       title,
       discountType,
       description,
-      maxPurchaseAmount,
       discountValue,
       applicableTo,
-      minPurchaseAmount,
       startDate,
       endDate,
       brands,
@@ -64,6 +58,41 @@ const createOffer = async (req, res) => {
     });
 
     await offer.save();
+
+    const query = {};
+    if (brands.length > 0) {
+      query.brand = { $in: brands.map((brand) => brand._id) };
+    }
+    if (categories.length > 0) {
+      query.category = { $in: categories.map((category) => category._id) };
+    }
+    console.log("query", query);
+
+    const products = await Product.find(query);
+    console.log("products", products);
+
+    const bulkOps = products.map((product) => {
+      let discountPrice = product.price;
+
+      if (discountType === "percentage") {
+        discountPrice -= (product.price * discountValue) / 100;
+      } else if (discountType === "fixed") {
+        discountPrice -= discountValue;
+      }
+
+      discountPrice = Math.max(0, discountPrice);
+
+      return {
+        updateOne: {
+          filter: { _id: product._id },
+          update: { discount_price: discountPrice },
+        },
+      };
+    });
+    console.log("bulkOps", bulkOps);
+
+    await Product.bulkWrite(bulkOps);
+
     return res.json({ success: true, message: "New offer created!" });
   } catch (error) {
     console.error(error.message);
@@ -72,6 +101,38 @@ const createOffer = async (req, res) => {
 
 const deleteOffer = async (req, res) => {
   try {
+    const id = req.body.id;
+    const offer = await Offer.findByIdAndDelete(id);
+
+    const query = {};
+    if (offer.brands && offer.brands.length > 0) {
+      query.brand = { $in: offer.brands.map((brand) => brand._id) };
+    }
+    
+    if (offer.categories && offer.categories.length > 0) {
+      query.category = {
+        $in: offer.categories.map((category) => category._id),
+      };
+    }
+
+    const products = await Product.find(query);
+    if (products.length === 0) {
+      return res.json({
+        success: true,
+        message: "Offer removed!",
+      });
+    }
+
+    const bulkOps = products.map((product) => ({
+      updateOne: {
+        filter: { _id: product._id },
+        update: { discount_price: 0 },
+      },
+    }));
+
+    await Product.bulkWrite(bulkOps);
+
+    return res.json({ success: true, message: "Offer removed!" });
   } catch (error) {
     console.error(error.message);
   }
@@ -155,7 +216,7 @@ const useCoupon = async (req, res) => {
       return res.json({ success: false, message: "This coupon code expired!" });
     }
 
-    const cart = await Cart.findById(cartId)
+    const cart = await Cart.findById(cartId);
     if (cart.totalPrice < coupon.minPurchaseAmount) {
       return res.json({
         success: false,
@@ -208,7 +269,7 @@ const removeCoupon = async (req, res) => {
   try {
     const { cartId } = req.body;
 
-    const cart = await Cart.findById(cartId).populate("items.productId")
+    const cart = await Cart.findById(cartId).populate("items.productId");
 
     const appliedCouponCode = cart.couponCode;
     cart.discount = 0;

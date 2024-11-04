@@ -357,6 +357,7 @@ const loadWishlistPage = async (req, res) => {
     let wishlist = await Wishlist.findOne({ userId }).populate(
       "items.productId"
     );
+
     res.render("wishlist", { wishlist });
   } catch (error) {
     console.error(error.message);

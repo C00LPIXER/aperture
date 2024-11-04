@@ -68,9 +68,20 @@
           <tbody>
             <tr>
               <td><%= item.productId.name %></td>
+              <% if(item.productId.discount_price > 0) {%>
+              <td><%= item.productId.discount_price.toFixed(2) %></td>
+              <%} else {%>
               <td><%= item.productId.price.toFixed(2) %></td>
+              <%}%>
               <td><%= item.quantity %></td>
+              <% if(item.productId.discount_price > 0) {%>
+              <td>
+                ₹<%= (item.productId.discount_price *
+                item.quantity).toFixed(2)%>
+              </td>
+              <%} else {%>
               <td>₹<%= (item.productId.price * item.quantity).toFixed(2)%></td>
+              <%}%>
             </tr>
           </tbody>
           <%})%>
@@ -360,14 +371,16 @@
                 </div>
               </div>
               <div class="flex-w flex-t p-b-13">
+                <% if(cart.discount > 0){ %>
                 <div class="size-208">
-                  <span class="stext-110 cl22">Discount:</span>
+                  <span class="stext-110 cl22">Coupon :</span>
                 </div>
                 <div class="size-209">
                   <span class="mtext-110 cl22"
                     >₹ <%= cart.discount.toFixed(2) %></span
                   >
                 </div>
+                <%}%>
               </div>
 
               <div class="flex-w flex-t">

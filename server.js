@@ -6,6 +6,7 @@ const session = require("express-session");
 const userRoutes = require("./Routes/userRoutes");
 const adminRoutes = require("./Routes/adminRoutes");
 const passport = require("./middleware/passportOAuth");
+const offerCron = require("./middleware/offerCron");
 const path = require("path");
 const app = express();
 

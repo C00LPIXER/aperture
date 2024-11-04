@@ -6,6 +6,22 @@ const loadShutterSpace = async (req, res) => {
   }
 };
 
+const createArt = async (req, res) => {
+  try {
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+const removeArt = async (req, res) => {
+  try {
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
 module.exports = {
-    loadShutterSpace
-}
+  loadShutterSpace,
+  createArt,
+  removeArt,
+};

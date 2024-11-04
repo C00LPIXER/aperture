@@ -82,26 +82,21 @@
               <!-- Product Title and Price -->
               <h3 class="mtext-106 p-b-14 text-dark"><%= product.name %></h3>
               <div class="mtext-106">
-                <%if(product.stock < 1){%>
-                <span class="text-danger">Sold Out</span>
-                <%} else {%>
-                <span class="text-success"
-                  >Price: ₹<%= product.price.toFixed(2) %></span
-                >
-                <% if(product.discount_price > 0) {%>
-                <span style="text-decoration: line-through" class="p-3"
-                  >₹<%= (product.discount_price + product.price).toFixed(2) %></span
-                >
-                <%}%>
+                <% if (product.stock < 1) { %>
+                  <span class="text-danger">Sold Out</span>
+                <% } else { %>
+                  <% if (product.discount_price > 0) { %>
+                    <span class="text-success">Price: ₹<%= product.discount_price.toFixed(2) %></span>
+                    <span style="text-decoration: line-through" class="p-3">₹<%= product.price.toFixed(2) %></span>
+                    <p class="stext-102 cl6 p-t-1 text-success">
+                      <strong>Discount Applied:</strong> Save <%= Math.round(((product.price - product.discount_price) / product.price) * 100) %>%
+                    </p>
+                  <% } else { %>
+                    <span>Price: ₹<%= product.price.toFixed(2) %></span>
+                  <% } %>
+                <% } %>
               </div>
-
-              <!-- Discounts / Coupons -->
-              <% if (product.discount_price > 0) { %>
-              <p class="stext-102 cl6 p-t-1 text-success">
-                <strong>Discount Applied:</strong> Save <%=
-                Math.round((product.discount_price / product.price) * 100) %>%
-              </p>
-              <% } %> <%}%>
+              
               <p class="stext-102 cl6 text-dark">
                 <strong>Brand:</strong> <%= product.brand.name %>
               </p>
@@ -211,7 +206,7 @@
                     <div class="flex-w flex-t p-b-68">
                       <div class="size-207">
                         <div class="flex-w flex-sb-m p-b-17">
-                          <span class="mtext-107 p-r-20"><i class="fa-regular fa-circle-user fa-lg" style="color: #787878;"></i> <%= review.userId.firstName %> </span>
+                          <span class="mtext-107 p-r-20"><i class="fa-regular fa-circle-user fa-lg" style="color: #787878;"></i> <%= review.userId.firstName +" "+ review.userId.lastName %> </span>
 
                           <span class="fs-18 cl11">
                             <% for (let i = 1; i <= 5; i++) { %> <% if (i <=
@@ -259,6 +254,7 @@
             <% relatedProduct.forEach((item) => { %>
             <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
               <!-- Block2 -->
+              <a href="/product-detail?product=<%= item._id %>">
               <div class="block2">
                 <div class="block2-pic hov-img0">
                   <img src="<%= item.images[0] %>" alt="IMG-PRODUCT" />
@@ -278,10 +274,22 @@
                     >
                       <%= item.name %>
                   </p>
-                    <span class="stext-105 cl3">₹<%= item.price %></span>
+                  <div class="d-flex">
+                    <%if(item.stock < 1) {%>
+                      <span class="cl3 text-danger"> Currently unavailable </span>
+                      <%} else {%>
+                      <% if(item.discount_price > 0) {%>
+                      <span class="cl3 px-2"> ₹<%= (item.discount_price).toFixed(2) %> </span>
+                      <span style="text-decoration: line-through; color: #ff000076;" class="cl3"> ₹<%= (item.price).toFixed(2) %> </span>
+                      <%}else{%>
+                      <span class="cl3 px-2"> ₹<%= item.price.toFixed(2) %> </span>
+                      <%}%>
+                      <%}%>
+                    </div>
                   </div>
                 </div>
               </div>
+            </a>
             </div>
             <% }); %>
           </div>

@@ -82,21 +82,106 @@
           <div class="card mb-4">
             <article class="card-body">
               <h5 class="card-title">Sale statistics</h5>
-              <canvas id="myChart" height="120px"></canvas>
+              <canvas id="monthlyRevenueChart"></canvas>
             </article>
           </div>
         </div>
         <div class="col-xl-4 col-lg-12">
           <div class="card mb-4">
             <article class="card-body">
-              <h5 class="card-title">Revenue Base on Area</h5>
-              <canvas id="myChart2" height="217"></canvas>
+
+              <canvas id="topCategoriesChart"></canvas>
+            </article>
+          </div>
+        </div>
+        <div class="col-xl-4 col-lg-12">
+          <div class="card mb-4">
+            <article class="card-body">
+
+              <canvas id="topCategoriesChart"></canvas>
             </article>
           </div>
         </div>
       </div>
     </section>
-    <!-- content-main end// -->
   </main>
   <%- include('partials/footer') %>
-</body>
+  <script>
+    function renderMonthlyRevenueChart(data) {
+      const revenueLabels = data.map(item => `Month ${item._id}`);
+      const revenueValues = data.map(item => item.totalRevenue);
+  
+      const ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: revenueLabels,
+          datasets: [{
+            label: 'Monthly Revenue',
+            data: revenueValues,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+  
+    function renderTopProductsChart(data) {
+      const productLabels = data.map(item => item._id); // Replace with product names if available
+      const productValues = data.map(item => item.totalQuantity);
+  
+      const ctx = document.getElementById('topProductsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: productLabels,
+          datasets: [{
+            data: productValues,
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+  
+    function renderTopCategoriesChart(data) {
+      const categoryLabels = data.map(item => item._id);
+      const categoryValues = data.map(item => item.totalSales);
+  
+      const ctx = document.getElementById('topCategoriesChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: categoryLabels,
+          datasets: [{
+            label: 'Sales by Category',
+            data: categoryValues,
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            borderColor: 'rgba(255, 206, 86, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+  
+    // AJAX Calls to Fetch Data and Render Charts
+    $(document).ready(function () {
+      // Fetch and render monthly revenue chart
+      $.ajax({
+        url: '/admin/chart',
+        method: 'GET',
+        success: function (data) {
+          renderMonthlyRevenueChart(data);
+          renderTopCategoriesChart(data);
+          renderTopProductsChart(data);
+        },
+        error: function (error) {
+          console.error('Error fetching monthly revenue data:', error);
+        }
+      });
+    });
+  </script>
+  </body>

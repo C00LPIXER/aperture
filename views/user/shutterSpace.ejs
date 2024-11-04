@@ -1,46 +1,271 @@
-<%- include('partials/head') %>
-<html>
-  <body class="animsition">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography Gallery</title>
+    <%- include('partials/head') %>
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #D3D3D3 0%, #A9A9A9 100%);
+            color: black;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+        }
+        .btn-submit-art {
+            background: #A9A9A9;
+            color: black;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        .btn-submit-art:hover {
+            background: #808080;
+            color: black;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-control:focus {
+            border-color: #A9A9A9;
+            box-shadow: 0 0 0 0.2rem rgba(169, 169, 169, 0.25);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #D3D3D3 0%, #A9A9A9 100%);
+            color: black;
+        }
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .upload-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+        }
+        .upload-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .is-invalid + .invalid-feedback {
+            display: block;
+        }
+    </style>
+</head>
+<body class="animsition">
     <%- include('partials/navbar') %>
-    <header></header>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">Photography Gallery</h1>
+            <p class="lead mb-4">Share your best shots with the photography community</p>
+            <button class="btn btn-submit-art" data-bs-toggle="modal" data-bs-target="#submitArtModal">
+                <i class="fas fa-camera me-2"></i> Submit Your Art
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
       <main>
         <div class="container">
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-              <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-3 mb-5">
-                <div class="card">
-                  <img
-                    src="https://mdbootstrap.com/images/regular/nature/img%20(7).jpg"
-                    class="card-img-top"
-                    alt="Photo of a beautiful landscape"
-                  />
-                  <div class="card-body">
-                    <h5 class="card-title">Stunning Sunset</h5>
-                    <p class="card-text small">
-                      Captured by <strong>John Doe</strong>
-                    </p>
-                    <p class="card-text">
-                      A breathtaking view of the sun setting over the mountains, captured with vibrant colors and sharp details.
-                    </p>
-                    <ul class="list-unstyled small">
-                      <li><strong>Camera:</strong> Canon EOS R5</li>
-                      <li><strong>Lens:</strong> RF 24-70mm f/2.8L</li>
-                      <li><strong>Aperture:</strong> f/8</li>
-                      <li><strong>ISO:</strong> 100</li>
-                      <li><strong>Shutter Speed:</strong> 1/200s</li>
-                    </ul>
-                    <div class="d-flex align-items-center mt-3 text-end">
-                      <button class="btn btn-outline-dark btn-sm me-2">
-                        <i class="far fa-thumbs-up"></i> Like
-                      </button>
-                      <!-- <span class="ms-2 like-count">24 Likes</span> -->
-                    </div>
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div
+              class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 col-xxl-3 mb-5"
+            >
+              <div class="card">
+                <img
+                  src="https://mdbootstrap.com/images/regular/nature/img%20(7).jpg"
+                  class="card-img-top"
+                  alt="Photo of a beautiful landscape"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">Stunning Sunset</h5>
+                  <p class="card-text small">
+                    Captured by <strong>John Doe</strong>
+                  </p>
+                  <p class="card-text">
+                    A breathtaking view of the sun setting over the mountains,
+                    captured with vibrant colors and sharp details.
+                  </p>
+                  <ul class="list-unstyled small">
+                    <li><strong>Camera:</strong> Canon EOS R5</li>
+                    <li><strong>Lens:</strong> RF 24-70mm f/2.8L</li>
+                    <li><strong>Aperture:</strong> f/8</li>
+                    <li><strong>ISO:</strong> 100</li>
+                    <li><strong>Shutter Speed:</strong> 1/200s</li>
+                  </ul>
+                  <div class="d-flex align-items-center mt-3 text-end">
+                    <button class="btn btn-outline-dark btn-sm me-2">
+                      <i class="far fa-thumbs-up"></i> Like
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+        </div>
       </main>
+
+    <!-- Submit Art Modal -->
+    <div class="modal fade" id="submitArtModal" tabindex="-1" aria-labelledby="submitArtModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submitArtModalLabel">Submit Your Artwork</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="artSubmitForm" novalidate>
+                        <div class="mb-3">
+                            <label for="photoUpload" class="form-label">Upload Photo</label>
+                            <input type="file" class="form-control" id="photoUpload" accept="image/*" required>
+                            <div class="invalid-feedback">Please select an image to upload.</div>
+                            <img id="imagePreview" class="image-preview" alt="Preview" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="photoTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="photoTitle" placeholder="Enter a title for your photo" required>
+                            <div class="invalid-feedback">Please enter a title.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="photoDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="photoDescription" rows="3" placeholder="Tell us about your photo" required></textarea>
+                            <div class="invalid-feedback">Please provide a description.</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="camera" class="form-label">Camera</label>
+                                    <input type="text" class="form-control" id="camera" placeholder="e.g., Canon EOS R5" required>
+                                    <div class="invalid-feedback">Please enter the camera model.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lens" class="form-label">Lens</label>
+                                    <input type="text" class="form-control" id="lens" placeholder="e.g., RF 24-70mm f/2.8L" required>
+                                    <div class="invalid-feedback">Please enter the lens details.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="aperture" class="form-label">Aperture</label>
+                                    <input type="text" class="form-control" id="aperture" placeholder="e.g., f/2.8" required>
+                                    <div class="invalid-feedback">Please enter the aperture.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="iso" class="form-label">ISO</label>
+                                    <input type="text" class="form-control" id="iso" placeholder="e.g., 100" required>
+                                    <div class="invalid-feedback">Please enter the ISO.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="shutterSpeed" class="form-label">Shutter Speed</label>
+                                    <input type="text" class="form-control" id="shutterSpeed" placeholder="e.g., 1/200s" required>
+                                    <div class="invalid-feedback">Please enter the shutter speed.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-submit-art" id="submitForm">Submit Photo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%- include('partials/footer') %>
-  </body>
+
+    <script>
+        // Image preview functionality
+        document.getElementById('photoUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+
+            if (file && file.type.startsWith('image/')) { // Check if the file is an image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Form validation and submission
+        document.getElementById('submitForm').addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = document.getElementById('artSubmitForm');
+
+            // Remove any existing validation classes
+            form.querySelectorAll('.is-invalid').forEach(element => {
+                element.classList.remove('is-invalid');
+            });
+
+            // Check each required field
+            let isValid = true;
+            form.querySelectorAll('[required]').forEach(field => {
+                if (!field.value) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            // Prepare form data for submission
+            const formData = new FormData();
+            formData.append('photo', document.getElementById('photoUpload').files[0]);
+            formData.append('title', document.getElementById('photoTitle').value);
+            formData.append('description', document.getElementById('photoDescription').value);
+            formData.append('camera', document.getElementById('camera').value);
+            formData.append('lens', document.getElementById('lens').value);
+            formData.append('aperture', document.getElementById('aperture').value);
+            formData.append('iso', document.getElementById('iso').value);
+            formData.append('shutterSpeed', document.getElementById('shutterSpeed').value);
+
+            // Submit the form data via AJAX or Fetch API
+            // Example using Fetch:
+            fetch('/submit-art', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle successful submission (e.g., update gallery, close modal)
+                console.log('Success:', data);
+                $('#submitArtModal').modal('hide');
+                form.reset(); // Reset the form
+                document.getElementById('imagePreview').style.display = 'none'; // Hide preview
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
 </html>

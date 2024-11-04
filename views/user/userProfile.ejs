@@ -231,7 +231,9 @@
               <div class="card mb-3">
                 <div class="card-body">
                   <h5 class="card-title">Order #<%= order._id %></h5>
+                  <% if(order.orderStatus === "Delivered") { %>
                     <a class="card-text m-2" href="/profile/download-invoice/<%= order._id %>">Download Invoice</a>
+                    <%}%>
                     <p class="card-text m-2">Status: <%= order.orderStatus %></p>
 
                   <!-- Button to view order details -->
@@ -248,7 +250,7 @@
                   <!-- Button to cancel the order -->
                   <%if(order.orderStatus === 'Shipped') {%>
                   <a type="hidden"></a>
-                  <%} else if(order.orderStatus=== 'Delivered') {%>
+                  <%} else if(order.orderStatus=== 'Delivered' && new Date() < new Date(order.placedAt.getTime() + 7 * 24 * 60 * 60 * 1000)) {%>
                   <a
                     href="javascript:void(0);"
                     class="btn btn-danger text-white"
@@ -256,8 +258,7 @@
                     onclick="returnOrder(this)"
                     >Return Order</a
                   >
-                  <%} else if(order.orderStatus !== 'Cancelled' &&
-                  order.orderStatus !== 'Returned'){%>
+                  <%} else if(order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned' && order.orderStatus !== 'Delivered'){%>
                   <a
                     href="javascript:void(0);"
                     class="btn btn-danger text-white"
@@ -427,12 +428,17 @@
                         <% } else if(order.orderStatus === 'Cancelled'){ %>
                         <p class="py-2">
                           <strong>Cancelled Date: </strong>
-                          <%= new Date(order.placedAt).toDateString() %>
+                          <%= new Date(order.updatedAt).toDateString() %>
                         </p>
                         <% } else if(order.orderStatus === 'Delivered'){ %>
                         <p class="py-2">
-                          <strong>Cancelled Date: </strong>
-                          <%= new Date(order.placedAt).toDateString() %>
+                          <strong>Delivered Date: </strong>
+                          <%= new Date(order.updatedAt).toDateString() %>
+                        </p>
+                        <% } else if(order.orderStatus === 'Returned'){ %>
+                          p class="py-2">
+                          <strong>Returned Date: </strong>
+                          <%= new Date(order.updatedAt).toDateString() %>
                         </p>
                         <% } %>
 
@@ -692,7 +698,7 @@
               </div>
 
               <!-- Button to Add Amount to Wallet -->
-              <div
+              <!-- <div
                 class="btn w-100 mb-3 border p-3"
                 onclick="toggleAddAmountForm()"
                 id="showAddAmountButton"
@@ -703,10 +709,10 @@
                     Wallet</strong
                   >
                 </p>
-              </div>
+              </div> -->
 
               <!-- Add Amount Form (Hidden initially) -->
-              <form
+              <!-- <form
                 id="addAmountForm"
                 action="/Profile/add-amount"
                 method="post"
@@ -735,7 +741,7 @@
                 >
                   Cancel
                 </button>
-              </form>
+              </form> -->
 
               <!-- Wallet History Section -->
               <div id="walletHistory">
@@ -926,7 +932,6 @@
         const rating = $("#rating").val();
         const review = $("#review").val();
         const productId = $("#hiddenProductId").val();
-        alert(productId);
 
         if (!rating) {
           showValidationError("Please select a rating.");

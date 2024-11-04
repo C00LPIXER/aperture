@@ -26,22 +26,28 @@
             <div class="col-lg-6 col-md-6 ms-auto text-md-end">
               <form id="statusForm">
                 <input type="hidden" name="orderId" value="<%= order._id %>" />
-                <%if(order.orderStatus !== "Cancelled") {%>
+                <%if(order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered") {%>
                 <span id="order-status" class="bor123">Order <%= order.orderStatus %></span>
                 <select
                   id="orderStatus"
                   name="status"
                   class="form-select d-inline-block mb-lg-0 mb-15 mw-200"
                 >
-                  <option value="">Change status</option>
-                  <option value="Processing">Processing</option>
+                <option value="">Change status</option>
+                <% if(order.orderStatus === "Processing") { %>
                   <option value="Shipped">Shipped</option>
                   <option value="Delivered">Delivered</option>
                   <option value="Cancelled">Cancelled</option>
+                <% } else if(order.orderStatus === "Shipped") { %>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                <% } %>
                 </select>
                 <button type="submit" class="btn btn-primary">Save</button>
-                <%} else {%>
-                <button class="btn btn-danger">Order cancelled</button>
+                <%} else if(order.orderStatus === "Delivered") {%>
+                <button class="btn btn-success text-white">Order Delivered</button>
+                <%} else if(order.orderStatus === "Cancelled") {%>
+                <button class="btn btn-danger">Order Cancelled</button>
                 <%}%>
               </form>
             </div>
@@ -144,10 +150,16 @@
                             <dt>Subtotal:</dt>
                             <dd>₹ <%= order.totalPrice %></dd>
                           </dl>
+                          <% if(order.discount && order.couponCode){%>
                           <dl class="dlist">
-                            <dt>Shipping cost:</dt>
-                            <dd><%= order.shippingFee %></dd>
+                            <dt>Coupon:</dt>
+                            <dd><%= order.couponCode %></dd>
                           </dl>
+                          <dl class="dlist">
+                            <dt>Discount:</dt>
+                            <dd>₹ <%= order.discount.toFixed(2) %></dd>
+                          </dl>
+                          <%}%>
                           <dl class="dlist">
                             <dt>Grand total:</dt>
                             <dd>

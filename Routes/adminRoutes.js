@@ -23,6 +23,7 @@ const routes = express.Router();
 
 //? [admin authentication] 
 routes.get("/admin", adminAuth.isadminLogin, adminController.loadAdminPage);
+routes.get("/admin/chart", adminAuth.isadminLogin, adminController.loadChart);
 routes.get("/admin/login", adminAuth.isadminLogout, adminController.loadAdminLogin);
 routes.post("/admin/login", adminAuth.isadminLogout, adminController.adminAuthentication);
 routes.get("/admin/logout", adminController.adminLogout);
@@ -66,8 +67,9 @@ routes.patch("/admin/products/:id/unblock", adminAuth.isAdmin, adminController.u
 //? [offer management]
 routes.get("/admin/offers", adminAuth.isAdmin, offerController.loadOfferList)
 routes.post("/admin/offers/add-offer", adminAuth.isAdmin, offerController.createOffer)
+routes.delete("/admin/offers/delete", adminAuth.isAdmin, offerController.deleteOffer)
 
-//? [offer management]
+//? [coupon management]
 routes.get("/admin/coupons", adminAuth.isAdmin, offerController.loadCouponList)
 routes.post("/admin/coupons/add-coupon", adminAuth.isAdmin, offerController.createCoupon)
 routes.delete("/admin/coupons/delete", adminAuth.isAdmin, offerController.deleteCoupon)

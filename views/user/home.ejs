@@ -394,11 +394,18 @@
                   >
                     <%= item.name %>
                 </p>
+                <div class="d-flex">
                   <%if(item.stock < 1) {%>
-                  <span class="cl3 text-danger"> Currently unavailable </span>
-                  <%} else {%>
-                  <span class="cl3"> ₹<%= item.price %> </span>
-                  <%}%>
+                    <span class="cl3 text-danger"> Currently unavailable </span>
+                    <%} else {%>
+                    <% if(item.discount_price > 0) {%>
+                    <span class="cl3 px-2"> ₹<%= (item.discount_price).toFixed(2) %> </span>
+                    <span style="text-decoration: line-through; color: #ff000076;" class="cl3"> ₹<%= (item.price).toFixed(2) %> </span>
+                    <%}else{%>
+                    <span class="cl3 px-2"> ₹<%= item.price.toFixed(2) %> </span>
+                    <%}%>
+                    <%}%>
+                  </div>
                 </div>
 
                 <div class="block2-txt-child2 flex-r p-t-3">

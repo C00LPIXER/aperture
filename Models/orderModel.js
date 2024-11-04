@@ -75,6 +75,6 @@ const orderSchema = new mongoose.Schema({
   deliveredAt: {
     type: Date,
   },
-});
+},{ timestamps: true });
 
 module.exports = mongoose.model("order", orderSchema);

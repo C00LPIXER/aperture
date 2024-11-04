@@ -67,6 +67,48 @@ const loadShopPage = async (req, res) => {
       (term) => new RegExp(`\\b${term}\\b`, "i")
     );
 
+    // const filterQuery = {
+    //   is_Active: true,
+    //   ...(search
+    //     ? {
+    //         $or: [
+    //           { name: { $in: regexPatterns } },
+    //           { description: { $in: regexPatterns } },
+    //         ],
+    //       }
+    //     : {}),
+    //   ...(brandIds.length > 0 && { brand: { $in: brandIds } }),
+    //   ...(categoryIds.length > 0 && { category: { $in: categoryIds } }),
+    // };
+
+    // const activeProducts = await Product.find(filterQuery)
+    //   .sort(getSortOrder(sort))
+    //   .skip((page - 1) * limit)
+    //   .limit(limit)
+    //   .lean()
+    //   .exec();
+
+    // const totalFilteredProducts = await Product.countDocuments(filterQuery);
+
+    // res.render("shop", {
+    //   categories,
+    //   allBrands,
+    //   allCategories,
+    //   totalProducts: totalFilteredProducts,
+    //   activeProducts,
+    //   brands,
+    //   currentPage: page,
+    //   totalPages: Math.ceil(totalFilteredProducts / limit),
+    //   limit,
+    //   search,
+    //   category: selectedCategories,
+    //   selectedCategories,
+    //   brand: selectedBrands,
+    //   selectedBrands,
+    //   sort,
+    //   wishlist,
+    // });
+
     const filterQuery = {
       is_Active: true,
       ...(search
@@ -81,21 +123,45 @@ const loadShopPage = async (req, res) => {
       ...(categoryIds.length > 0 && { category: { $in: categoryIds } }),
     };
 
-    const activeProducts = await Product.find(filterQuery)
-      .sort(getSortOrder(sort))
-      .skip((page - 1) * limit)
-      .limit(limit)
+    const allActiveProducts = await Product.find(filterQuery)
+      .populate({
+        path: "brand",
+        select: "name",
+        match: { is_Active: true },
+      })
+      .populate({
+        path: "category",
+        select: "name",
+        match: { is_Active: true },
+      })
+      .lean()
       .exec();
 
-    const totalFilteredProducts = await Product.countDocuments(filterQuery);
+    const filteredActiveProducts = allActiveProducts.filter(
+      (product) => product.brand && product.category
+    );
+
+    const totalFilteredProducts = filteredActiveProducts.length;
+    const startIndex = (page - 1) * limit;
+    const paginatedProducts = filteredActiveProducts.slice(
+      startIndex,
+      startIndex + limit
+    );
+
+    const activeBrands = await Brand.find({ is_Active: true })
+      .select("name")
+      .lean();
+    const activeCategories = await Category.find({ is_Active: true })
+      .select("name")
+      .lean();
 
     res.render("shop", {
-      categories,
-      allBrands,
-      allCategories,
+      categories: activeCategories,
+      allBrands: activeBrands,
+      allCategories: activeCategories,
       totalProducts: totalFilteredProducts,
-      activeProducts,
-      brands,
+      activeProducts: paginatedProducts,
+      brands: activeBrands,
       currentPage: page,
       totalPages: Math.ceil(totalFilteredProducts / limit),
       limit,
@@ -135,8 +201,8 @@ const productDetail = async (req, res) => {
   try {
     const productId = req.query.product;
     const userId = req.session.user;
-    let wishlist =  await Wishlist.findOne({ userId });
-    const product = await Product.findOne({_id: productId})
+    let wishlist = await Wishlist.findOne({ userId });
+    const product = await Product.findOne({ _id: productId })
       .populate("category")
       .populate("brand");
     const reviews = await Review.find({ productId: productId }).populate(
@@ -160,7 +226,6 @@ const loadCartPage = async (req, res) => {
   try {
     const userId = req.session.user;
     let cart = await Cart.findOne({ userId }).populate("items.productId");
-    const coupon = await Coupon.findOne({ code: cart.couponCode });
 
     if (cart && cart.items.length > 0) {
       const items = cart.items.map((item) => ({
@@ -169,6 +234,7 @@ const loadCartPage = async (req, res) => {
       }));
 
       if (cart && cart.items.length > 0 && cart.couponCode) {
+        const coupon = await Coupon.findOne({ code: cart.couponCode });
         cart.discount = 0;
         cart.couponCode = null;
         await cart.save();
@@ -188,11 +254,15 @@ const loadCartPage = async (req, res) => {
     }
 
     if (cart && cart.items.length > 0) {
-      cart.totalPrice = cart.items.reduce(
-        (total, item) => total + item.productId.price * item.quantity,
-        0
-      );
+      cart.totalPrice = cart.items.reduce((total, item) => {
+        const price =
+          item.productId.discount_price > 0
+            ? item.productId.discount_price
+            : item.productId.price;
+        return total + price * item.quantity;
+      }, 0);
     }
+
     res.render("cart", { cart });
   } catch (error) {
     console.error("cart", error.message);
@@ -217,12 +287,18 @@ const addToCart = async (req, res) => {
           if (itemIndex > -1) {
             return res.json({ success: true, info: "Item already in cart" });
           } else {
-            cart.items.push({ productId, quantity: 1, price: product.price });
+            const itemPrice =
+              product.discount_price > 0
+                ? product.discount_price
+                : product.price;
+            cart.items.push({ productId, quantity: 1, price: itemPrice });
           }
         } else {
+          const itemPrice =
+            product.discount_price > 0 ? product.discount_price : product.price;
           cart = new Cart({
             userId,
-            items: [{ productId, quantity: 1, price: product.price }],
+            items: [{ productId, quantity: 1, price: itemPrice }],
           });
         }
         await cart.save();
@@ -315,10 +391,13 @@ const loadCheckOutPage = async (req, res) => {
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     const coupon = await Coupon.find();
     if (cart && cart.items.length > 0) {
-      cart.totalPrice = cart.items.reduce(
-        (total, item) => total + item.productId.price * item.quantity,
-        0
-      );
+      cart.totalPrice = cart.items.reduce((total, item) => {
+        const price =
+          item.productId.discount_price > 0
+            ? item.productId.discount_price
+            : item.productId.price;
+        return total + price * item.quantity;
+      }, 0);
       cart.save();
       res.render("checkOut", { cart, user, coupon });
     } else {
@@ -376,11 +455,11 @@ const createOrder = async (req, res) => {
       couponCode: cart.couponCode,
     });
 
-    let savedOrder
+    let savedOrder;
 
     if (paymentMethod === "Wallet") {
       const wallet = await Wallet.findOne({ userId });
-      if (wallet.balance < totalPrice) {
+      if (!wallet || wallet.balance < totalPrice) {
         return res.json({
           success: false,
           message: `Your account currently has insufficient balance`,
@@ -392,10 +471,10 @@ const createOrder = async (req, res) => {
         amount: totalPrice,
         description: "Purchase",
       });
-      newOrder.paymentStatus = "Completed"
+      newOrder.paymentStatus = "Completed";
       savedOrder = await newOrder.save();
       await wallet.save();
-    }else{
+    } else {
       savedOrder = await newOrder.save();
     }
     if (savedOrder) {

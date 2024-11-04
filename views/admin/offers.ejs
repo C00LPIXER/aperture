@@ -130,43 +130,6 @@
                     ></small>
                   </div>
                 </div>
-
-                <div class="row">
-                  <div class="col-md-6 mb-4">
-                    <label for="maxPurchaseAmount" class="form-label"
-                      >Maximum Purchase Amount</label
-                    >
-                    <input
-                      name="maxLimit"
-                      type="number"
-                      placeholder="Enter discount value"
-                      class="form-control"
-                      id="maxPurchaseAmount"
-                    />
-                    <small
-                      class="error-message"
-                      id="maxPurchaseAmountError"
-                    ></small>
-                  </div>
-
-                  <div class="col-md-6 mb-4">
-                    <label for="minPurchaseAmount" class="form-label"
-                      >Minimum Purchase Amount</label
-                    >
-                    <input
-                      name="minPurchaseAmount"
-                      type="number"
-                      placeholder="Enter minimum purchase amount"
-                      class="form-control"
-                      id="minPurchaseAmount"
-                    />
-                    <small
-                      class="error-message"
-                      id="minPurchaseAmountError"
-                    ></small>
-                  </div>
-                </div>
-
                 <div class="row">
                   <div class="col-md-6 mb-4">
                     <label for="startDate" class="form-label">Start Date</label>
@@ -219,8 +182,6 @@
                       <th>Discount</th>
                       <th>Start Date</th>
                       <th>End Date</th>
-                      <th>Used</th>
-                      <th>Limit</th>
                       <th class="text-end"><span class="me-2">Action</span></th>
                     </tr>
                   </thead>
@@ -235,12 +196,10 @@
                       <%}%>
                       <td><%= new Date(offer.startDate).toDateString() %></td>
                       <td><%= new Date(offer.endDate).toDateString() %></td>
-                      <td><%= offer.usedCount %></td>
-                      <td><%= offer.usageLimit %></td>
                       <td class="text-end">
                         <a
                           class="me-4"
-                          onclick="deleteCoupon('<%= offer._id %>')"
+                          onclick="deleteOffer('<%= offer._id %>')"
                           ><i
                             class="fa-solid fa-trash"
                             style="color: #000000"
@@ -248,6 +207,7 @@
                         ></a>
                       </td>
                     </tr>
+                    <td colspan="6" ><%= offer.description %></td>
                     <% }) %>
                   </tbody>
                 </table>
@@ -420,6 +380,39 @@
   <input type="hidden" id="selectedCategories" name="selectedCategories" />
 
   <script>
+    function deleteOffer(id) {
+      swal(
+        {
+          title: "Are you sure?",
+          text: "Once logged out, you will need to log in again!",
+          showCancelButton: true,
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          closeOnConfirm: true,
+          closeOnCancel: true,
+        },
+        function (isConfirm) {
+          if (isConfirm) {
+            $.ajax({
+              url: "/admin/offers/delete",
+              type: "DELETE",
+              data: { id: id },
+              success: function (response) {
+                if (response.success) {
+                  showToast(response.message);
+                  $("#offerTable").load("/admin/offers #offerTable");
+                } else {
+                  showToastError(response.message);
+                }
+              },
+              error: function (error) {
+                showToastError(response.message);
+              },
+            });
+          }
+        }
+      );
+    }
     document
       .getElementById("offerForm")
       .addEventListener("submit", function (e) {
@@ -455,6 +448,7 @@
               if (response.success) {
                 showToast(response.message);
                 $("#offerForm").load("/admin/offers #offerForm");
+                $("#offerTable").load("/admin/offers #offerTable");
               } else {
                 showToastError(response.message);
               }
@@ -534,35 +528,6 @@
             isValid = false;
           } else {
             discountValueError.innerText = "";
-          }
-
-          // Max Limit Value validation
-          const maxPurchaseAmount = parseFloat(
-            document.getElementById("maxPurchaseAmount").value
-          );
-          const maxPurchaseAmountError =
-            document.getElementById("maxPurchaseAmountError");
-          if (isNaN(maxPurchaseAmount) || maxPurchaseAmount <= 0) {
-            maxPurchaseAmountError.innerText =
-              "Max limit value must be a positive number.";
-            isValid = false;
-          } else {
-            maxPurchaseAmountError.innerText = "";
-          }
-
-          // Minimum Purchase Amount validation
-          const minPurchaseAmount = parseFloat(
-            document.getElementById("minPurchaseAmount").value
-          );
-          const minPurchaseAmountError = document.getElementById(
-            "minPurchaseAmountError"
-          );
-          if (isNaN(minPurchaseAmount) || minPurchaseAmount <= 0) {
-            minPurchaseAmountError.innerText =
-              "Minimum purchase amount must be positive.";
-            isValid = false;
-          } else {
-            minPurchaseAmountError.innerText = "";
           }
 
           // Start Date validation

@@ -5,6 +5,7 @@ const Product = require("../../Models/productModel");
 const Address = require("../../Models/userAddress");
 const Cart = require("../../Models/cartModel");
 const Order = require("../../Models/orderModel");
+const Wallet = require("../../Models/walletModel");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const fs = require("fs");
@@ -14,6 +15,67 @@ const Offer = require("../../Models/offerModel");
 const loadAdminPage = async (req, res) => {
   try {
     res.render("admin");
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+const loadChart = async (req, res) => {
+  try {
+    const topCategories = await Order.aggregate([
+      { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.product",
+          foreignField: "_id",
+          as: "productInfo",
+        },
+      },
+      { $unwind: "$productInfo" },
+      {
+        $group: {
+          _id: "$productInfo.category",
+          totalSales: { $sum: "$items.quantity" },
+        },
+      },
+      { $sort: { totalSales: -1 } },
+      { $limit: 10 },
+    ]);
+
+    const topProducts = await Order.aggregate([
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.product",
+          totalQuantity: { $sum: "$items.quantity" },
+          totalSales: {
+            $sum: { $multiply: ["$items.quantity", "$items.price"] },
+          },
+        },
+      },
+      { $sort: { totalQuantity: -1 } },
+      { $limit: 10 },
+    ]);
+
+    const revenue = await Order.aggregate([
+      {
+        $group: {
+          _id: { $month: "$placedAt" },
+          totalRevenue: { $sum: "$totalPrice" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    res.json(revenue, topProducts, topCategories);
+    console.log(
+      "revenue",
+      revenue,
+      ",topProducts",
+      topProducts,
+      ",topCategories",
+      topCategories
+    );
   } catch (error) {
     console.error(error.message);
   }
@@ -274,14 +336,45 @@ const loadOrderList = async (req, res) => {
 const changeOrderStatus = async (req, res) => {
   try {
     const { orderId, status } = req.body;
+    const userId = req.session.user;
 
     const order = await Order.findById(orderId);
+    const amount = order.totalPrice;
 
     if (status === "Cancelled" && order.orderStatus !== "Cancelled") {
       for (let item of order.items) {
         await Product.findByIdAndUpdate(item.product, {
           $inc: { stock: item.quantity },
         });
+      }
+
+      if (
+        order.paymentMethod === "Wallet" ||
+        order.paymentMethod === "PayPal"
+      ) {
+        const wallet = await Wallet.findOne({ userId: userId });
+        if (wallet) {
+          wallet.balance += amount;
+          wallet.walletHistory.push({
+            transactionType: "credit",
+            amount: amount,
+            description: "Refund",
+          });
+          await wallet.save();
+        } else {
+          const newWallet = new Wallet({
+            userId,
+            balance: amount,
+            walletHistory: [
+              {
+                transactionType: "credit",
+                amount: amount,
+                description: "Refund",
+              },
+            ],
+          });
+          await newWallet.save();
+        }
       }
     }
 
@@ -545,4 +638,5 @@ module.exports = {
   removeImage,
   adminLogout,
   changeOrderStatus,
+  loadChart,
 };

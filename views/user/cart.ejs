@@ -1,7 +1,7 @@
 <%- include('partials/head') %>
 <html>
   <body class="animsition">
-	<%- include('partials/navbar') %>
+    <%- include('partials/navbar') %>
 
     <!-- breadcrumb -->
     <div class="container">
@@ -44,9 +44,16 @@
                         </div>
                       </td>
                       <td class="column-2">
-                        <%= item.productId.name %> <br /><span
-                          >₹<%= item.productId.price.toFixed(2) %></span
-                        >
+                        <%= item.productId.name %> <br />
+                        <% if(item.productId.discount_price > 0) {%>
+                        <span> 
+                          ₹<%=item.productId.discount_price.toFixed(2) %>
+                          </span>
+                        <%} else {%> 
+                          <span> 
+                            ₹<%=item.productId.price.toFixed(2) %>
+                            </span>
+                        <%}%>
                       </td>
                       <td class="column-4">
                         <div class="wrap-num-product flex-w m-l-auto m-r-0">
@@ -72,10 +79,17 @@
                           </div>
                         </div>
                       </td>
-                      <td class="column-5">
-                        ₹<%= (item.productId.price * item.quantity).toFixed(2)
-                        %>
-                      </td>
+                      <% if(item.productId.discount_price > 0) {%>
+                        <td class="column-5">
+                          ₹<%= (item.productId.discount_price * item.quantity).toFixed(2)
+                          %>
+                        </td>
+                      <%} else {%>
+                        <td class="column-5">
+                          ₹<%= (item.productId.price * item.quantity).toFixed(2)
+                          %>
+                        </td>
+                      <%}%>
                       <td class="column-6">
                         <a
                           class="text-danger"
