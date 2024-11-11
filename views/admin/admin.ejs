@@ -1,11 +1,18 @@
 <%- include('partials/head') %>
+<style>
+  #topCategoriesChart {
+    min-height: 400px !important;
+  }
+  #timeFilter {
+    border: none;
+    color: grey;
+  }
+</style>
 <body>
   <div class="screen-overlay"></div>
   <%- include('partials/aside') %>
   <main class="main-wrap">
-    <header class="main-header navbar">
-
-    </header>
+    <header class="main-header navbar"></header>
     <section class="content-main">
       <div class="content-header">
         <div>
@@ -28,7 +35,7 @@
               ></span>
               <div class="text">
                 <h6 class="mb-1 card-title">Revenue</h6>
-                <span>$13,456.5</span>
+                <span>₹ <span id="totalRevenue"></span></span>
                 <span class="text-sm"> Shipping fees are not included </span>
               </div>
             </article>
@@ -82,106 +89,304 @@
           <div class="card mb-4">
             <article class="card-body">
               <h5 class="card-title">Sale statistics</h5>
-              <canvas id="monthlyRevenueChart"></canvas>
+              <div class="d-flex">
+                <label for="timeFilter">Select Time Filter:</label>
+                <select id="timeFilter" onchange="fetchChartData()">
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                  <option value="daily">Daily</option>
+                </select>
+              </div>
+              <canvas id="salesChart"></canvas>
             </article>
           </div>
         </div>
         <div class="col-xl-4 col-lg-12">
           <div class="card mb-4">
             <article class="card-body">
-
               <canvas id="topCategoriesChart"></canvas>
             </article>
           </div>
         </div>
-        <div class="col-xl-4 col-lg-12">
+        <div class="col-xl-5 col-lg-12">
           <div class="card mb-4">
             <article class="card-body">
-
-              <canvas id="topCategoriesChart"></canvas>
+              <h5 class="card-title product-chart">To Selling Products</h5>
+              <canvas id="topProductsChart"></canvas>
             </article>
           </div>
         </div>
       </div>
     </section>
+    <%- include('partials/footer') %>
   </main>
-  <%- include('partials/footer') %>
-  <script>
+  <!-- <script>
     function renderMonthlyRevenueChart(data) {
-      const revenueLabels = data.map(item => `Month ${item._id}`);
-      const revenueValues = data.map(item => item.totalRevenue);
-  
-      const ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+      const revenueLabels = data.map((item) => `Month ${item._id}`);
+      const revenueValues = data.map((item) => item.totalRevenue);
+
+      const ctx = document
+        .getElementById("monthlyRevenueChart")
+        .getContext("2d");
       new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
           labels: revenueLabels,
-          datasets: [{
-            label: 'Monthly Revenue',
-            data: revenueValues,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-          }]
+          datasets: [
+            {
+              label: "Monthly Revenue",
+              data: revenueValues,
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+            },
+          ],
         },
-        options: { responsive: true }
+        options: { responsive: true },
       });
     }
-  
+
     function renderTopProductsChart(data) {
-      const productLabels = data.map(item => item._id); // Replace with product names if available
-      const productValues = data.map(item => item.totalQuantity);
-  
-      const ctx = document.getElementById('topProductsChart').getContext('2d');
+      const productLabels = data.map((item) => item.productName);
+      const productValues = data.map((item) => item.totalQuantity);
+
+      const ctx = document.getElementById("topProductsChart").getContext("2d");
       new Chart(ctx, {
-        type: 'pie',
+        type: "pie",
         data: {
           labels: productLabels,
-          datasets: [{
-            data: productValues,
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
-          }]
+          datasets: [
+            {
+              data: productValues,
+              backgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56",
+                "#4BC0C0",
+                "#9966FF",
+                "#FF9F40",
+              ],
+            },
+          ],
         },
-        options: { responsive: true }
+        options: { responsive: true },
       });
     }
-  
+
     function renderTopCategoriesChart(data) {
-      const categoryLabels = data.map(item => item._id);
-      const categoryValues = data.map(item => item.totalSales);
-  
-      const ctx = document.getElementById('topCategoriesChart').getContext('2d');
+      const categoryLabels = data.map((item) => item.categoryName);
+      const categoryValues = data.map((item) => item.totalSales);
+
+      const ctx = document
+        .getElementById("topCategoriesChart")
+        .getContext("2d");
       new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
           labels: categoryLabels,
-          datasets: [{
-            label: 'Sales by Category',
-            data: categoryValues,
-            backgroundColor: 'rgba(255, 206, 86, 0.2)',
-            borderColor: 'rgba(255, 206, 86, 1)',
-            borderWidth: 1
-          }]
+          datasets: [
+            {
+              label: "Sales by Category",
+              data: categoryValues,
+              backgroundColor: "rgba(255, 206, 86, 0.2)",
+              borderColor: "rgba(255, 206, 86, 1)",
+              borderWidth: 1,
+            },
+          ],
         },
-        options: { responsive: true }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 0,
+              max: 15, 
+              title: {
+                display: true,
+                text: "Total Sales",
+              },
+            },
+          },
+        },
       });
     }
-  
+
     // AJAX Calls to Fetch Data and Render Charts
     $(document).ready(function () {
-      // Fetch and render monthly revenue chart
+      // Fetch and render charts
       $.ajax({
-        url: '/admin/chart',
-        method: 'GET',
+        url: "/admin/chart",
+        method: "GET",
         success: function (data) {
-          renderMonthlyRevenueChart(data);
-          renderTopCategoriesChart(data);
-          renderTopProductsChart(data);
+          renderMonthlyRevenueChart(data.revenue);
+          renderTopCategoriesChart(data.topCategories);
+          renderTopProductsChart(data.topProducts);
         },
         error: function (error) {
-          console.error('Error fetching monthly revenue data:', error);
-        }
+          console.error("Error fetching monthly revenue data:", error);
+        },
       });
     });
+  </script> -->
+  <script>
+    function renderSalesChart(data, filter) {
+      let labels, labelText;
+
+      if (filter === "yearly") {
+        labels = data.map((item) => `Year ${item._id}`);
+        labelText = "Yearly Revenue";
+      } else if (filter === "monthly") {
+        // Convert month numbers to month names
+        const months = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+        labels = data.map((item) => months[item._id - 1]); // Adjust index for month names
+        labelText = "Monthly Revenue";
+      } else if (filter === "daily") {
+        const days = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+        labels = data.map((item) => days[item._id - 1]);
+        labelText = "Daily Revenue (Last 7 Days)";
+      }
+
+      const values = data.map((item) => item.totalRevenue);
+
+      if (window.salesChartInstance) window.salesChartInstance.destroy();
+
+      const ctx = document.getElementById("salesChart").getContext("2d");
+      window.salesChartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: labelText,
+              data: values,
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: "Revenue" },
+            },
+          },
+        },
+      });
+    }
+
+    function renderTopProductsChart(data) {
+      const labels = data.map((item) => item.productName);
+      const values = data.map((item) => item.totalQuantity);
+
+      if (window.topProductsChartInstance)
+        window.topProductsChartInstance.destroy();
+
+      const ctx = document.getElementById("topProductsChart").getContext("2d");
+      window.topProductsChartInstance = new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              data: values,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            legend: {
+              position: "top", 
+              align: "center", 
+              labels: {
+                padding: 10,
+                boxWidth: 20,
+              },
+            },
+          },
+        },
+      });
+    }
+
+    function renderTopCategoriesChart(data) {
+      const categoryLabels = data.map((item) => item.categoryName);
+      const categoryValues = data.map((item) => item.totalSales);
+
+      const ctx = document
+        .getElementById("topCategoriesChart")
+        .getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: categoryLabels,
+          datasets: [
+            {
+              label: "Sales by Category",
+              data: categoryValues,
+              backgroundColor: "rgba(255, 206, 86, 0.2)",
+              borderColor: "rgba(255, 206, 86, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 0,
+              max: 15,
+              title: {
+                display: true,
+                text: "Total Sales",
+              },
+            },
+          },
+        },
+      });
+    }
+
+    function fetchChartData() {
+      const filter = document.getElementById("timeFilter").value;
+      $.ajax({
+        url: `/admin/chart?filter=${filter}`,
+        method: "GET",
+        success: function (data) {
+          renderSalesChart(data.revenue, filter);
+          renderTopProductsChart(data.topProducts);
+          renderTopCategoriesChart(data.topCategories);
+        },
+        error: function (error) {
+          console.error("Error fetching chart data:", error);
+        },
+      });
+    }
+
+    $(document).ready(fetchChartData);
   </script>
-  </body>
+</body>

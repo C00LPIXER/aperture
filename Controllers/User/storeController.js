@@ -9,6 +9,7 @@ const Wishlist = require("../../Models/wishlistModel");
 const Review = require("../../Models/reviewModel");
 const Wallet = require("../../Models/walletModel");
 const Coupon = require("../../Models/couponModel");
+const mongoose = require("mongoose")
 require("dotenv").config();
 
 //* shop
@@ -67,48 +68,6 @@ const loadShopPage = async (req, res) => {
       (term) => new RegExp(`\\b${term}\\b`, "i")
     );
 
-    // const filterQuery = {
-    //   is_Active: true,
-    //   ...(search
-    //     ? {
-    //         $or: [
-    //           { name: { $in: regexPatterns } },
-    //           { description: { $in: regexPatterns } },
-    //         ],
-    //       }
-    //     : {}),
-    //   ...(brandIds.length > 0 && { brand: { $in: brandIds } }),
-    //   ...(categoryIds.length > 0 && { category: { $in: categoryIds } }),
-    // };
-
-    // const activeProducts = await Product.find(filterQuery)
-    //   .sort(getSortOrder(sort))
-    //   .skip((page - 1) * limit)
-    //   .limit(limit)
-    //   .lean()
-    //   .exec();
-
-    // const totalFilteredProducts = await Product.countDocuments(filterQuery);
-
-    // res.render("shop", {
-    //   categories,
-    //   allBrands,
-    //   allCategories,
-    //   totalProducts: totalFilteredProducts,
-    //   activeProducts,
-    //   brands,
-    //   currentPage: page,
-    //   totalPages: Math.ceil(totalFilteredProducts / limit),
-    //   limit,
-    //   search,
-    //   category: selectedCategories,
-    //   selectedCategories,
-    //   brand: selectedBrands,
-    //   selectedBrands,
-    //   sort,
-    //   wishlist,
-    // });
-
     const filterQuery = {
       is_Active: true,
       ...(search
@@ -134,6 +93,7 @@ const loadShopPage = async (req, res) => {
         select: "name",
         match: { is_Active: true },
       })
+      .sort(getSortOrder(sort))
       .lean()
       .exec();
 
@@ -143,6 +103,7 @@ const loadShopPage = async (req, res) => {
 
     const totalFilteredProducts = filteredActiveProducts.length;
     const startIndex = (page - 1) * limit;
+
     const paginatedProducts = filteredActiveProducts.slice(
       startIndex,
       startIndex + limit
@@ -243,7 +204,7 @@ const loadCartPage = async (req, res) => {
       }
 
       for (let i = 0; i < items.length; i++) {
-        if (items[i].product.stock < 1) {
+        if (items[i].product.stock < 1 || !items[i].product.is_Active) {
           await Cart.findOneAndUpdate(
             { _id: cart._id },
             { $pull: { items: { productId: items[i].product._id } } }
@@ -487,7 +448,7 @@ const createOrder = async (req, res) => {
       }
     }
 
-    res.json({ success: true, message: "Order created successfully" });
+    res.json({ success: true, message: "Order created successfully", redirectUrl: `/order-placed/${savedOrder._id}`});
   } catch (error) {
     console.error(error.message);
   }
@@ -607,7 +568,9 @@ const returnOrder = async (req, res) => {
 
 const successPage = async (req, res) => {
   try {
-    res.render("success");
+    const ordeId = req.params.ordeId;
+    const order = await Order.findById(ordeId).populate('userId').populate('items.product');
+    res.render("success", {order});
   } catch (error) {
     console.error(error.message);
   }

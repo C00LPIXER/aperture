@@ -136,7 +136,7 @@ const paymentSuccess = async (req, res) => {
       }
     }
 
-    res.redirect("/order-placed");
+    res.redirect(`/order-placed/${savedOrder._id}`);
   } catch (error) {
     console.error("paymentSuccess:", error.message);
   }
@@ -144,7 +144,58 @@ const paymentSuccess = async (req, res) => {
 
 const paymentCancel = async (req, res) => {
   try {
-    res.redirect("/checkout");
+    const { paymentMethod, totalPrice, shippingAddressId } =
+      req.session.payment;
+
+    const userId = req.session.user;
+    const cart = await Cart.findOne({ userId });
+    const shippingAddress = await Address.findById(shippingAddressId);
+
+    if (!shippingAddress) {
+      return res.json({
+        success: false,
+        message: "Please make sure you select an address",
+      });
+    }
+
+    const items = cart.items.map((item) => ({
+      product: item.productId,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+    const newOrder = new Order({
+      userId: userId,
+      shippingAddress: {
+        name: shippingAddress.name,
+        mobile: shippingAddress.mobile,
+        pincode: shippingAddress.pincode,
+        locality: shippingAddress.locality,
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        landmark: shippingAddress.landmark,
+        type: shippingAddress.type,
+      },
+      items: items,
+      paymentMethod: paymentMethod,
+      orderStatus: "Failed",
+      paymentStatus: "Failed",
+      totalPrice: totalPrice,
+      discount: cart.discount || 0,
+      couponCode: cart.couponCode,
+    });
+
+    const savedOrder = await newOrder.save();
+    if (savedOrder) {
+      await Cart.findByIdAndDelete({ _id: cart._id });
+      for (let item of items) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: -item.quantity },
+        });
+      }
+    }
+
+    res.redirect(`/order-placed/${savedOrder._id}`);
   } catch (error) {
     console.error("paymentCancel:", error.message);
   }

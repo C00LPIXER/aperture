@@ -582,7 +582,19 @@
           event.preventDefault();
 
           const paymentMethod = document.getElementById("payment-method").value;
+          const shippingAddressId = document.getElementById("address").value;
           const formData = $(this).serialize();
+
+          if (!shippingAddressId) {
+            Toastify({
+              text: "Please make sure you select an address",
+              duration: 3000,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#dc3545",
+            }).showToast();
+            return;
+          }
 
           if (
             paymentMethod === "Cash on Delivery" ||
@@ -594,7 +606,7 @@
               data: formData,
               success: function (response) {
                 if (response.success) {
-                  window.location.href = "/order-placed";
+                  window.location.href = response.redirectUrl;
                 } else {
                   Toastify({
                     text: response.message,

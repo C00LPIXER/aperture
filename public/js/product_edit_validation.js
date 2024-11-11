@@ -76,7 +76,7 @@ function removeImgae(imgid, id) {
       title: "Are you sure?",
       text: "Once deleted, you will not be able to recover this image!",
       showCancelButton: true,
-      confirmButtonText: "Delete",
+      confirmButtonText: "Delete", 
       cancelButtonText: "Cancel",
     },
     function (isConfirm) {

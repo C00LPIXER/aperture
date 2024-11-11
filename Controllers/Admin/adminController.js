@@ -9,9 +9,122 @@ const Wallet = require("../../Models/walletModel");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 const Offer = require("../../Models/offerModel");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 //* admin authentication
+// const loadAdminPage = async (req, res) => {
+//   try {
+//     res.render("admin");
+//   } catch (error) {
+//     console.error(error.message);
+//   }
+// };
+
+// const loadChart = async (req, res) => {
+//   try {
+//     const topCategories = await Order.aggregate([
+//       { $unwind: "$items" },
+//       {
+//         $lookup: {
+//           from: "products",
+//           localField: "items.product",
+//           foreignField: "_id",
+//           as: "productInfo",
+//         },
+//       },
+//       { $unwind: "$productInfo" },
+//       {
+//         $group: {
+//           _id: "$productInfo.category",
+//           totalSales: { $sum: "$items.quantity" },
+//         },
+//       },
+//       {
+//         $lookup: {
+//           from: "categories",
+//           localField: "_id",
+//           foreignField: "_id",
+//           as: "categoryDetails",
+//         },
+//       },
+//       { $unwind: "$categoryDetails" },
+//       {
+//         $project: {
+//           _id: 1,
+//           totalSales: 1,
+//           categoryName: "$categoryDetails.name",
+//         },
+//       },
+//       { $sort: { totalSales: -1 } },
+//       { $limit: 10 },
+//     ]);
+    
+
+//     const topProducts = await Order.aggregate([
+//       { $unwind: "$items" },
+//       {
+//         $group: {
+//           _id: "$items.product",
+//           totalQuantity: { $sum: "$items.quantity" },
+//           totalSales: {
+//             $sum: { $multiply: ["$items.quantity", "$items.price"] },
+//           },
+//         },
+//       },
+//       {
+//         $lookup: {
+//           from: "products",
+//           localField: "_id",
+//           foreignField: "_id",
+//           as: "productDetails",
+//         },
+//       },
+//       {
+//         $unwind: "$productDetails",
+//       },
+//       {
+//         $project: {
+//           _id: 1,
+//           totalQuantity: 1,
+//           totalSales: 1,
+//           productName: "$productDetails.name",
+//         },
+//       },
+//       { $sort: { totalQuantity: -1 } },
+//       { $limit: 10 },
+//     ]);
+    
+
+//     const revenue = await Order.aggregate([
+//       {
+//         $group: {
+//           _id: { $month: "$placedAt" },
+//           totalRevenue: { $sum: "$totalPrice" },
+//         },
+//       },
+//       { $sort: { _id: 1 } },
+//     ]);
+
+//     res.json({ revenue, topProducts, topCategories });
+//     console.log(
+//       "revenue",
+//       revenue,
+//       ",topProducts",
+//       topProducts,
+//       ",topCategories",
+//       topCategories
+//     );
+//   } catch (error) {
+//     console.error(error.message);
+//   }
+// };
+
 const loadAdminPage = async (req, res) => {
   try {
     res.render("admin");
@@ -22,6 +135,63 @@ const loadAdminPage = async (req, res) => {
 
 const loadChart = async (req, res) => {
   try {
+    const { filter } = req.query;
+    let dateGroup, dateRange;
+
+    if (filter === "yearly") {
+      dateGroup = { $year: "$placedAt" };
+      dateRange = 5;
+    } else if (filter === "monthly") {
+      dateGroup = { $month: "$placedAt" };
+      dateRange = 12; 
+    } else if (filter === "daily") {
+      dateGroup = { $dayOfWeek: "$placedAt" };
+      dateRange = 7;
+    } else {
+      dateGroup = { $month: "$placedAt" };
+      dateRange = 12;
+    }
+
+    const revenue = await Order.aggregate([
+      { $match: filter === "daily" ? { placedAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } } : {} },
+      {
+        $group: {
+          _id: dateGroup,
+          totalRevenue: { $sum: "$totalPrice" },
+        },
+      },
+      { $sort: { _id: 1 } },
+      { $limit: dateRange },
+    ]);
+
+    const topProducts = await Order.aggregate([
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.product",
+          totalQuantity: { $sum: "$items.quantity" },
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" },
+      {
+        $project: {
+          _id: 1,
+          totalQuantity: 1,
+          productName: "$productDetails.name",
+        },
+      },
+      { $sort: { totalQuantity: -1 } },
+      { $limit: 10 },
+    ]);
+
     const topCategories = await Order.aggregate([
       { $unwind: "$items" },
       {
@@ -39,45 +209,30 @@ const loadChart = async (req, res) => {
           totalSales: { $sum: "$items.quantity" },
         },
       },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "categoryDetails",
+        },
+      },
+      { $unwind: "$categoryDetails" },
+      {
+        $project: {
+          _id: 1,
+          totalSales: 1,
+          categoryName: "$categoryDetails.name",
+        },
+      },
       { $sort: { totalSales: -1 } },
       { $limit: 10 },
     ]);
 
-    const topProducts = await Order.aggregate([
-      { $unwind: "$items" },
-      {
-        $group: {
-          _id: "$items.product",
-          totalQuantity: { $sum: "$items.quantity" },
-          totalSales: {
-            $sum: { $multiply: ["$items.quantity", "$items.price"] },
-          },
-        },
-      },
-      { $sort: { totalQuantity: -1 } },
-      { $limit: 10 },
-    ]);
-
-    const revenue = await Order.aggregate([
-      {
-        $group: {
-          _id: { $month: "$placedAt" },
-          totalRevenue: { $sum: "$totalPrice" },
-        },
-      },
-      { $sort: { _id: 1 } },
-    ]);
-    res.json(revenue, topProducts, topCategories);
-    console.log(
-      "revenue",
-      revenue,
-      ",topProducts",
-      topProducts,
-      ",topCategories",
-      topCategories
-    );
+    res.json({ revenue, topProducts, topCategories });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Error loading chart data");
   }
 };
 
@@ -165,7 +320,6 @@ const blockProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     await Product.findByIdAndUpdate(productId, { is_Active: false });
-    req.session.user = null;
     res.json({ success: true, message: "Product blocked", status: "blocked" });
   } catch (error) {
     console.error(error.message);
@@ -200,9 +354,8 @@ const createProduct = async (req, res) => {
     if (isExist) {
       return res.json({ success: false, message: "Product already exists!" });
     } else {
-      const imagePaths = req.files
-        ? req.files.map((file) => `/uploads/${file.filename}`)
-        : [];
+      const imagePaths = req.files ? req.files.map((file) => file.path) : [];
+
       const highlight = req.body.highlights.split(",");
 
       const product = new Product({
@@ -243,19 +396,29 @@ const removeImage = async (req, res) => {
   try {
     const { imgid, id } = req.body;
 
-    const product = await Product.findByIdAndUpdate(id, {
-      $pull: { images: imgid },
-    });
+    const publicId = imgid
+      .replace(
+        /^https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/v\d+\//,
+        ""
+      )
+      .replace(/\.[^.]+$/, "");
 
-    const imagePath = path.join("public", imgid);
+    console.log("Public ID to delete:", publicId);
 
-    if (fs.existsSync(imagePath)) {
-      await fs.unlinkSync(imagePath);
+    const result = await cloudinary.uploader.destroy(publicId);
+    console.log("Cloudinary deletion result:", result);
+
+    if (result.result === "ok") {
+      await Product.findByIdAndUpdate(id, {
+        $pull: { images: imgid },
+      });
+      res.json({ success: true, message: "Image removed successfully!" });
     } else {
-      console.log(`Image ${imgid} not found at path: ${imagePath}`);
+      res.json({
+        success: false,
+        message: "Failed to delete image on Cloudinary.",
+      });
     }
-
-    res.json({ success: true, message: "Image removed successfully!" });
   } catch (error) {
     console.error(error.message);
   }
@@ -266,10 +429,7 @@ const editProduct = async (req, res) => {
     const id = req.body.id;
     const highlight = req.body.highlights.split(",");
 
-    const imagePaths =
-      req.files && req.files.length > 0
-        ? req.files.map((file) => `/uploads/${file.filename}`)
-        : [];
+    const imagePaths = req.files ? req.files.map((file) => file.path) : [];
 
     const product = await Product.findById(id);
 

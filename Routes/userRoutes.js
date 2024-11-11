@@ -1,14 +1,34 @@
 const express = require("express");
-const User = require("../Models/userModel");
 const authController = require("../Controllers/User/authController");
 const accountController = require("../Controllers/User/accountController");
 const storeController = require("../Controllers/User/storeController");
 const paymentController = require("../Controllers/User/paymentController");
-const shutterSpaceController = require("../Controllers/User/shutterSpaceController");
+const galleryController = require("../Controllers/User/galleryController");
 const offerController = require("../Controllers/Admin/offerController");
 const userAuthentication = require("../middleware/userAuth");
 const passport = require("passport");
 const routes = express.Router();
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const path  = require('path');
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'gallery',
+    format: async (req, file) => 'jpg',
+    public_id: (req, file) => Date.now() + "_" + file.originalname.split('.')[0], 
+  },
+});
+
+const upload = multer({ storage: storage });
 
 //* user authentication
 routes.get("/landing", userAuthentication.isLogout, authController.loadLandingPage);
@@ -44,7 +64,7 @@ routes.delete("/cart/reove-from-cart", userAuthentication.isLogin, storeControll
 //* proceed to checkout
 routes.get("/checkout", userAuthentication.isLogin, storeController.loadCheckOutPage);
 routes.post("/checkout/complete", userAuthentication.isLogin, storeController.createOrder);
-routes.get("/order-placed", userAuthentication.isLogin, storeController.successPage);
+routes.get("/order-placed/:ordeId", userAuthentication.isLogin, storeController.successPage);
 routes.post("/checkout/use-coupon", userAuthentication.isLogin, offerController.useCoupon);
 routes.patch("/checkout/remove-coupon", userAuthentication.isLogin, offerController.removeCoupon);
 
@@ -69,9 +89,9 @@ routes.post("/add-to-wishlist", accountController.addToWishlist);
 routes.delete("/wishlist/remove-from-wishlist", userAuthentication.isLogin, accountController.removeFromWishlist); 
 
 //ToDo sutter space
-routes.get("/sutter-space", shutterSpaceController.loadShutterSpace);
-routes.post("/sutter-space/create-art", shutterSpaceController.createArt);
-routes.delete("/sutter-space/delete-art", shutterSpaceController.removeArt);
+routes.get("/sutter-space", galleryController.loadShutterSpace);
+routes.post("/sutter-space/create-art", upload.array("image", 1), galleryController.createArt);
+routes.delete("/sutter-space/delete-art", galleryController.removeArt);
 
 //* error page
 routes.get("/not-found", authController.loadErrorPage);

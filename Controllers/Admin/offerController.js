@@ -66,10 +66,8 @@ const createOffer = async (req, res) => {
     if (categories.length > 0) {
       query.category = { $in: categories.map((category) => category._id) };
     }
-    console.log("query", query);
 
     const products = await Product.find(query);
-    console.log("products", products);
 
     const bulkOps = products.map((product) => {
       let discountPrice = product.price;
@@ -89,7 +87,6 @@ const createOffer = async (req, res) => {
         },
       };
     });
-    console.log("bulkOps", bulkOps);
 
     await Product.bulkWrite(bulkOps);
 
@@ -288,7 +285,7 @@ const removeCoupon = async (req, res) => {
 
     return res.json({ success: true, message: "Coupon removed!" });
   } catch (error) {
-    console.error(error.message);
+    console.error("removeCoupon", error.message);
   }
 };
 

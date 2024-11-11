@@ -75,7 +75,7 @@
     <!-- Header -->
     <%- include('partials/navbar') %>
 
-    <div id="containers" class="container">
+    <div id="containers" class="container mt-4">
       <h2>My Account</h2>
       <hr />
       <div class="row">
@@ -232,9 +232,13 @@
                 <div class="card-body">
                   <h5 class="card-title">Order #<%= order._id %></h5>
                   <% if(order.orderStatus === "Delivered") { %>
-                    <a class="card-text m-2" href="/profile/download-invoice/<%= order._id %>">Download Invoice</a>
-                    <%}%>
-                    <p class="card-text m-2">Status: <%= order.orderStatus %></p>
+                  <a
+                    class="card-text m-2"
+                    href="/profile/download-invoice/<%= order._id %>"
+                    >Download Invoice</a
+                  >
+                  <%}%>
+                  <p class="card-text m-2">Status: <%= order.orderStatus %></p>
 
                   <!-- Button to view order details -->
                   <button
@@ -250,7 +254,9 @@
                   <!-- Button to cancel the order -->
                   <%if(order.orderStatus === 'Shipped') {%>
                   <a type="hidden"></a>
-                  <%} else if(order.orderStatus=== 'Delivered' && new Date() < new Date(order.placedAt.getTime() + 7 * 24 * 60 * 60 * 1000)) {%>
+                  <%} else if(order.orderStatus=== 'Delivered' && new Date() <
+                  new Date(order.placedAt.getTime() + 7 * 24 * 60 * 60 * 1000))
+                  {%>
                   <a
                     href="javascript:void(0);"
                     class="btn btn-danger text-white"
@@ -258,7 +264,9 @@
                     onclick="returnOrder(this)"
                     >Return Order</a
                   >
-                  <%} else if(order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned' && order.orderStatus !== 'Delivered'){%>
+                  <%} else if(order.orderStatus !== 'Cancelled' &&
+                  order.orderStatus !== 'Returned' && order.orderStatus !==
+                  'Delivered'){%>
                   <a
                     href="javascript:void(0);"
                     class="btn btn-danger text-white"
@@ -419,7 +427,8 @@
                           <%= "Mobile " + order.shippingAddress.mobile %> <br />
                         </p>
                         <% if(order.orderStatus !== 'Cancelled' &&
-                        order.orderStatus !== 'Delivered') { %>
+                        order.orderStatus !== 'Delivered' && order.orderStatus
+                        !== 'Returned') { %>
                         <p class="py-2">
                           <strong>Estimated Delivery Date: </strong>
                           <%= new Date(new Date(order.placedAt).getTime() + 7 *
@@ -436,7 +445,7 @@
                           <%= new Date(order.updatedAt).toDateString() %>
                         </p>
                         <% } else if(order.orderStatus === 'Returned'){ %>
-                          p class="py-2">
+                        <p class="py-2">
                           <strong>Returned Date: </strong>
                           <%= new Date(order.updatedAt).toDateString() %>
                         </p>
@@ -445,6 +454,7 @@
                         <!-- Progress Bar for Order Status -->
                         <% if (order.orderStatus !== 'Cancelled' &&
                         order.orderStatus !== 'Returned') { %>
+
                         <div class="progressbar">
                           <div
                             class="progress-step <% if(order.orderStatus === 'Processing' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered') { %> active <% } %>"
@@ -909,6 +919,26 @@
 
     <%- include('partials/footer') %>
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const hash = window.location.hash;
+        if (hash) {
+          const targetTab = document.querySelector(`a[href="${hash}"]`);
+          if (targetTab) {
+            document
+              .querySelector(".list-group-item.active")
+              ?.classList.remove("active");
+            targetTab.classList.add("active");
+            const tabContent = document.querySelector(hash);
+            if (tabContent) {
+              document
+                .querySelector(".tab-pane.active")
+                ?.classList.remove("show", "active");
+              tabContent.classList.add("show", "active");
+            }
+          }
+        }
+      });
+
       function setProductId(buttonElement) {
         const productId = buttonElement.getAttribute("data-productId-id");
         document.getElementById("hiddenProductId").value = productId;
