@@ -30,6 +30,27 @@ const loadProfilePage = async (req, res) => {
         .sort({ placedAt: -1 })
         .populate("items.product")
         .populate("shippingAddress");
+
+      if (order.length > 0) {
+        const failedOrders = await Order.find({ orderStatus: "Failed" });
+
+        failedOrders.forEach(async (order) => {
+          const timeElapsed = new Date() - new Date(order.placedAt);
+          const twentyFourHours = 24 * 60 * 60 * 1000;
+
+          if (timeElapsed >= twentyFourHours) {
+            order.orderStatus = "Cancelled";
+            await order.save();
+          }
+
+          for (let item of order.items) {
+            await Product.findByIdAndUpdate(item.product, {
+              $inc: { stock: item.quantity },
+            });
+          }
+        });
+      }
+
       if (user) {
         res.render("userProfile", { user, order, wallet });
       }

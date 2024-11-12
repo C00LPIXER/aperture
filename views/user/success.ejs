@@ -3,7 +3,16 @@
   <body class="animsition">
     <%- include('partials/navbar') %>
 
-    <div class="container" style="min-height: 80vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+    <div
+      class="container"
+      style="
+        min-height: 80vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      "
+    >
       <div class="success-animation">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -11,7 +20,14 @@
           width="150"
           height="150"
         >
-          <circle cx="50" cy="50" r="30" stroke="green" stroke-width="3" fill="none" />
+          <circle
+            cx="50"
+            cy="50"
+            r="30"
+            stroke="green"
+            stroke-width="3"
+            fill="none"
+          />
           <path
             d="M30 50 L45 65 L70 35"
             stroke="green"
@@ -23,32 +39,57 @@
 
       <!-- Thank You Message -->
       <h2 class="ltext-103 cl5 text-center">Thank you for your order!</h2>
+      <% if(order.orderStatus !== "Failed"){ %>
       <p class="stext-102 cl6 text-center p-t-10">
         Your order has been successfully placed.
       </p>
-      <div class="p-3" style="min-height: 20vh; min-width: 75vh; display: flex; flex-direction: column; justify-content: center; border: 2px solid black;">        
+      <%} else { %>
+      <p class="stext-102 cl222 text-center p-t-10">
+        Payment failed. Please retry payment from the 'My Orders' section.<br> If not completed within 24 hours, the order will be automatically canceled.
+      </p>
+      <%}%>
+      <div
+        class="p-3"
+        style="
+          min-height: 20vh;
+          min-width: 75vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          border: 1px solid gainsboro;
+        "
+      >
         <ul>
           <% order.items.forEach(item => { %>
-            <li>
-              Product: <%= item.product.name %> <br>
-              Quantity: <%= item.quantity %> <br>
-              Price: $<%= item.price %>
-            </li>
+          <li>
+            Product: <%= item.product.name %> <br />
+            Quantity: <%= item.quantity %> <br />
+            Price: $<%= item.price %>
+          </li>
           <% }) %>
         </ul>
-      
+
         <p><strong>Total Price:</strong> $<%= order.totalPrice %></p>
-        <p><strong>Shipping Address:</strong> <%= order.shippingAddress.locality %>, <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %></p>
+        <p>
+          <strong>Shipping Address:</strong> <%= order.shippingAddress.locality
+          %>, <%= order.shippingAddress.city %>, <%= order.shippingAddress.state
+          %> - <%= order.shippingAddress.pincode %>
+        </p>
         <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
       </div>
-      
 
       <!-- Popup Buttons -->
       <div id="success-buttons" class="p-t-30">
-        <button class="flex-c-m stext-101 cl0 bg333 bor14 hov-btn3 p-lr-15 trans-04 pointer w-50" onclick="window.location.href='/shop';">
+        <button
+          class="flex-c-m stext-101 cl0 bg333 bor14 hov-btn3 p-lr-15 trans-04 pointer w-50"
+          onclick="window.location.href='/shop';"
+        >
           Continue Shopping
         </button>
-        <button class="flex-c-m stext-101 cl0 bg2 bor14 hov-btn3 p-lr-15 trans-04 pointer m-l-15 p-3 w-50" onclick="window.location.href='/profile#orders';">
+        <button
+          class="flex-c-m stext-101 cl0 bg2 bor14 hov-btn3 p-lr-15 trans-04 pointer m-l-15 p-3 w-50"
+          onclick="window.location.href='/profile#orders';"
+        >
           View Order
         </button>
       </div>
@@ -83,7 +124,7 @@
       }
 
       .bg333 {
-        background-color: #4CAF50;
+        background-color: #4caf50;
       }
     </style>
   </body>

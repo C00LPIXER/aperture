@@ -3,7 +3,6 @@ const authController = require("../Controllers/User/authController");
 const accountController = require("../Controllers/User/accountController");
 const storeController = require("../Controllers/User/storeController");
 const paymentController = require("../Controllers/User/paymentController");
-const galleryController = require("../Controllers/User/galleryController");
 const offerController = require("../Controllers/Admin/offerController");
 const userAuthentication = require("../middleware/userAuth");
 const passport = require("passport");
@@ -72,6 +71,9 @@ routes.patch("/checkout/remove-coupon", userAuthentication.isLogin, offerControl
 routes.post("/checkout/pay-with-paypal", userAuthentication.isLogin, paymentController.payWithPaypal);
 routes.get("/checkout/payment-success", userAuthentication.isLogin, paymentController.paymentSuccess);
 routes.get("/checkout/payment-failed", userAuthentication.isLogin, paymentController.paymentCancel);
+routes.get("/profile/pay-now/:orderId", userAuthentication.isLogin, paymentController.payFromOrder);
+routes.get("/profile/payment-success", userAuthentication.isLogin, paymentController.payNowSuccess);
+routes.get("/profile/payment-failed", userAuthentication.isLogin, paymentController.payNowCancel);
 
 // * user profile
 routes.get("/profile", userAuthentication.pleaseLogin, accountController.loadProfilePage);
@@ -86,12 +88,7 @@ routes.get("/profile/download-invoice/:id", userAuthentication.isLogin, accountC
 routes.post("/profile/submit-review", userAuthentication.isLogin, accountController.addReview);
 routes.get("/wishlist", userAuthentication.pleaseLogin, accountController.loadWishlistPage);
 routes.post("/add-to-wishlist", accountController.addToWishlist);
-routes.delete("/wishlist/remove-from-wishlist", userAuthentication.isLogin, accountController.removeFromWishlist); 
-
-//ToDo sutter space
-routes.get("/sutter-space", galleryController.loadShutterSpace);
-routes.post("/sutter-space/create-art", upload.array("image", 1), galleryController.createArt);
-routes.delete("/sutter-space/delete-art", galleryController.removeArt);
+routes.delete("/wishlist/remove-from-wishlist", userAuthentication.isLogin, accountController.removeFromWishlist);
 
 //* error page
 routes.get("/not-found", authController.loadErrorPage);

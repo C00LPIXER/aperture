@@ -11,6 +11,7 @@ const path = require("path");
 const fs = require("fs");
 const cloudinary = require("cloudinary").v2;
 const Offer = require("../../Models/offerModel");
+const Review = require("../../Models/reviewModel");
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -18,116 +19,26 @@ cloudinary.config({
 });
 
 //* admin authentication
-// const loadAdminPage = async (req, res) => {
-//   try {
-//     res.render("admin");
-//   } catch (error) {
-//     console.error(error.message);
-//   }
-// };
-
-// const loadChart = async (req, res) => {
-//   try {
-//     const topCategories = await Order.aggregate([
-//       { $unwind: "$items" },
-//       {
-//         $lookup: {
-//           from: "products",
-//           localField: "items.product",
-//           foreignField: "_id",
-//           as: "productInfo",
-//         },
-//       },
-//       { $unwind: "$productInfo" },
-//       {
-//         $group: {
-//           _id: "$productInfo.category",
-//           totalSales: { $sum: "$items.quantity" },
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "categories",
-//           localField: "_id",
-//           foreignField: "_id",
-//           as: "categoryDetails",
-//         },
-//       },
-//       { $unwind: "$categoryDetails" },
-//       {
-//         $project: {
-//           _id: 1,
-//           totalSales: 1,
-//           categoryName: "$categoryDetails.name",
-//         },
-//       },
-//       { $sort: { totalSales: -1 } },
-//       { $limit: 10 },
-//     ]);
-    
-
-//     const topProducts = await Order.aggregate([
-//       { $unwind: "$items" },
-//       {
-//         $group: {
-//           _id: "$items.product",
-//           totalQuantity: { $sum: "$items.quantity" },
-//           totalSales: {
-//             $sum: { $multiply: ["$items.quantity", "$items.price"] },
-//           },
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "products",
-//           localField: "_id",
-//           foreignField: "_id",
-//           as: "productDetails",
-//         },
-//       },
-//       {
-//         $unwind: "$productDetails",
-//       },
-//       {
-//         $project: {
-//           _id: 1,
-//           totalQuantity: 1,
-//           totalSales: 1,
-//           productName: "$productDetails.name",
-//         },
-//       },
-//       { $sort: { totalQuantity: -1 } },
-//       { $limit: 10 },
-//     ]);
-    
-
-//     const revenue = await Order.aggregate([
-//       {
-//         $group: {
-//           _id: { $month: "$placedAt" },
-//           totalRevenue: { $sum: "$totalPrice" },
-//         },
-//       },
-//       { $sort: { _id: 1 } },
-//     ]);
-
-//     res.json({ revenue, topProducts, topCategories });
-//     console.log(
-//       "revenue",
-//       revenue,
-//       ",topProducts",
-//       topProducts,
-//       ",topCategories",
-//       topCategories
-//     );
-//   } catch (error) {
-//     console.error(error.message);
-//   }
-// };
-
 const loadAdminPage = async (req, res) => {
   try {
-    res.render("admin");
+    const orders = await Order.countDocuments();
+    const products = await Product.countDocuments();
+    const users = await User.countDocuments();
+    const totalRevenue = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: "Delivered",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalPrice" },
+        },
+      },
+    ]);
+
+    res.render("admin", { orders, products, users, totalRevenue });
   } catch (error) {
     console.error(error.message);
   }
@@ -143,7 +54,7 @@ const loadChart = async (req, res) => {
       dateRange = 5;
     } else if (filter === "monthly") {
       dateGroup = { $month: "$placedAt" };
-      dateRange = 12; 
+      dateRange = 12;
     } else if (filter === "daily") {
       dateGroup = { $dayOfWeek: "$placedAt" };
       dateRange = 7;
@@ -153,7 +64,18 @@ const loadChart = async (req, res) => {
     }
 
     const revenue = await Order.aggregate([
-      { $match: filter === "daily" ? { placedAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } } : {} },
+      {
+        $match: {
+          orderStatus: "Delivered",
+          ...(filter === "daily"
+            ? {
+                placedAt: {
+                  $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                },
+              }
+            : {}),
+        },
+      },
       {
         $group: {
           _id: dateGroup,
@@ -165,6 +87,7 @@ const loadChart = async (req, res) => {
     ]);
 
     const topProducts = await Order.aggregate([
+      { $match: { orderStatus: "Delivered" } },
       { $unwind: "$items" },
       {
         $group: {
@@ -193,6 +116,7 @@ const loadChart = async (req, res) => {
     ]);
 
     const topCategories = await Order.aggregate([
+      { $match: { orderStatus: "Delivered" } },
       { $unwind: "$items" },
       {
         $lookup: {
@@ -767,6 +691,44 @@ const editBrand = async (req, res) => {
   }
 };
 
+//* review manegement
+const loadReviews = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+    const skip = (page - 1) * limit;
+
+    const reviews = await Review.find()
+      .populate("productId")
+      .skip(skip)
+      .limit(limit);
+
+    const totalReviews = await Review.countDocuments();
+    const totalPages = Math.ceil(totalReviews / limit);
+
+    res.render("reviews", {
+      reviews,
+      currentPage: page,
+      totalPages,
+      limit,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+const deleteReview = async (req, res) => {
+  try {
+    const reviewId = req.params.reviewId;
+    await Review.findByIdAndDelete(reviewId);
+    
+    res.json({ success: true, message: "Review removed!" });
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
 module.exports = {
   loadAdminPage,
   loadAdminLogin,
@@ -799,4 +761,6 @@ module.exports = {
   adminLogout,
   changeOrderStatus,
   loadChart,
+  loadReviews,
+  deleteReview,
 };

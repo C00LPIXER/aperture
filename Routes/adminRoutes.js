@@ -75,7 +75,7 @@ routes.patch("/admin/products/:id/unblock", adminAuth.isAdmin, adminController.u
 //? [offer management]
 routes.get("/admin/offers", adminAuth.isAdmin, offerController.loadOfferList)
 routes.post("/admin/offers/add-offer", adminAuth.isAdmin, offerController.createOffer)
-routes.delete("/admin/offers/delete", adminAuth.isAdmin, offerController.deleteOffer)
+routes.put("/admin/offers/block", adminAuth.isAdmin, offerController.deleteOffer)
 
 //? [coupon management]
 routes.get("/admin/coupons", adminAuth.isAdmin, offerController.loadCouponList)
@@ -88,5 +88,8 @@ routes.post("/admin/sales", adminAuth.isAdmin, salesController.generateReport)
 routes.get('/admin/download-pdf-report', salesController.downloadPDFReport);
 routes.get('/admin/download-excel-report', salesController.downloadExcelReport);
 
+//? [review]
+routes.get("/admin/reviews", adminAuth.isAdmin, adminController.loadReviews)
+routes.get("/admin/reviews/:reviewId", adminAuth.isAdmin, adminController.deleteReview)
 
 module.exports = routes;

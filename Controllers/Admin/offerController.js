@@ -99,8 +99,7 @@ const createOffer = async (req, res) => {
 const deleteOffer = async (req, res) => {
   try {
     const id = req.body.id;
-    const offer = await Offer.findByIdAndDelete(id);
-
+    const offer = await Offer.findByIdAndUpdate(id,{isActive: false});
     const query = {};
     if (offer.brands && offer.brands.length > 0) {
       query.brand = { $in: offer.brands.map((brand) => brand._id) };

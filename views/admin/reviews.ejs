@@ -1,0 +1,137 @@
+<%- include('partials/head') %>
+
+<body>
+  <div class="screen-overlay"></div>
+  <%- include('partials/aside') %>
+  <main class="main-wrap">
+    <header class="main-header navbar"></header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Review List</h2>
+          <p>Lorem ipsum dolor sit amet.</p>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <header class="card-header">
+          <div class="row gx-3">
+            <div class="col-lg-2 col-md-3 col-6">
+                <select class="form-select" id="limitSelect">
+                    <option value="4" <%= limit === 4 ? 'selected' : '' %>>Show 4</option>
+                    <option value="8" <%= limit === 8 ? 'selected' : '' %>>Show 8</option>
+                    <option value="12" <%= limit === 12 ? 'selected' : '' %>>Show 12</option>
+                  </select>
+            </div>
+          </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body" id="review-summery">
+          <div class="table-responsive">
+            <%if(reviews){%>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Product</th>
+                  <th scope="col">rating</th>
+                  <th scope="col">Review</th>
+                  <th scope="col">Date</th>
+                  <th scope="col" class="text-end"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% reviews.forEach((review) => {%>
+                <tr>
+                  <td><%= review.productId.name %></td>
+                  <td><%= review.rating %></td>
+                  <td><%= review.review %></td>
+                  <td><%= new Date(review.createdAt).toDateString() %></td>
+                  <td>
+                    <a
+                      onclick="deleteReview(`<%= review._id %>`)"
+                      class="btn"
+                      ><i class="fa-solid fa-trash" style="color: #000000"></i
+                    ></a>
+                  </td>
+                </tr>
+                <%})%>
+              </tbody>
+            </table>
+            <%} else {%>
+            <p>No Reviews</p>
+            <%}%>
+          </div>
+          <!-- table-responsive //end -->
+        </div>
+        <!-- card-body end// -->
+      </div>
+      <!-- card end// -->
+      <div class="pagination-area mt-30 mb-50">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="?page=<%= currentPage - 1 %>&limit=<%= limit %>"
+              >
+                <i class="material-icons md-chevron_left"></i>
+              </a>
+            </li>
+            <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>">
+                <%= i %>
+              </a>
+            </li>
+            <% } %> <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="?page=<%= currentPage + 1 %>&limit=<%= limit %>"
+              >
+                <i class="material-icons md-chevron_right"></i>
+              </a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+    </section>
+    <!-- content-main end// -->
+    <%- include('partials/footer') %>
+    <script>
+      function deleteReview(reviewId) {
+        alert(reviewId);
+        $.ajax({
+          url: `/admin/reviews/${reviewId}`,
+          method: "GET",
+          success: function (response) {
+            if (response.success) {
+                Toastify({
+                text: response.message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#dc3545",
+              }).showToast();
+              $("#review-summery").load("/admin/reviews #review-summery > *");
+            }
+          },
+          error: function (error) {
+            console.error("Error fetching chart data:", error);
+          },
+        });
+      }
+      document
+        .getElementById("limitSelect")
+        .addEventListener("change", function () {
+          const selectedLimit = this.value;
+          const url = new URL(window.location.href);
+
+          url.searchParams.set("limit", selectedLimit);
+
+          window.location.href = url.toString();
+        });
+    </script>
+  </main>
+</body>

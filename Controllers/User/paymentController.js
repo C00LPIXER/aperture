@@ -32,7 +32,7 @@ const convertCurrency = async (amountInINR) => {
   }
 };
 
-//* order with paypal 
+//* order with paypal
 const payWithPaypal = async (req, res) => {
   try {
     req.session.payment = req.body;
@@ -179,7 +179,7 @@ const paymentCancel = async (req, res) => {
       items: items,
       paymentMethod: paymentMethod,
       orderStatus: "Failed",
-      paymentStatus: "Failed",
+      paymentStatus: "Pending",
       totalPrice: totalPrice,
       discount: cart.discount || 0,
       couponCode: cart.couponCode,
@@ -201,8 +201,82 @@ const paymentCancel = async (req, res) => {
   }
 };
 
+const payFromOrder = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const { totalPrice } = await Order.findById(orderId);
+    req.session.orderId = orderId;
+    let total = await convertCurrency(totalPrice);
+
+    const create_payment_json = {
+      intent: "sale",
+      payer: {
+        payment_method: "paypal",
+      },
+      redirect_urls: {
+        return_url: "http://localhost:3000/profile/payment-success",
+        cancel_url: "http://localhost:3000/profile/payment-failed",
+      },
+      transactions: [
+        {
+          amount: {
+            currency: "USD",
+            total: total,
+          },
+        },
+      ],
+    };
+
+    paypal.payment.create(create_payment_json, function (error, payment) {
+      if (error) {
+        console.error(error.message);
+        return res.json({ success: false, message: "Payment creation failed" });
+      } else {
+        for (let i = 0; i < payment.links.length; i++) {
+          if (payment.links[i].rel === "approval_url") {
+            return res.json({
+              success: true,
+              redirectUrl: payment.links[i].href,
+            });
+          }
+        }
+        res.json({
+          success: false,
+          message: "Approval URL not found in PayPal response",
+        });
+      }
+    });
+  } catch (error) {
+    console.error("payWithPaypal:", error.message);
+  }
+};
+
+const payNowSuccess = async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(req.session.orderId, {
+      orderStatus: "Processing",
+      paymentStatus: "Completed",
+    });
+
+    res.redirect("/profile#orders");
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+const payNowCancel = async (req, res) => {
+  try {
+    res.redirect("/profile#orders");
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
 module.exports = {
   payWithPaypal,
   paymentSuccess,
   paymentCancel,
+  payFromOrder,
+  payNowSuccess,
+  payNowCancel,
 };
