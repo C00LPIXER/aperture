@@ -256,6 +256,7 @@ const addReview = async (req, res) => {
         ratings: avgRating,
       });
     }
+    
     if (NewReview) {
       res.json({
         success: true,
@@ -375,9 +376,11 @@ const invoiceDownload = async (req, res) => {
 const loadWishlistPage = async (req, res) => {
   try {
     const userId = req.session.user;
-    let wishlist = await Wishlist.findOne({ userId }).populate(
-      "items.productId"
-    );
+    let wishlist = await Wishlist.findOne({ userId }).populate({
+      path: "items.productId",
+      match: { is_Active: true }
+  });
+
 
     res.render("wishlist", { wishlist });
   } catch (error) {

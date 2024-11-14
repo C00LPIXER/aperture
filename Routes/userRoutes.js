@@ -7,27 +7,8 @@ const offerController = require("../Controllers/Admin/offerController");
 const userAuthentication = require("../middleware/userAuth");
 const passport = require("passport");
 const routes = express.Router();
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const path  = require('path');
+const app = express();
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
-
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'gallery',
-    format: async (req, file) => 'jpg',
-    public_id: (req, file) => Date.now() + "_" + file.originalname.split('.')[0], 
-  },
-});
-
-const upload = multer({ storage: storage });
 
 //* user authentication
 routes.get("/landing", userAuthentication.isLogout, authController.loadLandingPage);
@@ -93,5 +74,4 @@ routes.delete("/wishlist/remove-from-wishlist", userAuthentication.isLogin, acco
 //* error page
 routes.get("/not-found", authController.loadErrorPage);
 
-module.exports = routes; 
-  
+module.exports = routes;  

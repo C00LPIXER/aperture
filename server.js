@@ -39,7 +39,9 @@ app.use(
     cookie: { secure: false },
   })
 );
- 
+
+app.use(nocache());
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -50,9 +52,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(nocache());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("./public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", userRoutes);
 app.use("/", adminRoutes);
@@ -61,6 +62,6 @@ app.get("*", (req, res) => {
   res.render("errorPage");
 });
 
-app.listen(port, "0.0.0.0", () => {
+app.listen(port, () => {
   console.log(`server running on http://127.0.0.1:${port}`);
 });

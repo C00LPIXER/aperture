@@ -9,7 +9,8 @@ const Wishlist = require("../../Models/wishlistModel");
 const Review = require("../../Models/reviewModel");
 const Wallet = require("../../Models/walletModel");
 const Coupon = require("../../Models/couponModel");
-const mongoose = require("mongoose")
+const Banner = require("../../Models/bannerModel");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 //* shop
@@ -17,6 +18,8 @@ const loadHomePage = async (req, res) => {
   try {
     const userId = req.session.user;
     const wishlist = await Wishlist.findOne({ userId });
+    const banner = await Banner.find();
+
     const activeProducts = await Product.find({
       is_Active: true,
       stock: { $gt: 0 },
@@ -33,7 +36,7 @@ const loadHomePage = async (req, res) => {
       (product) => product.category && product.brand
     );
 
-    res.render("home", { product, wishlist });
+    res.render("home", { product, wishlist, banner });
   } catch (error) {
     console.error(error.message);
   }
@@ -222,8 +225,18 @@ const loadCartPage = async (req, res) => {
             : item.productId.price;
         return total + price * item.quantity;
       }, 0);
-    }
 
+      cart.totalDiscount = cart.items.reduce((totalDiscount, item) => {
+        const originalPrice = item.productId.price;
+        const discountPrice =
+          item.productId.discount_price > 0
+            ? item.productId.discount_price
+            : originalPrice;
+        const discountAmount = (originalPrice - discountPrice) * item.quantity;
+
+        return totalDiscount + discountAmount;
+      }, 0);
+    }
     res.render("cart", { cart });
   } catch (error) {
     console.error("cart", error.message);
@@ -262,6 +275,7 @@ const addToCart = async (req, res) => {
             items: [{ productId, quantity: 1, price: itemPrice }],
           });
         }
+
         await cart.save();
         res.json({
           success: true,
@@ -359,6 +373,18 @@ const loadCheckOutPage = async (req, res) => {
             : item.productId.price;
         return total + price * item.quantity;
       }, 0);
+
+      cart.totalDiscount = cart.items.reduce((totalDiscount, item) => {
+        const originalPrice = item.productId.price;
+        const discountPrice =
+          item.productId.discount_price > 0
+            ? item.productId.discount_price
+            : originalPrice;
+        const discountAmount = (originalPrice - discountPrice) * item.quantity;
+
+        return totalDiscount + discountAmount;
+      }, 0);
+
       cart.save();
       res.render("checkOut", { cart, user, coupon });
     } else {
@@ -413,6 +439,7 @@ const createOrder = async (req, res) => {
       paymentMethod: paymentMethod,
       totalPrice: totalPrice,
       discount: cart.discount,
+      totalDiscount: cart.totalDiscount,
       couponCode: cart.couponCode,
     });
 
@@ -448,7 +475,11 @@ const createOrder = async (req, res) => {
       }
     }
 
-    res.json({ success: true, message: "Order created successfully", redirectUrl: `/order-placed/${savedOrder._id}`});
+    res.json({
+      success: true,
+      message: "Order created successfully",
+      redirectUrl: `/order-placed/${savedOrder._id}`,
+    });
   } catch (error) {
     console.error(error.message);
   }
@@ -569,8 +600,10 @@ const returnOrder = async (req, res) => {
 const successPage = async (req, res) => {
   try {
     const ordeId = req.params.ordeId;
-    const order = await Order.findById(ordeId).populate('userId').populate('items.product');
-    res.render("success", {order});
+    const order = await Order.findById(ordeId)
+      .populate("userId")
+      .populate("items.product");
+    res.render("success", { order });
   } catch (error) {
     console.error(error.message);
   }

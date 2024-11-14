@@ -367,78 +367,80 @@
                         </p>
 
                         <!-- Table for showing all ordered products -->
-                        <table class="table table-bordered">
-                          <thead>
-                            <tr>
-                              <th scope="col">Image</th>
-                              <th scope="col">Product</th>
-                              <th scope="col">Quantity</th>
-                              <th scope="col">Price</th>
-                              <th scope="col">Subtotal</th>
-                              <%if(order.orderStatus === 'Delivered'){%>
-                              <th>Rate</th>
-                              <%}%>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <% order.items.forEach((item) => { %>
-                            <tr>
-                              <td>
-                                <img
-                                  src="<%= item.product.images[0] %>"
-                                  alt="<%= item.product.name %>"
-                                  class="img-fluid"
-                                  style="width: 80px"
-                                />
-                              </td>
-                              <td><%= item.product.name %></td>
-                              <td><%= item.quantity %></td>
-                              <td>₹ <%= item.price %></td>
-                              <td>₹ <%= item.price * item.quantity %></td>
-                              <%if(order.orderStatus === 'Delivered'){%>
-                              <td>
-                                <a
-                                  href="javascript:void(0);"
-                                  class="btn btn-dark text-white"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#ratingReviewModal"
-                                  data-productId-id="<%= item.product._id %>"
-                                  onclick="setProductId(this)"
-                                >
-                                  Add Review
-                                </a>
-                              </td>
-                              <%}%>
-                            </tr>
-                            <% }) %>
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <th colspan="4" class="text-end">Subtotal:</th>
-                              <th>
-                                ₹ <%= order.totalPrice + order.discount %>
-                              </th>
-                            </tr>
-                            <tr>
-                              <% if(order.discount && order.couponCode){%>
-                              <th colspan="1" class="text-end">Coupon:</th>
-                              <th><%= order.couponCode %></th>
-                              <th colspan="2" class="text-end">Discount:</th>
-                              <th>₹ <%= order.discount.toFixed(2) %></th>
-                              <%} else if(order.discount) {%> <%}%>
-                            </tr>
-                            <tr>
-                              <th colspan="4" class="text-end">Total:</th>
-                              <th>₹ <%= order.totalPrice.toFixed(2) %></th>
-                            </tr>
-                            <tr>
-                              <th colspan="4" class="text-end">
-                                Payment Method:
-                              </th>
-                              <th><%= order.paymentMethod %></th>
-                            </tr>
-                          </tfoot>
-                        </table>
+                        <div class="table-responsive">
+                          <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col">Image</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Subtotal</th>
+                                <% if(order.orderStatus === 'Delivered') { %>
+                                <th>Rate</th>
+                                <% } %>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% order.items.forEach((item) => { %>
+                              <tr>
+                                <td>
+                                  <img
+                                    src="<%= item.product.images[0] %>"
+                                    alt="<%= item.product.name %>"
+                                    class="img-fluid"
+                                    style="width: 80px"
+                                  />
+                                </td>
+                                <td><%= item.product.name %></td>
+                                <td><%= item.quantity %></td>
+                                <td>₹ <%= item.price %></td>
+                                <td>₹ <%= item.price * item.quantity %></td>
+                                <% if(order.orderStatus === 'Delivered') { %>
+                                <td>
+                                  <a
+                                    href="javascript:void(0);"
+                                    class="btn btn-dark text-white"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#ratingReviewModal"
+                                    data-productId-id="<%= item.product._id %>"
+                                    onclick="setProductId(this)"
+                                  >
+                                    Add Review
+                                  </a>
+                                </td>
+                                <% } %>
+                              </tr>
+                              <% }) %>
+                            </tbody>
+                            <tfoot>
+                              <tr>
+                                <th colspan="4" class="text-end">Subtotal:</th>
+                                <th>
+                                  ₹ <%= order.totalPrice + order.discount %>
+                                </th>
+                              </tr>
+                              <tr>
+                                <% if(order.discount && order.couponCode) { %>
+                                <th colspan="1" class="text-end">Coupon:</th>
+                                <th><%= order.couponCode %></th>
+                                <th colspan="2" class="text-end">Discount:</th>
+                                <th>₹ <%= order.discount.toFixed(2) %></th>
+                                <% } else if(order.discount) { %> <% } %>
+                              </tr>
+                              <tr>
+                                <th colspan="4" class="text-end">Total:</th>
+                                <th>₹ <%= order.totalPrice.toFixed(2) %></th>
+                              </tr>
+                              <tr>
+                                <th colspan="4" class="text-end">
+                                  Payment Method:
+                                </th>
+                                <th><%= order.paymentMethod %></th>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
                       </div>
 
                       <!-- Shipping Details Tab -->
@@ -738,89 +740,48 @@
                 </h5>
               </div>
 
-              <!-- Button to Add Amount to Wallet -->
-              <!-- <div
-                class="btn w-100 mb-3 border p-3"
-                onclick="toggleAddAmountForm()"
-                id="showAddAmountButton"
-              >
-                <p>
-                  <strong
-                    ><i class="fa-solid fa-plus"></i> Add Amount to
-                    Wallet</strong
-                  >
-                </p>
-              </div> -->
-
-              <!-- Add Amount Form (Hidden initially) -->
-              <!-- <form
-                id="addAmountForm"
-                action="/Profile/add-amount"
-                method="post"
-                style="display: none"
-              >
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label for="amount" class="form-label">Amount</label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="amount"
-                      name="amount"
-                      placeholder="Enter amount"
-                      required
-                    />
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-primary mb-5">
-                  Add Amount
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary mb-5"
-                  onclick="toggleAddAmountForm()"
-                >
-                  Cancel
-                </button>
-              </form> -->
-
               <!-- Wallet History Section -->
               <div id="walletHistory">
                 <!-- Table for displaying wallet history -->
-                <table class="table table-striped">
-                  <thead>
-                    <tr class="justify-content-between">
-                      <th>No</th>
-                      <th class="text-center">Date</th>
-                      <th class="text-center">Description</th>
-                      <th class="text-center">Amount</th>
-                      <th class="text-center">Transaction</th>
-                    </tr>
-                  </thead>
-                  <tbody id="walletHistoryBody">
-                    <% wallet.walletHistory.forEach((walletHistory, num) => { %>
-                    <tr>
-                      <td><%= num + 1 %></td>
-                      <td class="text-center">
-                        <%= walletHistory.date.toDateString() %>
-                      </td>
-                      <td class="text-center">
-                        <%= walletHistory.description %>
-                      </td>
-                      <td class="text-center">₹<%= walletHistory.amount %></td>
-                      <% if(walletHistory.transactionType === "credit") { %>
-                      <td class="text-success text-center">
-                        <%= walletHistory.transactionType %>
-                      </td>
-                      <% } else { %>
-                      <td class="text-danger text-center">
-                        <%= walletHistory.transactionType %>
-                      </td>
-                      <% } %>
-                    </tr>
-                    <% }) %>
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr class="justify-content-between">
+                        <th>No</th>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Description</th>
+                        <th class="text-center">Amount</th>
+                        <th class="text-center">Transaction</th>
+                      </tr>
+                    </thead>
+                    <tbody id="walletHistoryBody">
+                      <% wallet.walletHistory.forEach((walletHistory, num) => {
+                      %>
+                      <tr>
+                        <td><%= num + 1 %></td>
+                        <td class="text-center">
+                          <%= walletHistory.date.toDateString() %>
+                        </td>
+                        <td class="text-center">
+                          <%= walletHistory.description %>
+                        </td>
+                        <td class="text-center">
+                          ₹<%= walletHistory.amount %>
+                        </td>
+                        <% if(walletHistory.transactionType === "credit") { %>
+                        <td class="text-success text-center">
+                          <%= walletHistory.transactionType %>
+                        </td>
+                        <% } else { %>
+                        <td class="text-danger text-center">
+                          <%= walletHistory.transactionType %>
+                        </td>
+                        <% } %>
+                      </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
 
                 <!-- Pagination for Wallet History -->
                 <nav>

@@ -12,6 +12,7 @@ const fs = require("fs");
 const cloudinary = require("cloudinary").v2;
 const Offer = require("../../Models/offerModel");
 const Review = require("../../Models/reviewModel");
+const Banner = require("../../Models/bannerModel");
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -272,7 +273,6 @@ const loadAddProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    console.log(req.body);
     const isExist = await Product.findOne({ name: req.body.name });
 
     if (isExist) {
@@ -327,10 +327,7 @@ const removeImage = async (req, res) => {
       )
       .replace(/\.[^.]+$/, "");
 
-    console.log("Public ID to delete:", publicId);
-
     const result = await cloudinary.uploader.destroy(publicId);
-    console.log("Cloudinary deletion result:", result);
 
     if (result.result === "ok") {
       await Product.findByIdAndUpdate(id, {
@@ -358,6 +355,10 @@ const editProduct = async (req, res) => {
     const product = await Product.findById(id);
 
     const updatedImages = [...product.images, ...imagePaths];
+
+    if (updatedImages.length < 3) {
+      return res.json({ success: false, message: "minimum add 3 images" });
+    }
 
     await Product.findByIdAndUpdate(id, {
       name: req.body.name,
@@ -592,7 +593,6 @@ const editCategory = async (req, res) => {
     const isExist = await Category.findOne({
       name: { $regex: new RegExp(req.body.name, "i") },
     });
-    console.log("from database", category.name, "form body", req.body.name);
 
     if (isExist && category.name !== req.body.name) {
       return res.json({ success: false, message: "Category already exists!" });
@@ -639,7 +639,6 @@ const createBrand = async (req, res) => {
 const listBrand = async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log(userId);
     await Brands.findByIdAndUpdate(userId, { is_Active: true });
     return res.json({ success: true, message: "Brand listed successfully" });
   } catch (error) {
@@ -650,7 +649,6 @@ const listBrand = async (req, res) => {
 const unlistBrand = async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log(userId);
     await Brands.findByIdAndUpdate(userId, { is_Active: false });
     return res.json({ success: true, message: "Brand Unlisted successfully" });
   } catch (error) {
@@ -722,8 +720,35 @@ const deleteReview = async (req, res) => {
   try {
     const reviewId = req.params.reviewId;
     await Review.findByIdAndDelete(reviewId);
-    
+
     res.json({ success: true, message: "Review removed!" });
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+//* banner manegement
+const loadBanner = async (req, res) => {
+  try {
+    const banners = await Banner.find();
+    res.render("banners", { banners });
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+const createBanner = async (req, res) => {
+  try {
+    const title = req.body.title;
+    const subTitle = req.body.subtitle;
+    const image = req.file.path;
+
+    const banner = new Banner({
+      title,
+      subTitle,
+      image,
+    }).save();
+    res.json({success: true, message: "New banner added!"})
   } catch (error) {
     console.error(error.message);
   }
@@ -763,4 +788,6 @@ module.exports = {
   loadChart,
   loadReviews,
   deleteReview,
+  loadBanner,
+  createBanner,
 };

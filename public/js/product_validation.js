@@ -52,10 +52,25 @@ $(document).ready(() => {
         );
         dataTransfer.items.add(croppedFile);
         currentImageInput.files = dataTransfer.files;
-
+  
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const previewContainerId = currentImageInput.id === "imageInput1"
+            ? "#imagePreview1"
+            : currentImageInput.id === "imageInput2"
+            ? "#imagePreview2"
+            : "#imagePreview3";
+  
+          $(previewContainerId).html(
+            `<img src="${event.target.result}" alt="Cropped Image" class="img-fluid"/>`
+          );
+        };
+        reader.readAsDataURL(croppedImageBlob);
+  
         $("#cropModal").modal("hide");
       });
   });
+  
 
   $("#cancelCropBtn").on("click", function () {
     if (croppieInstance) {
@@ -88,6 +103,7 @@ $(document).ready(() => {
           if (response.success) {
             showToast(response.message);
             $("#addProductForm")[0].reset();
+            $("#addProductForm").load("/admin/add_product #addProductForm > *");
           } else {
             showToastError(response.message);
           }

@@ -115,138 +115,58 @@
       </div>
     </header>
 
-    <!-- Slider -->
-    <section class="section-slide">
-      <div class="wrap-slick1">
-        <div class="slick1">
-          <div
-            class="item-slick1"
-            style="background-image: url(/images/photographer4.jpg)"
-          >
-            <div class="container h-full">
-              <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+        <!-- Slider -->
+        <% if(banner) {%>
+          <section class="section-slide">
+            <div class="wrap-slick1">
+              <div class="slick1">
+                <% banner.forEach((banner) => { %>
                 <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="0"
+                  class="item-slick1"
+                  style="background-image: url('<%= banner.image %>')"
                 >
-                  <span class="ltext-101 cl2 respon2">
-                    Cameras for Every Perspective
-                  </span>
+                  <div class="container h-full">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                      <div
+                        class="layer-slick1 animated visible-false"
+                        data-appear="fadeInDown"
+                        data-delay="0"
+                      >
+                        <span class="ltext-101 cl2 respon2">
+                          <%= banner.subTitle %>
+                        </span>
+                      </div>
+      
+                      <div
+                        class="layer-slick1 animated visible-false"
+                        data-appear="fadeInDown"
+                        data-delay="800"
+                      >
+                        <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                          <%= banner.title %>
+                        </h2>
+                      </div>
+      
+                      <div
+                        class="layer-slick1 animated visible-false"
+                        data-appear="fadeInDown"
+                        data-delay="1600"
+                      >
+                        <a
+                          href="product.html"
+                          class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
+                        >
+                          Shop Now
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="800"
-                >
-                  <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                    Every Angle, Every Shot
-                  </h2>
-                </div>
-
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="1600"
-                >
-                  <a
-                    href="/shop"
-                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
-                  >
-                    Shop Now
-                  </a>
-                </div>
+                <%})%>
               </div>
             </div>
-          </div>
-
-          <div
-            class="item-slick1"
-            style="background-image: url(/images/photorapher5.jpg)"
-          >
-            <div class="container h-full">
-              <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="0"
-                >
-                  <span class="ltext-101 cl2 respon2">
-                    Unleash Your Inner Photographer!
-                  </span>
-                </div>
-
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="800"
-                >
-                  <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                    Capture Every Moment in Stunning Detail
-                  </h2>
-                </div>
-
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="1600"
-                >
-                  <a
-                    href="/shop"
-                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
-                  >
-                    Shop Now
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="item-slick1"
-            style="background-image: url(/images/drone2.jpg)"
-          >
-            <div class="container h-full">
-              <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="0"
-                >
-                  <span class="ltext-101 cl2 respon2">
-                    Elevate Your Perspective
-                  </span>
-                </div>
-
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="800"
-                >
-                  <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                    See the World from New Heights
-                  </h2>
-                </div>
-
-                <div
-                  class="layer-slick1 animated visible-false"
-                  data-appear="fadeInDown"
-                  data-delay="1600"
-                >
-                  <a
-                    href="/shop"
-                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
-                  >
-                    Shop Now
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+          </section>
+          <%}%>
 
     <!-- Banner -->
     <div class="sec-banner bg0 p-t-80 p-b-50">
@@ -255,7 +175,7 @@
           <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
             <!-- Block1 -->
             <div class="block1 wrap-pic-w">
-              <img src="/images/cam1.jpg" alt="IMG-BANNER">
+              <img src="https://res.cloudinary.com/dlepjhjb4/image/upload/v1731563237/assets/bdng4buhwgp497x3erif.jpg" alt="IMG-BANNER">
   
               <a href="/shop?search=&brand=&category=Camera&sort=" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                 <div class="block1-txt-child1 flex-col-l">
@@ -280,7 +200,7 @@
           <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
             <!-- Block1 -->
             <div class="block1 wrap-pic-w">
-              <img src="/images/lens1.jpg" alt="IMG-BANNER">
+              <img src="https://res.cloudinary.com/dlepjhjb4/image/upload/v1730884742/assets/ed3ogvhsfuu7v577ae3d.jpg" alt="IMG-BANNER">
   
               <a href="/shop?search=&brand=&category=Lenses&sort=" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                 <div class="block1-txt-child1 flex-col-l">
@@ -305,7 +225,7 @@
           <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
             <!-- Block1 -->
             <div class="block1 wrap-pic-w">
-              <img src="/images/cam7.jpg" alt="IMG-BANNER">
+              <img src="https://res.cloudinary.com/dlepjhjb4/image/upload/v1730884732/assets/tenbclxsgcd8pr9ybcwp.jpg" alt="IMG-BANNER">
   
               <a href="/shop?search=&brand=&category=Accessories&sort=" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                 <div class="block1-txt-child1 flex-col-l">
@@ -394,7 +314,7 @@
                   >
                     <%= item.name %>
                 </p>
-                <div class="d-flex">
+                <div class="">
                   <%if(item.stock < 1) {%>
                     <span class="cl3 text-danger"> Currently unavailable </span>
                     <%} else {%>
@@ -475,9 +395,8 @@
 
     <script>
       $(".gallery-lb").each(function () {
-        // the containers for all your galleries
         $(this).magnificPopup({
-          delegate: "a", // the selector for gallery item
+          delegate: "a", 
           type: "image",
           gallery: {
             enabled: true,

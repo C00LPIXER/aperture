@@ -9,6 +9,7 @@ const Cart = require("../../Models/cartModel");
 const Order = require("../../Models/orderModel");
 const passport = require("passport");
 const flash = require("connect-flash/lib/flash");
+const Banner = require("../../Models/bannerModel");;
 require("dotenv").config();
 
 const securePasswd = async (password) => {
@@ -112,6 +113,8 @@ const loadErrorPage = async (req, res) => {
 //* user authentication
 const loadLandingPage = async (req, res) => {
   try {
+    const banner = await Banner.find()
+
     const activeProducts = await Product.find({ is_Active: true, stock: {$gt : 0} })
       .populate({
         path: "category",
@@ -125,7 +128,7 @@ const loadLandingPage = async (req, res) => {
       (product) => product.category && product.brand
     );
 
-    res.render("landing", { product });
+    res.render("landing", { product, banner });
   } catch (error) {
     console.error(error.message);
   }

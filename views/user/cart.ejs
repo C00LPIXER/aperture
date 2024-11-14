@@ -103,6 +103,7 @@
                 </table>
               </div>
 
+              <a href="/shop">
               <div class="flex-w flex-sb-m p-t-18 p-b-15 p-lr-15">
                 <div
                   class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer"
@@ -110,6 +111,7 @@
                   Update Cart
                 </div>
               </div>
+            </a>
             </div>
 
             <div class="col-lg-4 m-lr-auto m-b-50">
@@ -123,6 +125,14 @@
                     <span class="mtext-110 cl22"
                       >₹ <%= cart.totalPrice.toFixed(2) %></span
                     >
+                  </div>
+                </div>
+                <div class="flex-w flex-t p-b-13">
+                  <div class="size-208">
+                    <span class="stext-110 cl22">Discount:</span>
+                  </div>
+                  <div class="size-209">
+                    <span class="mtext-110 cl22"><%= cart.totalDiscount.toFixed(2) %></span>
                   </div>
                 </div>
                 <div class="flex-w flex-t p-b-13">

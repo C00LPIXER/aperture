@@ -76,7 +76,7 @@ function removeImgae(imgid, id) {
       title: "Are you sure?",
       text: "Once deleted, you will not be able to recover this image!",
       showCancelButton: true,
-      confirmButtonText: "Delete", 
+      confirmButtonText: "Delete",
       cancelButtonText: "Cancel",
     },
     function (isConfirm) {
@@ -118,7 +118,7 @@ $(document).ready(() => {
         success: function (response) {
           if (response.success) {
             showToast(response.message);
-              window.history.back();
+            window.history.back();
           } else {
             showToastError(response.message);
           }
@@ -207,8 +207,8 @@ function validateForm() {
     isValid = false;
   }
 
-  const positiveNumberPattern = /^(?!0)([0-9]+(\.[0-9]+)?|[0-9]*\.[0-9]+)$/; 
-  const nonNegativeStockPattern = /^(0|[1-9][0-9]*)$/; 
+  const positiveNumberPattern = /^(?!0)([0-9]+(\.[0-9]+)?|[0-9]*\.[0-9]+)$/;
+  const nonNegativeStockPattern = /^(0|[1-9][0-9]*)$/;
   if (name.value.trim() === "") {
     displayError(name, "Product title is required");
     isValid = false;
@@ -361,4 +361,4 @@ function clearErrorMessage(inputElement) {
 
 function goBack() {
   window.history.back();
-}  
+}

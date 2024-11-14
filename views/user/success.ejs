@@ -11,6 +11,7 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        padding: 20px;
       "
     >
       <div class="success-animation">
@@ -43,16 +44,18 @@
       <p class="stext-102 cl6 text-center p-t-10">
         Your order has been successfully placed.
       </p>
-      <%} else { %>
+      <% } else { %>
       <p class="stext-102 cl222 text-center p-t-10">
-        Payment failed. Please retry payment from the 'My Orders' section.<br> If not completed within 24 hours, the order will be automatically canceled.
+        Payment failed. Please retry payment from the 'My Orders' section.<br>
+        If not completed within 24 hours, the order will be automatically canceled.
       </p>
-      <%}%>
+      <% } %>
       <div
-        class="p-3"
+        class="order-summary p-3"
         style="
           min-height: 20vh;
-          min-width: 75vh;
+          width: 100%;
+          max-width: 75vh;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -81,13 +84,13 @@
       <!-- Popup Buttons -->
       <div id="success-buttons" class="p-t-30">
         <button
-          class="flex-c-m stext-101 cl0 bg333 bor14 hov-btn3 p-lr-15 trans-04 pointer w-50"
+          class="flex-c-m stext-101 cl0 bg333 bor14 hov-btn3 p-lr-15 trans-04 pointer w-100 sm-w-50"
           onclick="window.location.href='/shop';"
         >
           Continue Shopping
         </button>
         <button
-          class="flex-c-m stext-101 cl0 bg2 bor14 hov-btn3 p-lr-15 trans-04 pointer m-l-15 p-3 w-50"
+          class="flex-c-m stext-101 cl0 bg2 bor14 hov-btn3 p-lr-15 trans-04 pointer p-3 w-100 sm-w-50 m-t-10 sm-m-l-15"
           onclick="window.location.href='/profile#orders';"
         >
           View Order
@@ -115,8 +118,10 @@
 
       #success-buttons {
         display: flex;
+        flex-direction: column;
         justify-content: center;
-        gap: 20px;
+        align-items: center;
+        gap: 10px;
       }
 
       .bg2 {
@@ -125,6 +130,26 @@
 
       .bg333 {
         background-color: #4caf50;
+      }
+
+      /* Responsive Styling */
+      @media (min-width: 768px) {
+        #success-buttons {
+          flex-direction: row;
+          gap: 20px;
+        }
+        .w-100 {
+          width: auto;
+        }
+        .sm-w-50 {
+          width: 50%;
+        }
+        .m-t-10 {
+          margin-top: 0;
+        }
+        .sm-m-l-15 {
+          margin-left: 15px;
+        }
       }
     </style>
   </body>

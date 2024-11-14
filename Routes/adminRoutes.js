@@ -4,7 +4,6 @@ const offerController = require("../Controllers/Admin/offerController");
 const salesController = require("../Controllers/Admin/salesController");
 const adminAuth = require("../middleware/adminAuth");
 const routes = express.Router();
-
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
@@ -65,9 +64,9 @@ routes.put("/admin/brands/edit", adminAuth.isAdmin, adminController.editBrand);
 //? [product management]
 routes.get("/admin/products", adminAuth.isAdmin, adminController.loadProductList);
 routes.get("/admin/add_product", adminAuth.isAdmin, adminController.loadAddProduct);
-routes.post("/admin/add_product", adminAuth.isAdmin, upload.array('product_images', 5), adminController.createProduct);
+routes.post("/admin/add_product", adminAuth.isAdmin, upload.array('product_images'), adminController.createProduct);
 routes.get("/admin/edit_product/:id", adminAuth.isAdmin, adminController.LoadEditProduct);
-routes.put("/admin/edit_product", adminAuth.isAdmin, upload.array('product_images', 5), adminController.editProduct);
+routes.put("/admin/edit_product", adminAuth.isAdmin, upload.array('product_images'), adminController.editProduct);
 routes.delete("/admin/edit_product/image", adminAuth.isAdmin, adminController.removeImage);
 routes.patch("/admin/products/:id/block", adminAuth.isAdmin, adminController.blockProduct);
 routes.patch("/admin/products/:id/unblock", adminAuth.isAdmin, adminController.unblockProduct);
@@ -91,5 +90,9 @@ routes.get('/admin/download-excel-report', salesController.downloadExcelReport);
 //? [review]
 routes.get("/admin/reviews", adminAuth.isAdmin, adminController.loadReviews)
 routes.get("/admin/reviews/:reviewId", adminAuth.isAdmin, adminController.deleteReview)
+
+//? [banner]
+routes.get("/admin/banners", adminAuth.isAdmin, adminController.loadBanner)
+routes.post("/admin/banners/create", adminAuth.isAdmin, upload.single('banner_image'), adminController.createBanner)
 
 module.exports = routes;

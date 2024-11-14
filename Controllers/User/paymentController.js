@@ -123,6 +123,7 @@ const paymentSuccess = async (req, res) => {
       paymentStatus: "Completed",
       totalPrice: totalPrice,
       discount: cart.discount || 0,
+      totalDiscount: cart.totalDiscount || 0,
       couponCode: cart.couponCode,
     });
 
@@ -182,6 +183,7 @@ const paymentCancel = async (req, res) => {
       paymentStatus: "Pending",
       totalPrice: totalPrice,
       discount: cart.discount || 0,
+      totalDiscount: cart.totalDiscount || 0,
       couponCode: cart.couponCode,
     });
 

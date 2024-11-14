@@ -34,6 +34,15 @@
       justify-content: center;
       z-index: 9999;
     }
+    @media (max-width: 576px) {
+          #couponForm, #removeCoupon {
+            flex-direction: column;
+          }
+          
+          #couponForm .btn, #removeCoupon .btn {
+            width: 100%;
+          }
+        }
   </style>
   <body class="animsition">
     <!-- Header -->
@@ -54,7 +63,7 @@
     </div>
 
     <div id="checkout" class="container p-t-25">
-      <div class="col-lg-12">
+      <div class="table-responsive col-lg-12">
         <table class="table">
           <thead>
             <tr>
@@ -219,14 +228,13 @@
           </form>
         </div>
         <div class="col-lg-5">
-          <div class="btn w-100 mb-3 border">
-            <% if(cart.couponCode && cart.discount) {%>
-            <form class="row" id="removeCoupon">
-              <div class="w-50 px-3">
+          <div class="d-flex flex-column gap-3">
+            <% if(cart.couponCode && cart.discount) { %>
+              <form id="removeCoupon" class="d-flex gap-2">
                 <input
                   type="text"
                   name="couponCode"
-                  class="form-control"
+                  class="form-control flex-grow-1 m-2"
                   id="couponInput"
                   value="<%= cart.couponCode %>"
                   disabled
@@ -237,28 +245,24 @@
                   name="cartId"
                   value="<%= cart._id %>"
                 />
-              </div>
-              <div class="">
-                <button class="btn btn-dark text-white">Remove</button>
-                <%if(coupon.length > 0){%>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#couponModal"
-                >
-                  View Coupons
-                </button>
-                <%}%>
-              </div>
-            </form>
-            <%} else {%>
-            <form class="row" id="couponForm">
-              <div class="w-50 px-3">
+                <button class="btn btn-dark px-4 m-2">Remove</button>
+                <% if(coupon.length > 0) { %>
+                  <button
+                    type="button"
+                    class="btn btn-secondary m-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#couponModal"
+                  >
+                    View Coupons
+                  </button>
+                <% } %>
+              </form>
+            <% } else { %>
+              <form id="couponForm" class="d-flex gap-2">
                 <input
                   type="text"
                   name="couponCode"
-                  class="form-control"
+                  class="form-control flex-grow-1 m-2"
                   id="couponInput"
                   placeholder="Enter Coupon"
                 />
@@ -268,22 +272,19 @@
                   name="cartId"
                   value="<%= cart._id %>"
                 />
-              </div>
-              <div class="">
-                <button type="submit" class="btn btn-dark w-50">Apply</button>
-                <%if(coupon.length > 0){%>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#couponModal"
-                >
-                  View Coupons
-                </button>
-                <%}%>
-              </div>
-            </form>
-            <%}%>
+                <button type="submit" class="btn btn-dark px-4 m-2">Apply</button>
+                <% if(coupon.length > 0) { %>
+                  <button
+                    type="button"
+                    class="btn btn-secondary m-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#couponModal"
+                  >
+                    View Coupons
+                  </button>
+                <% } %>
+              </form>
+            <% } %>
           </div>
         </div>
       </div>
@@ -366,7 +367,7 @@
                 </div>
                 <div class="size-209">
                   <span class="mtext-110 cl22"
-                    >₹ <%= cart.totalPrice.toFixed(2) %></span
+                    >₹ <%= (cart.totalPrice + cart.totalDiscount).toFixed(2) %></span
                   >
                 </div>
               </div>
@@ -378,6 +379,18 @@
                 <div class="size-209">
                   <span class="mtext-110 cl22"
                     >₹ <%= cart.discount.toFixed(2) %></span
+                  >
+                </div>
+                <%}%>
+              </div>
+              <div class="flex-w flex-t p-b-13">
+                <% if(cart.totalDiscount > 0){ %>
+                <div class="size-208">
+                  <span class="stext-110 cl22">Total Discount :</span>
+                </div>
+                <div class="size-209">
+                  <span class="mtext-110 cl22"
+                    >₹ <%= (cart.discount + cart.totalDiscount).toFixed(2) %></span
                   >
                 </div>
                 <%}%>

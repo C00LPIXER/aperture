@@ -1,0 +1,585 @@
+<%- include('partials/head') %>
+<style>
+  input.error {
+    border-color: red;
+  }
+
+  input.error::placeholder {
+    color: red;
+  }
+
+  textarea.error {
+    border-color: red;
+  }
+
+  textarea.error::placeholder {
+    color: red;
+  }
+  .input-error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+</style>
+<body>
+  <div class="screen-overlay"></div>
+  <%- include('partials/aside') %>
+  <main class="main-wrap">
+    <header class="main-header navbar"></header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Banners</h2>
+          <p>add, edit or delete a banner</p>
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Search Categories"
+            class="form-control bg-white"
+          />
+        </div>
+      </div>
+      <div id="banner-list" class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <form id="bannerForm" action="/admin/categories" method="post">
+                <div class="mb-4">
+                  <label for="banner_title" class="form-label">Title</label>
+                  <input
+                    name="title"
+                    type="text"
+                    placeholder="Type here"
+                    class="form-control"
+                    id="banner_title"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="form-label">Subtitle</label>
+                  <input
+                    name="subtitle"
+                    id="subtitle"
+                    placeholder="Type here"
+                    class="form-control"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="form-label">Banner Image</label>
+                  <input
+                    type="file"
+                    name="banner_image"
+                    id="banner_image"
+                    class="form-control"
+                  />
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">
+                    Create category
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="col-md-9">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>image</th>
+                      <th>Title</th>
+                      <th>Subtitle</th>
+                      <th><span class="me-5">Reomve</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% banners.forEach(banner => { %>
+                    <tr>
+                      <td class="">
+                        <img
+                          src="<%= banner.image %>"
+                          class="img-xs img-thumbnail"
+                          alt="banner img"
+                        />
+                      </td>
+                      <td><%= banner.title %></td>
+                      <td><%= banner.subTitle %></td>
+                      <td>
+                        <a
+                          class="btn"
+                          ><i class="fa-regular fa-trash-can fa-lg"></i></a
+                        >
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- .col// -->
+          </div>
+          <!-- .row // -->
+        </div>
+        <!-- card body .// -->
+      </div>
+      <!-- card .// -->
+    </section>
+    <div
+      id="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      class="position-fixed top-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <div
+        id="toast"
+        class="toast align-items-center text-white bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="toast_error"
+        class="toast align-items-center text-white bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div id="toast-body-error" class="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+    <!-- Cropping Modal -->
+    <div class="modal" id="cropModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Crop Image</h5>
+          </div>
+          <div class="modal-body">
+            <div id="croppieContainer"></div>
+            <!-- Croppie container -->
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+              id="cancelCropBtn"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="cropImageBtn">
+              Crop & Upload
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('partials/footer') %>
+  </main>
+</body>
+<!-- <script>
+  let croppieInstance;
+  let currentImageInput;
+
+  $(document).ready(() => {
+    // Handle banner image input change for cropping
+    $("#banner_image").on("change", function (e) {
+      currentImageInput = e.target;
+      if (
+        validateImage(currentImageInput) &&
+        currentImageInput.files &&
+        currentImageInput.files[0]
+      ) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          if (croppieInstance) {
+            croppieInstance.destroy();
+          }
+
+          croppieInstance = new Croppie(
+            document.getElementById("croppieContainer"),
+            {
+              viewport: { width: 250, height: 200, type: "square" },
+              boundary: { width: 300, height: 300 },
+              showZoomer: true,
+              enableExif: true,
+            }
+          );
+
+          croppieInstance.bind({
+            url: e.target.result,
+          });
+
+          $("#cropModal").modal("show");
+        };
+        reader.readAsDataURL(currentImageInput.files[0]);
+      }
+    });
+
+    // Crop and replace the image in the input field after cropping
+    $("#cropImageBtn").on("click", function () {
+      croppieInstance
+        .result({
+          type: "blob",
+          size: { width: 800, height: 640 },
+          quality: 1,
+        })
+        .then(function (croppedImageBlob) {
+          const dataTransfer = new DataTransfer();
+          const croppedFile = new File(
+            [croppedImageBlob],
+            currentImageInput.files[0].name,
+            { type: croppedImageBlob.type }
+          );
+          dataTransfer.items.add(croppedFile);
+          currentImageInput.files = dataTransfer.files;
+
+          $("#cropModal").modal("hide");
+        });
+    });
+
+    // Cancel cropping
+    $("#cancelCropBtn").on("click", function () {
+      if (croppieInstance) {
+        croppieInstance.destroy();
+        croppieInstance = null;
+      }
+      $("#cropModal").modal("hide");
+
+      if (currentImageInput) {
+        currentImageInput.value = "";
+      }
+    });
+  });
+
+  function validateImage(imageInput) {
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (imageInput.files.length === 0) {
+      displayErrorMessage(imageInput, "Please upload an image");
+      return false;
+    }
+
+    const file = imageInput.files[0];
+
+    if (file.size > maxSize) {
+      displayErrorMessage(imageInput, "File size exceeds 5MB");
+      return false;
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+      displayErrorMessage(
+        imageInput,
+        "Invalid file type. Please upload a jpg or png image."
+      );
+      return false;
+    }
+
+    clearErrorMessage(imageInput);
+    return true;
+  }
+
+  function displayErrorMessage(inputField, message) {
+    inputField.classList.add("error");
+    inputField.placeholder = message;
+  }
+
+  function clearErrorMessage(inputField) {
+    inputField.classList.remove("error");
+    inputField.placeholder = "Type here";
+  }
+
+  $(document).ready(() => {
+    $("#bannerForm").on("submit", function (e) {
+      e.preventDefault();
+
+      if (validateForm()) {
+        const formData = new FormData(this);
+
+        $.ajax({
+          type: "POST",
+          url: "/admin/banners/create",
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            if (response.success) {
+              showToast(response.message);
+              $("#banner-list").load("/admin/banners #banner-list");
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: function () {
+            showToast("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+
+  function validateForm() {
+    let isValid = true;
+
+    const banner_title = document.getElementById("banner_title");
+    const subtitle = document.getElementById("subtitle");
+    const image = document.getElementById("banner_image");
+
+    if (banner_title.value.trim() === "") {
+      displayError(banner_title, "Title is required");
+      isValid = false;
+    } else {
+      clearError(banner_title, "Type here");
+    }
+
+    if (subtitle.value.trim() === "") {
+      displayError(subtitle, "Subtitle is required");
+      isValid = false;
+    } else {
+      clearError(subtitle, "Type here");
+    }
+
+    if (image.value.trim() === "") {
+      displayError(image);
+      isValid = false;
+    } else {
+      clearError(image);
+    }
+
+    return isValid;
+  }
+
+  function displayError(inputField, errorMessage) {
+    inputField.classList.add("error");
+    inputField.value = "";
+    inputField.placeholder = errorMessage;
+  }
+
+  function clearError(inputField, originalPlaceholder) {
+    inputField.classList.remove("error");
+    inputField.placeholder = originalPlaceholder;
+  }
+
+  function showToast(message) {
+    const toastBody = document.getElementById("toast-body");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+
+  function showToastError(message) {
+    const toastBody = document.getElementById("toast-body-error");
+    toastBody.textContent = message;
+
+    const toastElement = document.getElementById("toast_error");
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+  }
+</script> -->
+<script>
+  let croppieInstance;
+  let currentImageInput;
+
+  $(document).ready(() => {
+    $("#banner_image").on("change", function (e) {
+      currentImageInput = e.target;
+      if (
+        validateImage(currentImageInput) &&
+        currentImageInput.files &&
+        currentImageInput.files[0]
+      ) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          if (croppieInstance) {
+            croppieInstance.destroy();
+          }
+
+          croppieInstance = new Croppie(
+            document.getElementById("croppieContainer"),
+            {
+              viewport: { width: 250, height: 200, type: "square" },
+              boundary: { width: 300, height: 300 },
+              showZoomer: true,
+              enableExif: true,
+            }
+          );
+
+          croppieInstance.bind({
+            url: e.target.result,
+          });
+
+          $("#cropModal").modal("show");
+        };
+        reader.readAsDataURL(currentImageInput.files[0]);
+      }
+    });
+
+    $("#cropImageBtn").on("click", function () {
+      croppieInstance
+        .result({
+          type: "blob",
+          size: { width: 800, height: 640 },
+          quality: 1,
+        })
+        .then(function (croppedImageBlob) {
+          const dataTransfer = new DataTransfer();
+          const croppedFile = new File(
+            [croppedImageBlob],
+            currentImageInput.files[0].name,
+            { type: croppedImageBlob.type }
+          );
+          dataTransfer.items.add(croppedFile);
+          currentImageInput.files = dataTransfer.files;
+
+          $("#cropModal").modal("hide");
+        });
+    });
+
+    $("#cancelCropBtn").on("click", function () {
+      if (croppieInstance) {
+        croppieInstance.destroy();
+        croppieInstance = null;
+      }
+      $("#cropModal").modal("hide");
+
+      if (currentImageInput) {
+        currentImageInput.value = "";
+        currentImageInput.files = new FileList();
+      }
+    });
+  });
+
+  function validateImage(imageInput) {
+    const maxSize = 5 * 1024 * 1024;
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const file = imageInput.files[0];
+
+    let errorMessage = "";
+    if (!file) {
+      errorMessage = "Please upload an image";
+    } else if (file.size > maxSize) {
+      errorMessage = "File size exceeds 5MB";
+    } else if (!allowedTypes.includes(file.type)) {
+      errorMessage = "Invalid file type. Please upload a jpg or png image.";
+    }
+
+    if (errorMessage) {
+      showErrorMessage(imageInput, errorMessage);
+      return false;
+    }
+
+    clearErrorMessage(imageInput);
+    return true;
+  }
+
+  function showErrorMessage(inputField, message) {
+    clearErrorMessage(inputField);
+
+    const errorText = document.createElement("div");
+    errorText.className = "input-error-message";
+    errorText.textContent = message;
+    inputField.classList.add("error");
+    inputField.parentNode.appendChild(errorText);
+  }
+
+  function clearErrorMessage(inputField) {
+    inputField.classList.remove("error");
+    const existingErrorText = inputField.parentNode.querySelector(
+      ".input-error-message"
+    );
+    if (existingErrorText) {
+      existingErrorText.remove();
+    }
+  }
+
+  $(document).ready(() => {
+    $("#bannerForm").on("submit", function (e) {
+      e.preventDefault();
+
+      if (validateForm()) {
+        const formData = new FormData(this);
+
+        $.ajax({
+          type: "POST",
+          url: "/admin/banners/create",
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            if (response.success) {
+              showToast(response.message);
+              $("#banner-list").load("/admin/banners #banner-list");
+            } else {
+              showToastError(response.message);
+            }
+          },
+          error: function () {
+            showToast("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+
+  function validateForm() {
+    let isValid = true;
+
+    const banner_title = document.getElementById("banner_title");
+    const subtitle = document.getElementById("subtitle");
+    const image = document.getElementById("banner_image");
+
+    if (banner_title.value.trim() === "") {
+      displayError(banner_title, "Title is required");
+      isValid = false;
+    } else {
+      clearError(banner_title, "Type here");
+    }
+
+    if (subtitle.value.trim() === "") {
+      displayError(subtitle, "Subtitle is required");
+      isValid = false;
+    } else {
+      clearError(subtitle, "Type here");
+    }
+
+    if (image.value.trim() === "") {
+      displayError(image, "Please upload an image");
+      isValid = false;
+    } else {
+      clearError(image);
+    }
+
+    return isValid;
+  }
+
+  function displayError(inputField, errorMessage) {
+    showErrorMessage(inputField, errorMessage);
+  }
+
+  function clearError(inputField, originalPlaceholder) {
+    clearErrorMessage(inputField);
+    inputField.placeholder = originalPlaceholder;
+  }
+</script>
