@@ -17,9 +17,8 @@ const mongoDB = process.env.DBURL;
 const connectDB = async () => {
   try {
     await mongoose.connect(mongoDB);
-    console.log("MongoDB connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err.message);
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
   }
 };
 connectDB();
@@ -62,6 +61,4 @@ app.get("*", (req, res) => {
   res.render("errorPage");
 });
 
-app.listen(port, () => {
-  console.log(`server running on http://127.0.0.1:${port}`);
-});
+app.listen(port);

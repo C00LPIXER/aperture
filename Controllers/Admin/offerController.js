@@ -13,6 +13,7 @@ const loadOfferList = async (req, res) => {
     const categories = await Category.find();
     res.render("offers", { offers, categories, brands });
   } catch (error) {
+    res.status(500).send("Internal server error");
     console.error(error.message);
   }
 };
@@ -92,6 +93,7 @@ const createOffer = async (req, res) => {
 
     return res.json({ success: true, message: "New offer created!" });
   } catch (error) {
+    res.status(500).send("Internal server error");
     console.error(error.message);
   }
 };
@@ -130,6 +132,7 @@ const deleteOffer = async (req, res) => {
 
     return res.json({ success: true, message: "Offer removed!" });
   } catch (error) {
+    res.status(500).send("Internal server error");
     console.error(error.message);
   }
 };
@@ -140,6 +143,7 @@ const loadCouponList = async (req, res) => {
     const coupon = await Coupon.find();
     res.render("coupons", { coupon });
   } catch (error) {
+    res.status(500).send("Internal server error");
     console.error(error.message);
   }
 };
@@ -181,6 +185,7 @@ const createCoupon = async (req, res) => {
     await coupon.save();
     res.json({ success: true, message: "New coupon created!" });
   } catch (error) {
+    res.status(500).send("Internal server error");
     console.error(error.message);
   }
 };
@@ -191,6 +196,7 @@ const deleteCoupon = async (req, res) => {
     const coupon = await Coupon.findByIdAndDelete(id);
     res.json({ success: true, message: "Coupon removed!" });
   } catch (error) {
+    res.status(500).send("Internal server error");
     console.error(error.message);
   }
 };
@@ -257,6 +263,7 @@ const useCoupon = async (req, res) => {
 
     return res.json({ success: true, message: "Coupon applied successfully!" });
   } catch (error) {
+    res.status(500).send("Internal server error");
     console.error(error.message);
   }
 };
@@ -284,7 +291,8 @@ const removeCoupon = async (req, res) => {
 
     return res.json({ success: true, message: "Coupon removed!" });
   } catch (error) {
-    console.error("removeCoupon", error.message);
+    res.status(500).send("Internal server error");
+    console.error(error.message);
   }
 };
 

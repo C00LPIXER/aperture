@@ -30,7 +30,8 @@ const loadSales = async (req, res) => {
     res.render("salesReport", { orders, reportData });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Error loading the default weekly report");
+    res.status(500).send("Internal server error");
+    
   }
 };
 
@@ -78,7 +79,7 @@ const generateReport = async (req, res) => {
     res.render("salesReport", { orders, reportData });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Error generating the report");
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -135,7 +136,7 @@ const downloadPDFReport = async (req, res) => {
     doc.end();
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Error generating the PDF report");
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -185,7 +186,7 @@ const downloadExcelReport = async (req, res) => {
     res.end();
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Error generating the Excel report");
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -226,10 +227,8 @@ const fetchOrdersAndReportData = async (reportType, startDate, endDate) => {
     couponDeductions: orders.reduce((sum, order) => sum + (order.couponCode ? order.discount : 0), 0),
     ordersCount: orders.length,
   };
-
   return { orders, reportData };
 };
-
 
 module.exports = {
   loadSales,

@@ -6,7 +6,7 @@ const isadminLogin = async (req, res, next) => {
         res.redirect("/admin/login");
       }
     } catch (error) {
-      console.log("error.message");
+      console.error(error.message);
     }
   };
   
@@ -18,7 +18,7 @@ const isadminLogin = async (req, res, next) => {
           next();
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   };
 

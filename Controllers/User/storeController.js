@@ -39,6 +39,7 @@ const loadHomePage = async (req, res) => {
     res.render("home", { product, wishlist, banner });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -139,6 +140,7 @@ const loadShopPage = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -182,6 +184,7 @@ const productDetail = async (req, res) => {
     res.render("productDetail", { product, relatedProduct, reviews, wishlist });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -240,6 +243,7 @@ const loadCartPage = async (req, res) => {
     res.render("cart", { cart });
   } catch (error) {
     console.error("cart", error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -295,6 +299,7 @@ const addToCart = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -355,6 +360,7 @@ const removeFromCart = async (req, res) => {
     res.json({ success: true, message: "Item removed" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -392,6 +398,7 @@ const loadCheckOutPage = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -482,6 +489,7 @@ const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -538,6 +546,7 @@ const cancelOrder = async (req, res) => {
     }
   } catch (error) {
     console.error("cancelOrder:", error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -593,7 +602,8 @@ const returnOrder = async (req, res) => {
       res.json({ status: true, message: "This order is already Returned" });
     }
   } catch (error) {
-    console.error("cancelOrder:", error.message);
+    console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -606,6 +616,7 @@ const successPage = async (req, res) => {
     res.render("success", { order });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 

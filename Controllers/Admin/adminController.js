@@ -42,6 +42,7 @@ const loadAdminPage = async (req, res) => {
     res.render("admin", { orders, products, users, totalRevenue });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -157,7 +158,7 @@ const loadChart = async (req, res) => {
     res.json({ revenue, topProducts, topCategories });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Error loading chart data");
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -166,6 +167,7 @@ const loadAdminLogin = async (req, res) => {
     res.render("adminLogin");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -201,6 +203,7 @@ const adminAuthentication = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -210,6 +213,7 @@ const adminLogout = async (req, res) => {
     res.redirect("/admin/login");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -238,6 +242,7 @@ const loadProductList = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -248,6 +253,7 @@ const blockProduct = async (req, res) => {
     res.json({ success: true, message: "Product blocked", status: "blocked" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -258,6 +264,7 @@ const unblockProduct = async (req, res) => {
     res.json({ success: true, message: "Product unblocked", status: "active" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -268,6 +275,7 @@ const loadAddProduct = async (req, res) => {
     res.render("add_product", { categories, brands });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -299,6 +307,7 @@ const createProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -313,6 +322,7 @@ const LoadEditProduct = async (req, res) => {
     res.render("editProduct", { product, categories, brands });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -342,6 +352,7 @@ const removeImage = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -375,6 +386,7 @@ const editProduct = async (req, res) => {
     res.json({ success: true, message: "Product updated successfully!" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -390,6 +402,7 @@ const loadOrderDetail = async (req, res) => {
     res.render("orderDetail", { order });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -415,6 +428,7 @@ const loadOrderList = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -469,6 +483,7 @@ const changeOrderStatus = async (req, res) => {
     res.json({ success: true, message: `Oreder ststus changed to ${status}` });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -504,6 +519,7 @@ const loadUserList = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -514,6 +530,7 @@ const blockUser = async (req, res) => {
     res.json({ success: true, message: "User blocked", status: "blocked" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -524,6 +541,7 @@ const unblockUser = async (req, res) => {
     res.json({ success: true, message: "User unblocked", status: "active" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -534,6 +552,7 @@ const loadCategoryPage = async (req, res) => {
     res.render("categories", { categories });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -552,6 +571,7 @@ const createCategory = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -562,6 +582,7 @@ const listCategory = async (req, res) => {
     res.json({ success: true, message: "Category listed successfully" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -572,6 +593,7 @@ const unlistCategory = async (req, res) => {
     res.json({ success: true, message: "Category Unlisted successfully" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -583,6 +605,7 @@ const loadEditCategory = async (req, res) => {
     res.render("editCategory", { category });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -605,6 +628,7 @@ const editCategory = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -615,6 +639,7 @@ const loadBrandPage = async (req, res) => {
     res.render("brands", { brands });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -633,6 +658,7 @@ const createBrand = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -643,6 +669,7 @@ const listBrand = async (req, res) => {
     return res.json({ success: true, message: "Brand listed successfully" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -653,6 +680,7 @@ const unlistBrand = async (req, res) => {
     return res.json({ success: true, message: "Brand Unlisted successfully" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -664,6 +692,7 @@ const loadeditBrand = async (req, res) => {
     res.render("editBrand", { brand });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -686,6 +715,7 @@ const editBrand = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -712,7 +742,7 @@ const loadReviews = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -724,6 +754,7 @@ const deleteReview = async (req, res) => {
     res.json({ success: true, message: "Review removed!" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -734,6 +765,7 @@ const loadBanner = async (req, res) => {
     res.render("banners", { banners });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -748,9 +780,10 @@ const createBanner = async (req, res) => {
       subTitle,
       image,
     }).save();
-    res.json({success: true, message: "New banner added!"})
+    res.json({success: true, message: "New banner added"})
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 

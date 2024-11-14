@@ -9,7 +9,7 @@ const Cart = require("../../Models/cartModel");
 const Order = require("../../Models/orderModel");
 const passport = require("passport");
 const flash = require("connect-flash/lib/flash");
-const Banner = require("../../Models/bannerModel");;
+const Banner = require("../../Models/bannerModel");
 require("dotenv").config();
 
 const securePasswd = async (password) => {
@@ -18,6 +18,7 @@ const securePasswd = async (password) => {
     return Hash;
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -58,6 +59,7 @@ const SendVerificationEmail = async (email, OTP) => {
     });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -99,6 +101,7 @@ const sendResetPasswdEmail = async (email, OTP) => {
     });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -107,15 +110,19 @@ const loadErrorPage = async (req, res) => {
     res.render("errorPage");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
 //* user authentication
 const loadLandingPage = async (req, res) => {
   try {
-    const banner = await Banner.find()
+    const banner = await Banner.find();
 
-    const activeProducts = await Product.find({ is_Active: true, stock: {$gt : 0} })
+    const activeProducts = await Product.find({
+      is_Active: true,
+      stock: { $gt: 0 },
+    })
       .populate({
         path: "category",
         select: "name",
@@ -131,6 +138,7 @@ const loadLandingPage = async (req, res) => {
     res.render("landing", { product, banner });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -139,6 +147,7 @@ const loadLoginPage = async (req, res) => {
     res.render("login");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -147,6 +156,7 @@ const loadSignupPage = async (req, res) => {
     res.render("signup");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -159,6 +169,7 @@ const loadotpVerification = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -173,10 +184,10 @@ const createAccount = async (req, res) => {
     req.session.otp = OTP;
     req.session.otpTimestamp = Date.now();
     SendVerificationEmail(req.body.email, OTP);
-    console.log(OTP);
     return res.json({ success: true, redirect: "/verification" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -187,11 +198,11 @@ const reSendOtp = async (req, res) => {
     req.session.otp = OTP;
     req.session.otpTimestamp = Date.now();
     SendVerificationEmail(email, OTP);
-    console.log(OTP);
     req.flash("success_msg", "New OTP has been resent to your email.");
     res.redirect("/verification");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -220,7 +231,6 @@ const verifyOtp = async (req, res) => {
         res.json({ success: false, message: "Invalid OTP!" });
       }
     } else {
-      console.log("OTP expired");
       req.session.otp = null;
       req.session.otpTimestamp = null;
       res.json({
@@ -230,6 +240,7 @@ const verifyOtp = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -271,6 +282,7 @@ const userAuthentication = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -280,6 +292,7 @@ const loadLogout = async (req, res) => {
     res.redirect("/login");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -305,6 +318,7 @@ const googleCallback = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -313,6 +327,7 @@ const loadForgotPasswordPage = (req, res) => {
     res.render("forgotPassword");
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -333,11 +348,10 @@ const sendResetPasswordOtp = async (req, res) => {
 
     await sendResetPasswdEmail(email, otp);
 
-    console.log(otp);
-
     res.json({ success: true, message: "OTP sent to your email" });
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -350,6 +364,7 @@ const loadOtpVerificationPage = (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -377,6 +392,7 @@ const verifyResetPasswordOtp = (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -389,7 +405,6 @@ const resendResetPasswordOtp = async (req, res) => {
       req.session.resetPasswordOtp = otp;
       req.session.otpTimestamp = Date.now();
       await sendResetPasswdEmail(email, otp);
-      console.log(otp);
       req.flash("success_msg", "New OTP has been resent to your email.");
       res.redirect("/verify-email");
     } else {
@@ -397,6 +412,7 @@ const resendResetPasswordOtp = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
+    res.status(500).send("Internal server error");
   }
 };
 
