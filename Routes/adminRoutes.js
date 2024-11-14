@@ -94,5 +94,6 @@ routes.get("/admin/reviews/:reviewId", adminAuth.isAdmin, adminController.delete
 //? [banner]
 routes.get("/admin/banners", adminAuth.isAdmin, adminController.loadBanner)
 routes.post("/admin/banners/create", adminAuth.isAdmin, upload.single('banner_image'), adminController.createBanner)
+routes.patch("/admin/banners/remove", adminAuth.isAdmin, adminController.removeBanner);
 
 module.exports = routes;

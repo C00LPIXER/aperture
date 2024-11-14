@@ -71,6 +71,11 @@ routes.get("/wishlist", userAuthentication.pleaseLogin, accountController.loadWi
 routes.post("/add-to-wishlist", accountController.addToWishlist);
 routes.delete("/wishlist/remove-from-wishlist", userAuthentication.isLogin, accountController.removeFromWishlist);
 
+//* others
+routes.get("/about", storeController.loadaboutPage);
+routes.get("/contact", storeController.loadContactPage);
+
+
 //* error page
 routes.get("/not-found", authController.loadErrorPage);
 

@@ -620,6 +620,22 @@ const successPage = async (req, res) => {
   }
 };
 
+const loadaboutPage = async (req, res) => {
+  try {
+      res.render("about")
+  } catch (error) {
+      console.error(error.message);
+  }
+}
+
+const loadContactPage = async (req, res) => {
+  try {
+      res.render("contact")
+  } catch (error) {
+      console.error(error.message);
+  }
+}
+
 module.exports = {
   loadHomePage,
   productDetail,
@@ -633,4 +649,6 @@ module.exports = {
   cancelOrder,
   successPage,
   returnOrder,
+  loadaboutPage,
+  loadContactPage
 };

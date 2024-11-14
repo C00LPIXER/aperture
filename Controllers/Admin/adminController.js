@@ -330,12 +330,14 @@ const removeImage = async (req, res) => {
   try {
     const { imgid, id } = req.body;
 
-    const publicId = imgid
+    let publicId = imgid
       .replace(
         /^https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/v\d+\//,
         ""
       )
       .replace(/\.[^.]+$/, "");
+
+    publicId = publicId.replace(/%20/g, " ");
 
     const result = await cloudinary.uploader.destroy(publicId);
 
@@ -780,7 +782,46 @@ const createBanner = async (req, res) => {
       subTitle,
       image,
     }).save();
-    res.json({success: true, message: "New banner added"})
+    res.json({ success: true, message: "New banner added" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal server error");
+  }
+};
+
+const removeBanner = async (req, res) => {
+  try {
+    const bannerCount = await Banner.countDocuments();
+    const bannerId = req.body.bannerId;
+
+    if (bannerCount <= 3) {
+      return res.json({
+        success: false,
+        message:
+          "A minimum of 3 banners are required. To delete this banner, please add a new one first.",
+      });
+    }
+
+    const { image } = await Banner.findById(bannerId);
+    let publicId = image
+      .replace(
+        /^https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/v\d+\//,
+        ""
+      )
+      .replace(/\.[^.]+$/, "");
+
+    publicId = publicId.replace(/%20/g, " ");
+
+    const result = await cloudinary.uploader.destroy(publicId);
+    if (result.result === "ok") {
+      await Banner.findByIdAndDelete(bannerId);
+      res.json({ success: true, message: "Banner removed!" });
+    } else {
+      res.json({
+        success: false,
+        message: `Failed to delete the image: ${result.result}`,
+      });
+    }
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal server error");
@@ -823,4 +864,5 @@ module.exports = {
   deleteReview,
   loadBanner,
   createBanner,
+  removeBanner,
 };
