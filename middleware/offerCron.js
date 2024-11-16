@@ -47,5 +47,6 @@ cron.schedule("0 0 * * *", async () => {
     }
   } catch (error) {
     console.error("cron schedule:", error.message);
+    res.status(500).render("internalError");
   }
 });

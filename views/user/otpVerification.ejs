@@ -165,108 +165,108 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-      function moveNext(current, nextFieldID) {
-        if (current.value.length === 1 && nextFieldID) {
-          document.getElementById(nextFieldID).focus();
-        }
-      }
-
-      function moveBack(event, current, previousFieldID) {
-        if (
-          event.key === "Backspace" &&
-          current.value === "" &&
-          previousFieldID
-        ) {
-          document.getElementById(previousFieldID).focus();
-        }
-      }
-
-      function handlePaste(event) {
-        event.preventDefault();
-        const pastedData = (
-          event.clipboardData || window.clipboardData
-        ).getData("text");
-        const otpInputs = ["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"];
-
-        if (pastedData.length === 6 && /^\d+$/.test(pastedData)) {
-          otpInputs.forEach((id, index) => {
-            document.getElementById(id).value = pastedData[index];
-          });
-          document.getElementById("otp6").focus();
-        }
-      }
-
-      function validateOtp() {
-        const otpInputs = ["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"];
-        let isValid = true;
-        let errorMessage = "";
-        const messageDiv = document.getElementById("otpErrorMessage");
-
-        otpInputs.forEach((id) => {
-          const element = document.getElementById(id);
-
-          const value = document.getElementById(id).value;
-          if (value.length !== 1 || !/^\d$/.test(value)) {
-            isValid = false;
-            element.style.borderColor = "red";
-          }
-        });
-
-        if (!isValid) {
-          errorMessage = "Please enter a valid 6-digit OTP.";
-          messageDiv.innerHTML = errorMessage;
-          messageDiv.style.display = "block";
-        } else {
-          messageDiv.style.display = "none";
-        }
-
-        return isValid;
-      }
-
-      document
-        .getElementById("otpForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
-
-          if (!validateOtp()) {
-            return;
-          }
-
-          const otp1 = document.getElementById("otp1").value;
-          const otp2 = document.getElementById("otp2").value;
-          const otp3 = document.getElementById("otp3").value;
-          const otp4 = document.getElementById("otp4").value;
-          const otp5 = document.getElementById("otp5").value;
-          const otp6 = document.getElementById("otp6").value;
-
-          const fullOtp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
-          document.getElementById("fullOtp").value = fullOtp;
-
-          const formData = $(this).serialize();
-
-          $.ajax({
-            type: "Post",
-            url: `/verification`,
-            data: formData,
-            success: (response) => {
-              if (response.success) {
-                // showToast(response.message);
-                window.location.href = "/login";
-              } else {
-                showToastError(response.message);
+            function moveNext(current, nextFieldID) {
+              if (current.value.length === 1 && nextFieldID) {
+                document.getElementById(nextFieldID).focus();
               }
-            },
-            error: function () {
-              showToast("An error occurred. Please try again.");
-            },
-          });
-        });
+            }
 
-      timer(60);
+            function moveBack(event, current, previousFieldID) {
+              if (
+                event.key === "Backspace" &&
+                current.value === "" &&
+                previousFieldID
+              ) {
+                document.getElementById(previousFieldID).focus();
+              }
+            }
+
+            function handlePaste(event) {
+              event.preventDefault();
+              const pastedData = (
+                event.clipboardData || window.clipboardData
+              ).getData("text");
+              const otpInputs = ["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"];
+
+              if (pastedData.length === 6 && /^\d+$/.test(pastedData)) {
+                otpInputs.forEach((id, index) => {
+                  document.getElementById(id).value = pastedData[index];
+                });
+                document.getElementById("otp6").focus();
+              }
+            }
+
+            function validateOtp() {
+              const otpInputs = ["otp1", "otp2", "otp3", "otp4", "otp5", "otp6"];
+              let isValid = true;
+              let errorMessage = "";
+              const messageDiv = document.getElementById("otpErrorMessage");
+
+              otpInputs.forEach((id) => {
+                const element = document.getElementById(id);
+
+                const value = document.getElementById(id).value;
+                if (value.length !== 1 || !/^\d$/.test(value)) {
+                  isValid = false;
+                  element.style.borderColor = "red";
+                }
+              });
+
+              if (!isValid) {
+                errorMessage = "Please enter a valid 6-digit OTP.";
+                messageDiv.innerHTML = errorMessage;
+                messageDiv.style.display = "block";
+              } else {
+                messageDiv.style.display = "none";
+              }
+
+              return isValid;
+            }
+
+            document
+              .getElementById("otpForm")
+              .addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                if (!validateOtp()) {
+                  return;
+                }
+
+                const otp1 = document.getElementById("otp1").value;
+                const otp2 = document.getElementById("otp2").value;
+                const otp3 = document.getElementById("otp3").value;
+                const otp4 = document.getElementById("otp4").value;
+                const otp5 = document.getElementById("otp5").value;
+                const otp6 = document.getElementById("otp6").value;
+
+                const fullOtp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
+                document.getElementById("fullOtp").value = fullOtp;
+
+                const formData = $(this).serialize();
+
+                $.ajax({
+                  type: "Post",
+                  url: `/verification`,
+                  data: formData,
+                  success: (response) => {
+                    if (response.success) {
+                      // showToast(response.message);
+                      window.location.href = "/login";
+                    } else {
+                      showToastError(response.message);
+                    }
+                  },
+                  error: function () {
+                    showToast("An error occurred. Please try again.");
+                  },
+                });
+              });
+
+      const initialTimeLeft = `<%= remainingTime %>`;
       const timerElement = document.getElementById("timer");
       const resendOtpButton = document.getElementById("resendOtp");
 
-      function timer(timeLeft) {
+      function startTimer(timeLeft) {
         const countdown = setInterval(() => {
           resendOtpButton.style.display = "none";
           if (timeLeft > 0) {
@@ -280,27 +280,29 @@
         }, 1000);
       }
 
+      startTimer(initialTimeLeft);
+
       function resendOtp() {
         window.location.href = "/reSendOtp";
       }
 
-      function showToast(message) {
-        const toastBody = document.getElementById("toast-body");
-        toastBody.textContent = message;
+            function showToast(message) {
+              const toastBody = document.getElementById("toast-body");
+              toastBody.textContent = message;
 
-        const toastElement = document.getElementById("toast");
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
-      }
+              const toastElement = document.getElementById("toast");
+              const toast = new bootstrap.Toast(toastElement);
+              toast.show();
+            }
 
-      function showToastError(message) {
-        const toastBody = document.getElementById("toast-body-error");
-        toastBody.textContent = message;
+            function showToastError(message) {
+              const toastBody = document.getElementById("toast-body-error");
+              toastBody.textContent = message;
 
-        const toastElement = document.getElementById("toast_error");
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
-      }
+              const toastElement = document.getElementById("toast_error");
+              const toast = new bootstrap.Toast(toastElement);
+              toast.show();
+            }
     </script>
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

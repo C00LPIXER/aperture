@@ -39,7 +39,7 @@ const loadHomePage = async (req, res) => {
     res.render("home", { product, wishlist, banner });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -140,7 +140,7 @@ const loadShopPage = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -184,7 +184,7 @@ const productDetail = async (req, res) => {
     res.render("productDetail", { product, relatedProduct, reviews, wishlist });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -243,7 +243,7 @@ const loadCartPage = async (req, res) => {
     res.render("cart", { cart });
   } catch (error) {
     console.error("cart", error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -299,7 +299,7 @@ const addToCart = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -343,7 +343,7 @@ const selectQuantity = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    res.status(500).render("internalError");
   }
 };
 
@@ -360,7 +360,7 @@ const removeFromCart = async (req, res) => {
     res.json({ success: true, message: "Item removed" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -369,8 +369,9 @@ const loadCheckOutPage = async (req, res) => {
   try {
     const userId = req.session.user;
     const user = await User.findById(userId).populate("addresses");
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    let cart = await Cart.findOne({ userId }).populate("items.productId");
     const coupon = await Coupon.find();
+
     if (cart && cart.items.length > 0) {
       cart.totalPrice = cart.items.reduce((total, item) => {
         const price =
@@ -387,18 +388,38 @@ const loadCheckOutPage = async (req, res) => {
             ? item.productId.discount_price
             : originalPrice;
         const discountAmount = (originalPrice - discountPrice) * item.quantity;
-
         return totalDiscount + discountAmount;
       }, 0);
 
-      cart.save();
+      const toRemove = [];
+      for (let i = 0; i < cart.items.length; i++) {
+        if (
+          cart.items[i].productId.stock < 1 ||
+          !cart.items[i].productId.is_Active
+        ) {
+          toRemove.push(cart.items[i].productId._id);
+        }
+      }
+
+      if (toRemove.length > 0) {
+        await Cart.findOneAndUpdate(
+          { _id: cart._id },
+          { $pull: { items: { productId: { $in: toRemove } } } }
+        );
+      }
+
+      cart = await Cart.findOne({ userId }).populate("items.productId");
       res.render("checkOut", { cart, user, coupon });
     } else {
       res.redirect("/cart");
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res
+      .status(500)
+      .render("internalError", {
+        message: "Unable to load checkout page. Please try again.",
+      });
   }
 };
 
@@ -489,7 +510,7 @@ const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -546,7 +567,7 @@ const cancelOrder = async (req, res) => {
     }
   } catch (error) {
     console.error("cancelOrder:", error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -603,7 +624,7 @@ const returnOrder = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -616,25 +637,27 @@ const successPage = async (req, res) => {
     res.render("success", { order });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
 const loadaboutPage = async (req, res) => {
   try {
-      res.render("about")
+    res.render("about");
   } catch (error) {
-      console.error(error.message);
+    console.error(error.message);
+    res.status(500).render("internalError");
   }
-}
+};
 
 const loadContactPage = async (req, res) => {
   try {
-      res.render("contact")
+    res.render("contact");
   } catch (error) {
-      console.error(error.message);
+    console.error(error.message);
+    res.status(500).render("internalError");
   }
-}
+};
 
 module.exports = {
   loadHomePage,
@@ -650,5 +673,5 @@ module.exports = {
   successPage,
   returnOrder,
   loadaboutPage,
-  loadContactPage
+  loadContactPage,
 };

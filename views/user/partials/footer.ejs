@@ -7,19 +7,39 @@
 
         <ul>
           <li class="p-b-10">
-            <a href="/shop?search=&brand=&category=Camera&sort=" class="stext-107 cl7 hov-cl1 trans-04"> Camera </a>
+            <a
+              href="/shop?search=&brand=&category=Camera&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              Camera
+            </a>
           </li>
 
           <li class="p-b-10">
-            <a href="/shop?search=&brand=&category=Lenses&sort=" class="stext-107 cl7 hov-cl1 trans-04"> Lnes </a>
+            <a
+              href="/shop?search=&brand=&category=Lenses&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              Lens
+            </a>
           </li>
 
           <li class="p-b-10">
-            <a href="/shop?search=&brand=&category=Drons&sort=" class="stext-107 cl7 hov-cl1 trans-04"> Drons </a>
+            <a
+              href="/shop?search=&brand=&category=Bags&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              Bags
+            </a>
           </li>
 
           <li class="p-b-10">
-            <a href="/shop?search=&brand=&category=Accessories&sort=" class="stext-107 cl7 hov-cl1 trans-04"> Accessories </a>
+            <a
+              href="/shop?search=&brand=&category=Accessories&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              Accessories
+            </a>
           </li>
         </ul>
       </div>
@@ -29,19 +49,39 @@
 
         <ul>
           <li class="p-b-10">
-            <a href="/shop?search=&brand=Canon&category=&sort=" class="stext-107 cl7 hov-cl1 trans-04"> Canon </a>
+            <a
+              href="/shop?search=&brand=Canon&category=&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              Canon
+            </a>
           </li>
 
           <li class="p-b-10">
-            <a href="/shop?search=&brand=Nikon&category=&sort=" class="stext-107 cl7 hov-cl1 trans-04"> Nikon </a>
+            <a
+              href="/shop?search=&brand=Nikon&category=&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              Nikon
+            </a>
           </li>
 
           <li class="p-b-10">
-            <a href="/shop?search=&brand=Sony&category=&sort=" class="stext-107 cl7 hov-cl1 trans-04"> Sony </a>
+            <a
+              href="/shop?search=&brand=Sony&category=&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              Sony
+            </a>
           </li>
 
           <li class="p-b-10">
-            <a href="/shop?search=&brand=DJI&category=&sort=" class="stext-107 cl7 hov-cl1 trans-04"> DJI </a>
+            <a
+              href="/shop?search=&brand=DJI&category=&sort="
+              class="stext-107 cl7 hov-cl1 trans-04"
+            >
+              DJI
+            </a>
           </li>
         </ul>
       </div>
@@ -51,39 +91,21 @@
 
         <ul>
           <li class="p-b-10">
-            <a href="/profile" class="stext-107 cl7 hov-cl1 trans-04"> My Account </a>
+            <a href="/profile" class="stext-107 cl7 hov-cl1 trans-04">
+              My Account
+            </a>
           </li>
 
           <li class="p-b-10">
-            <a href="/profile#orders" class="stext-107 cl7 hov-cl1 trans-04"> Oders </a>
+            <a href="/profile#orders" class="stext-107 cl7 hov-cl1 trans-04">
+              Oders
+            </a>
           </li>
 
           <li class="p-b-10">
             <a href="/shop" class="stext-107 cl7 hov-cl1 trans-04"> Shop </a>
           </li>
         </ul>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 p-b-50">
-        <h4 class="stext-301 cl0 p-b-30">Newsletter</h4>
-        <form>
-          <div class="wrap-input1 w-full p-b-4">
-            <input
-              class="input1 bg-none plh1 stext-107 cl7"
-              type="text"
-              placeholder="aperture@gmail.com"
-            />
-            <div class="focus-input1 trans-04"></div>
-          </div>
-
-          <div class="p-t-18">
-            <button
-              class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04"
-            >
-              Subscribe
-            </button>
-          </div>
-        </form>
       </div>
     </div>
 
@@ -122,64 +144,63 @@
   }
 
   function addToWishlist(id, element) {
-  $.ajax({
-    type: "POST",
-    url: "/add-to-wishlist",
-    data: { id: id },
-    success: (response) => {
-      if (response.success) {
-        if (response.message) {
-          showToastifySuccess(response.message);
-        }
-        const icon = element.querySelector(".fa-heart");
-        icon.classList.remove("fa-regular");
-        icon.classList.add("fa-solid");
-        icon.style.color = "#ff0000";
-        element.setAttribute("onclick", `removeFromWishlist('${id}', this)`);
-      } else {
-        showToastify(response.info);
-      }
-    },
-    error: function () {
-      showToast("An error occurred. Please try again.");
-    },
-  });
-}
-
-function removeFromWishlist(id, element) {
-  showConfirmationDialog(
-    "Are you sure?",
-    "You don't need this product",
-    "Remove",
-    "Cancel",
-    "btn-success"
-  ).then((isConfirm) => {
-    if (isConfirm) {
-      $.ajax({
-        url: "/wishlist/remove-from-wishlist",
-        type: "DELETE",
-        data: { id: id },
-        success: function (response) {
-          if (response.success) {
+    $.ajax({
+      type: "POST",
+      url: "/add-to-wishlist",
+      data: { id: id },
+      success: (response) => {
+        if (response.success) {
+          if (response.message) {
             showToastifySuccess(response.message);
-            $("#cartTable").load("/wishlist #cartTable > *");
-            const icon = element.querySelector(".fa-heart");
-            icon.classList.remove("fa-solid");
-            icon.classList.add("fa-regular");
-            icon.style.color = "";
-            element.setAttribute("onclick", `addToWishlist('${id}', this)`);
-          } else {
-            showToastifyError(response.message);
           }
-        },
-        error: function () {
-          showToastifyError("An error occurred while removing the item.");
-        },
-      });
-    }
-  });
-}
+          const icon = element.querySelector(".fa-heart");
+          icon.classList.remove("fa-regular");
+          icon.classList.add("fa-solid");
+          icon.style.color = "#ff0000";
+          element.setAttribute("onclick", `removeFromWishlist('${id}', this)`);
+        } else {
+          showToastify(response.info);
+        }
+      },
+      error: function () {
+        showToast("An error occurred. Please try again.");
+      },
+    });
+  }
 
+  function removeFromWishlist(id, element) {
+    showConfirmationDialog(
+      "Are you sure?",
+      "You don't need this product",
+      "Remove",
+      "Cancel",
+      "btn-success"
+    ).then((isConfirm) => {
+      if (isConfirm) {
+        $.ajax({
+          url: "/wishlist/remove-from-wishlist",
+          type: "DELETE",
+          data: { id: id },
+          success: function (response) {
+            if (response.success) {
+              showToastifySuccess(response.message);
+              $("#cartTable").load("/wishlist #cartTable > *");
+              const icon = element.querySelector(".fa-heart");
+              icon.classList.remove("fa-solid");
+              icon.classList.add("fa-regular");
+              icon.style.color = "";
+              element.setAttribute("onclick", `addToWishlist('${id}', this)`);
+            } else {
+              showToastifyError(response.message);
+            }
+          },
+          error: function () {
+            showToastifyError("An error occurred while removing the item.");
+          },
+        });
+      }
+    });
+  }
 </script>
 <!--===============================================================================================-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

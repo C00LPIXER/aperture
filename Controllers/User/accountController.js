@@ -16,7 +16,7 @@ const securePasswd = async (password) => {
     return Hash;
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -58,7 +58,7 @@ const loadProfilePage = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -117,7 +117,7 @@ const editUserInfo = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -163,7 +163,7 @@ const addAddress = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -200,7 +200,7 @@ const editAddress = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -218,7 +218,7 @@ const removeAddress = async (req, res) => {
     res.json({ success: true, message: "Address removed successfully" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -234,7 +234,7 @@ const loadEditAddress = async (req, res) => {
     res.render("editAddress", { address });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -272,7 +272,7 @@ const addReview = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -377,7 +377,7 @@ const invoiceDownload = async (req, res) => {
     doc.end();
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -394,7 +394,7 @@ const loadWishlistPage = async (req, res) => {
     res.render("wishlist", { wishlist });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -436,7 +436,7 @@ const addToWishlist = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -453,7 +453,7 @@ const removeFromWishlist = async (req, res) => {
     res.json({ success: true, message: "Item removed" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 

@@ -28,7 +28,7 @@ routes.get("/forgot-password", userAuthentication.isLogout, authController.loadF
 routes.post("/forgot-password/check-email", userAuthentication.isLogout, authController.sendResetPasswordOtp);
 routes.get("/verify-email", userAuthentication.isLogout, authController.loadOtpVerificationPage);
 routes.post("/verify-email", userAuthentication.isLogout, authController.verifyResetPasswordOtp);
-routes.get("/verify-email/resend-otp", userAuthentication.isLogout, authController.resendResetPasswordOtp);
+routes.post("/verify-email/resend-otp", userAuthentication.isLogout, authController.resendResetPasswordOtp);
 routes.get("/reset-password", userAuthentication.isLogout, authController.loadResetPasswordPage);
 routes.post("/reset-password/submit", userAuthentication.isLogout, authController.resetPassword);
 routes.get("/logout", authController.loadLogout);
@@ -79,4 +79,8 @@ routes.get("/contact", storeController.loadContactPage);
 //* error page
 routes.get("/not-found", authController.loadErrorPage);
 
-module.exports = routes;  
+routes.get("*", (req, res) => {
+  res.redirect("/not-found");
+});
+
+module.exports = routes;

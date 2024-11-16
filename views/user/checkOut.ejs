@@ -35,14 +35,16 @@
       z-index: 9999;
     }
     @media (max-width: 576px) {
-          #couponForm, #removeCoupon {
-            flex-direction: column;
-          }
-          
-          #couponForm .btn, #removeCoupon .btn {
-            width: 100%;
-          }
-        }
+      #couponForm,
+      #removeCoupon {
+        flex-direction: column;
+      }
+
+      #couponForm .btn,
+      #removeCoupon .btn {
+        width: 100%;
+      }
+    }
   </style>
   <body class="animsition">
     <!-- Header -->
@@ -230,60 +232,60 @@
         <div class="col-lg-5">
           <div class="d-flex flex-column gap-3">
             <% if(cart.couponCode && cart.discount) { %>
-              <form id="removeCoupon" class="d-flex gap-2">
-                <input
-                  type="text"
-                  name="couponCode"
-                  class="form-control flex-grow-1 m-2"
-                  id="couponInput"
-                  value="<%= cart.couponCode %>"
-                  disabled
-                />
-                <input
-                  type="hidden"
-                  id="cartId"
-                  name="cartId"
-                  value="<%= cart._id %>"
-                />
-                <button class="btn btn-dark px-4 m-2">Remove</button>
-                <% if(coupon.length > 0) { %>
-                  <button
-                    type="button"
-                    class="btn btn-secondary m-2"
-                    data-bs-toggle="modal"
-                    data-bs-target="#couponModal"
-                  >
-                    View Coupons
-                  </button>
-                <% } %>
-              </form>
+            <form id="removeCoupon" class="d-flex gap-2">
+              <input
+                type="text"
+                name="couponCode"
+                class="form-control flex-grow-1 m-2"
+                id="couponInput"
+                value="<%= cart.couponCode %>"
+                disabled
+              />
+              <input
+                type="hidden"
+                id="cartId"
+                name="cartId"
+                value="<%= cart._id %>"
+              />
+              <button class="btn btn-dark px-4 m-2">Remove</button>
+              <% if(coupon.length > 0) { %>
+              <button
+                type="button"
+                class="btn btn-secondary m-2"
+                data-bs-toggle="modal"
+                data-bs-target="#couponModal"
+              >
+                View Coupons
+              </button>
+              <% } %>
+            </form>
             <% } else { %>
-              <form id="couponForm" class="d-flex gap-2">
-                <input
-                  type="text"
-                  name="couponCode"
-                  class="form-control flex-grow-1 m-2"
-                  id="couponInput"
-                  placeholder="Enter Coupon"
-                />
-                <input
-                  type="hidden"
-                  id="cartId"
-                  name="cartId"
-                  value="<%= cart._id %>"
-                />
-                <button type="submit" class="btn btn-dark px-4 m-2">Apply</button>
-                <% if(coupon.length > 0) { %>
-                  <button
-                    type="button"
-                    class="btn btn-secondary m-2"
-                    data-bs-toggle="modal"
-                    data-bs-target="#couponModal"
-                  >
-                    View Coupons
-                  </button>
-                <% } %>
-              </form>
+            <form id="couponForm" class="d-flex gap-2">
+              <input
+                type="text"
+                name="couponCode"
+                class="form-control flex-grow-1 m-2"
+                id="couponInput"
+                placeholder="Enter Coupon"
+              />
+              <input
+                type="hidden"
+                id="cartId"
+                name="cartId"
+                value="<%= cart._id %>"
+              />
+              <button type="submit" class="btn btn-dark px-4 m-2">Apply</button>
+              <% if(coupon.length > 0) { %>
+              <button
+                type="button"
+                class="btn btn-secondary m-2"
+                data-bs-toggle="modal"
+                data-bs-target="#couponModal"
+              >
+                View Coupons
+              </button>
+              <% } %>
+            </form>
             <% } %>
           </div>
         </div>
@@ -342,7 +344,7 @@
                           type="radio"
                           name="shippingAddressId"
                           value="<%= addresses._id %>"
-                          id="address"
+                          id="shippingAddressId"
                           style="transform: scale(1.5)"
                           checked
                         />
@@ -367,7 +369,8 @@
                 </div>
                 <div class="size-209">
                   <span class="mtext-110 cl22"
-                    >₹ <%= (cart.totalPrice + cart.totalDiscount).toFixed(2) %></span
+                    >₹ <%= (cart.totalPrice + cart.totalDiscount).toFixed(2)
+                    %></span
                   >
                 </div>
               </div>
@@ -390,7 +393,8 @@
                 </div>
                 <div class="size-209">
                   <span class="mtext-110 cl22"
-                    >₹ <%= (cart.discount + cart.totalDiscount).toFixed(2) %></span
+                    >₹ <%= (cart.discount + cart.totalDiscount).toFixed(2)
+                    %></span
                   >
                 </div>
                 <%}%>
@@ -595,8 +599,9 @@
           event.preventDefault();
 
           const paymentMethod = document.getElementById("payment-method").value;
-          const shippingAddressId = document.getElementById("address").value;
-          const formData = $(this).serialize();
+          const shippingAddressId = document.querySelector(
+            'input[name="shippingAddressId"]:checked'
+          )?.value;
 
           if (!shippingAddressId) {
             Toastify({
@@ -608,6 +613,8 @@
             }).showToast();
             return;
           }
+
+          const formData = $(this).serialize();
 
           if (
             paymentMethod === "Cash on Delivery" ||

@@ -55,12 +55,8 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/admin", adminRoutes);
 app.use("/", userRoutes);
-app.use("/", adminRoutes);
-
-app.get("*", (req, res) => {
-  res.render("errorPage");
-});
 
 app.listen(port,() => {
   console.log(`server running on port: ${port}`);

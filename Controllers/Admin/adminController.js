@@ -42,7 +42,7 @@ const loadAdminPage = async (req, res) => {
     res.render("admin", { orders, products, users, totalRevenue });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -158,7 +158,7 @@ const loadChart = async (req, res) => {
     res.json({ revenue, topProducts, topCategories });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -167,7 +167,7 @@ const loadAdminLogin = async (req, res) => {
     res.render("adminLogin");
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -203,7 +203,7 @@ const adminAuthentication = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -213,7 +213,7 @@ const adminLogout = async (req, res) => {
     res.redirect("/admin/login");
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -242,7 +242,7 @@ const loadProductList = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -253,7 +253,7 @@ const blockProduct = async (req, res) => {
     res.json({ success: true, message: "Product blocked", status: "blocked" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -264,7 +264,7 @@ const unblockProduct = async (req, res) => {
     res.json({ success: true, message: "Product unblocked", status: "active" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -275,7 +275,7 @@ const loadAddProduct = async (req, res) => {
     res.render("add_product", { categories, brands });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -307,7 +307,7 @@ const createProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -322,13 +322,22 @@ const LoadEditProduct = async (req, res) => {
     res.render("editProduct", { product, categories, brands });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
 const removeImage = async (req, res) => {
   try {
     const { imgid, id } = req.body;
+    const product = await Product.findById(id);
+
+    if (product.images.length <= 3) {
+      return res.json({
+        success: false,
+        message:
+          "A minimum of 3 image are required. To delete this image, please add a new one first.",
+      });
+    }
 
     let publicId = imgid
       .replace(
@@ -337,7 +346,7 @@ const removeImage = async (req, res) => {
       )
       .replace(/\.[^.]+$/, "");
 
-    publicId = publicId.replace(/%20/g, " ");
+    publicId = decodeURIComponent(publicId);
 
     const result = await cloudinary.uploader.destroy(publicId);
 
@@ -354,7 +363,7 @@ const removeImage = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -388,7 +397,7 @@ const editProduct = async (req, res) => {
     res.json({ success: true, message: "Product updated successfully!" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -404,7 +413,7 @@ const loadOrderDetail = async (req, res) => {
     res.render("orderDetail", { order });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -430,7 +439,7 @@ const loadOrderList = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -485,7 +494,7 @@ const changeOrderStatus = async (req, res) => {
     res.json({ success: true, message: `Oreder ststus changed to ${status}` });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -521,7 +530,7 @@ const loadUserList = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -532,7 +541,7 @@ const blockUser = async (req, res) => {
     res.json({ success: true, message: "User blocked", status: "blocked" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -543,7 +552,7 @@ const unblockUser = async (req, res) => {
     res.json({ success: true, message: "User unblocked", status: "active" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -554,7 +563,7 @@ const loadCategoryPage = async (req, res) => {
     res.render("categories", { categories });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -573,7 +582,7 @@ const createCategory = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -584,7 +593,7 @@ const listCategory = async (req, res) => {
     res.json({ success: true, message: "Category listed successfully" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -595,7 +604,7 @@ const unlistCategory = async (req, res) => {
     res.json({ success: true, message: "Category Unlisted successfully" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -607,7 +616,7 @@ const loadEditCategory = async (req, res) => {
     res.render("editCategory", { category });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -630,7 +639,7 @@ const editCategory = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -641,7 +650,7 @@ const loadBrandPage = async (req, res) => {
     res.render("brands", { brands });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -660,7 +669,7 @@ const createBrand = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -671,7 +680,7 @@ const listBrand = async (req, res) => {
     return res.json({ success: true, message: "Brand listed successfully" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -682,7 +691,7 @@ const unlistBrand = async (req, res) => {
     return res.json({ success: true, message: "Brand Unlisted successfully" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -694,7 +703,7 @@ const loadeditBrand = async (req, res) => {
     res.render("editBrand", { brand });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -717,7 +726,7 @@ const editBrand = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -744,7 +753,7 @@ const loadReviews = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -756,7 +765,7 @@ const deleteReview = async (req, res) => {
     res.json({ success: true, message: "Review removed!" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -767,7 +776,7 @@ const loadBanner = async (req, res) => {
     res.render("banners", { banners });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -785,7 +794,7 @@ const createBanner = async (req, res) => {
     res.json({ success: true, message: "New banner added" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -810,7 +819,7 @@ const removeBanner = async (req, res) => {
       )
       .replace(/\.[^.]+$/, "");
 
-    publicId = publicId.replace(/%20/g, " ");
+    publicId = decodeURIComponent(publicId);
 
     const result = await cloudinary.uploader.destroy(publicId);
     if (result.result === "ok") {
@@ -824,7 +833,7 @@ const removeBanner = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 

@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+
+<body>
+  <main>
+    <header class="main-header navbar"></header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Error</h2>
+          <p>Something went wrong. Please try again later.</p>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <h3 class="mb-3">Oops! We encountered an error.</h3>
+          <p class="mb-4">
+            An unexpected error occurred while processing your request. Please
+            check your input or try again later.
+          </p>
+          <div class="d-flex justify-content-center">
+            <a href="/admin" class="btn btn-primary me-3">
+              <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <%- include('partials/footer') %>
+  </main>
+</body>

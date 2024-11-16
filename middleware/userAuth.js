@@ -10,9 +10,9 @@ const isLogin = async (req, res, next) => {
             console.log("Error logging out:", err.message);
           }
           req.session.user = null;
-          res.clearCookie('connect.sid');
-          req.flash('error_msg', 'Your account has been blocked by admin.');
-          return res.redirect('/login');
+          res.clearCookie("connect.sid");
+          req.flash("error_msg", "Your account has been blocked by admin.");
+          return res.redirect("/login");
         });
       } else {
         next();
@@ -22,6 +22,7 @@ const isLogin = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error.message);
+    res.status(500).render("internalError");
   }
 };
 
@@ -35,22 +36,20 @@ const pleaseLogin = async (req, res, next) => {
             console.log("Error logging out:", err.message);
           }
           req.session.user = null;
-          res.clearCookie('connect.sid');
-          req.flash('error_msg', 'Your account has been blocked by admin.');
-          return res.redirect('/login');
+          res.clearCookie("connect.sid");
+          req.flash("error_msg", "Your account has been blocked by admin.");
+          return res.redirect("/login");
         });
       } else {
         next();
       }
     } else {
-      req.flash(
-        "error_msg",
-        "You need to log in to access this feature"
-      );
+      req.flash("error_msg", "You need to log in to access this feature");
       res.redirect("/login");
     }
   } catch (error) {
     console.log(error.message);
+    res.status(500).render("internalError");
   }
 };
 
@@ -64,25 +63,24 @@ const isLogout = async (req, res, next) => {
             console.log(err.message);
           }
           req.session.user = null;
-          res.clearCookie('connect.sid');
-          req.flash('error_msg', 'Your account has been blocked by admin.');
-          return res.redirect('/login');
+          res.clearCookie("connect.sid");
+          req.flash("error_msg", "Your account has been blocked by admin.");
+          return res.redirect("/login");
         });
       } else {
         res.redirect("/");
       }
     } else {
-      next(); 
+      next();
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render("internalError");
   }
 };
 
 module.exports = {
   isLogin,
   isLogout,
-  pleaseLogin
+  pleaseLogin,
 };
- 

@@ -22,16 +22,21 @@ const loadSales = async (req, res) => {
 
     const reportData = {
       totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
-      totalDiscount: orders.reduce((sum, order) => sum + (order.discount || 0), 0),
-      couponDeductions: orders.reduce((sum, order) => sum + (order.couponCode ? order.discount : 0), 0),
+      totalDiscount: orders.reduce(
+        (sum, order) => sum + (order.discount || 0),
+        0
+      ),
+      couponDeductions: orders.reduce(
+        (sum, order) => sum + (order.couponCode ? order.discount : 0),
+        0
+      ),
       ordersCount: orders.length,
     };
 
     res.render("salesReport", { orders, reportData });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
-    
+    res.status(500).render("adminError");
   }
 };
 
@@ -71,15 +76,21 @@ const generateReport = async (req, res) => {
 
     const reportData = {
       totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
-      totalDiscount: orders.reduce((sum, order) => sum + (order.discount || 0), 0),
-      couponDeductions: orders.reduce((sum, order) => sum + (order.couponCode ? order.discount : 0), 0),
+      totalDiscount: orders.reduce(
+        (sum, order) => sum + (order.discount || 0),
+        0
+      ),
+      couponDeductions: orders.reduce(
+        (sum, order) => sum + (order.couponCode ? order.discount : 0),
+        0
+      ),
       ordersCount: orders.length,
     };
 
     res.render("salesReport", { orders, reportData });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -102,7 +113,8 @@ const downloadPDFReport = async (req, res) => {
     doc.fontSize(16).text("Sales Report", { align: "center" });
     doc.moveDown();
 
-    doc.fontSize(12)
+    doc
+      .fontSize(12)
       .text(`Total Sales: ${reportData.totalSales.toFixed(2)}`)
       .text(`Total Discounts: ${reportData.totalDiscount.toFixed(2)}`)
       .text(`Coupon Deductions: ${reportData.couponDeductions.toFixed(2)}`)
@@ -118,8 +130,12 @@ const downloadPDFReport = async (req, res) => {
 
     // Order Details Section
     orders.forEach((order, index) => {
-      doc.fontSize(12).fillColor("black").text(`Order ${index + 1}`, { bold: true });
-      doc.fontSize(10)
+      doc
+        .fontSize(12)
+        .fillColor("black")
+        .text(`Order ${index + 1}`, { bold: true });
+      doc
+        .fontSize(10)
         .text(`Order ID: ${order._id}`)
         .text(`Customer Email: ${order.userId.email}`)
         .text(`Items Ordered: ${order.items.length}`)
@@ -127,7 +143,7 @@ const downloadPDFReport = async (req, res) => {
         .text(`Order Status: ${order.orderStatus}`)
         .text(`Order Placed: ${new Date(order.placedAt).toLocaleDateString()}`)
         .moveDown();
-      
+
       // Draw a line to separate each order for clarity
       doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
       doc.moveDown();
@@ -136,7 +152,7 @@ const downloadPDFReport = async (req, res) => {
     doc.end();
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -186,7 +202,7 @@ const downloadExcelReport = async (req, res) => {
     res.end();
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
   }
 };
 
@@ -223,8 +239,14 @@ const fetchOrdersAndReportData = async (reportType, startDate, endDate) => {
 
   const reportData = {
     totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
-    totalDiscount: orders.reduce((sum, order) => sum + (order.discount || 0), 0),
-    couponDeductions: orders.reduce((sum, order) => sum + (order.couponCode ? order.discount : 0), 0),
+    totalDiscount: orders.reduce(
+      (sum, order) => sum + (order.discount || 0),
+      0
+    ),
+    couponDeductions: orders.reduce(
+      (sum, order) => sum + (order.couponCode ? order.discount : 0),
+      0
+    ),
     ordersCount: orders.length,
   };
   return { orders, reportData };

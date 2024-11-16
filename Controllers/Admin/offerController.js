@@ -13,7 +13,7 @@ const loadOfferList = async (req, res) => {
     const categories = await Category.find();
     res.render("offers", { offers, categories, brands });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -79,7 +79,7 @@ const createOffer = async (req, res) => {
         discountPrice -= discountValue;
       }
 
-      discountPrice = Math.max(0, discountPrice);
+      discountPrice = Math.max(0, Math.floor(discountPrice));
 
       return {
         updateOne: {
@@ -93,7 +93,75 @@ const createOffer = async (req, res) => {
 
     return res.json({ success: true, message: "New offer created!" });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
+    console.error(error.message);
+  }
+};
+
+const listOffer = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const offer = await Offer.findByIdAndUpdate(id, { isActive: true });
+
+    if (!offer) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Offer not found" });
+    }
+
+    const { discountType, discountValue } = offer;
+
+    const query = {};
+    if (offer.brands && offer.brands.length > 0) {
+      query.brand = { $in: offer.brands.map((brand) => brand._id) };
+    }
+
+    if (offer.categories && offer.categories.length > 0) {
+      query.category = {
+        $in: offer.categories.map((category) => category._id),
+      };
+    }
+
+    const products = await Product.find(query);
+    if (products.length === 0) {
+      return res.json({
+        success: true,
+        message: "Offer activated, but no products were found.",
+      });
+    }
+
+    const bulkOps = products.map((product) => {
+      let discountPrice = product.price;
+
+      if (discountType === "percentage") {
+        discountPrice -= (product.price * discountValue) / 100;
+      } else if (discountType === "fixed") {
+        discountPrice -= discountValue;
+      }
+
+      discountPrice = Math.max(0, Math.floor(discountPrice));
+
+      return {
+        updateOne: {
+          filter: { _id: product._id },
+          update: { discount_price: discountPrice },
+        },
+      };
+    });
+
+    await Product.bulkWrite(bulkOps);
+
+    return res.json({
+      success: true,
+      message: "Offer added to products successfully!",
+      data: {
+        offer,
+        affectedProducts: products.length,
+      },
+    });
+  } catch (error) {
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -101,12 +169,12 @@ const createOffer = async (req, res) => {
 const deleteOffer = async (req, res) => {
   try {
     const id = req.body.id;
-    const offer = await Offer.findByIdAndUpdate(id,{isActive: false});
+    const offer = await Offer.findByIdAndUpdate(id, { isActive: false });
     const query = {};
     if (offer.brands && offer.brands.length > 0) {
       query.brand = { $in: offer.brands.map((brand) => brand._id) };
     }
-    
+
     if (offer.categories && offer.categories.length > 0) {
       query.category = {
         $in: offer.categories.map((category) => category._id),
@@ -132,7 +200,7 @@ const deleteOffer = async (req, res) => {
 
     return res.json({ success: true, message: "Offer removed!" });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -143,7 +211,7 @@ const loadCouponList = async (req, res) => {
     const coupon = await Coupon.find();
     res.render("coupons", { coupon });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -185,7 +253,7 @@ const createCoupon = async (req, res) => {
     await coupon.save();
     res.json({ success: true, message: "New coupon created!" });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -196,7 +264,7 @@ const deleteCoupon = async (req, res) => {
     const coupon = await Coupon.findByIdAndDelete(id);
     res.json({ success: true, message: "Coupon removed!" });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -263,7 +331,7 @@ const useCoupon = async (req, res) => {
 
     return res.json({ success: true, message: "Coupon applied successfully!" });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -291,7 +359,7 @@ const removeCoupon = async (req, res) => {
 
     return res.json({ success: true, message: "Coupon removed!" });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render("adminError");
     console.error(error.message);
   }
 };
@@ -305,4 +373,5 @@ module.exports = {
   deleteCoupon,
   useCoupon,
   removeCoupon,
+  listOffer,
 };

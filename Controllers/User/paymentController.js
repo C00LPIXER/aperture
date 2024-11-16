@@ -79,7 +79,7 @@ const payWithPaypal = async (req, res) => {
     });
   } catch (error) {
     console.error("payWithPaypal:", error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -141,7 +141,7 @@ const paymentSuccess = async (req, res) => {
     res.redirect(`/order-placed/${savedOrder._id}`);
   } catch (error) {
     console.error("paymentSuccess:", error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -202,7 +202,7 @@ const paymentCancel = async (req, res) => {
     res.redirect(`/order-placed/${savedOrder._id}`);
   } catch (error) {
     console.error("paymentCancel:", error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -253,7 +253,7 @@ const payFromOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("payWithPaypal:", error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -267,7 +267,7 @@ const payNowSuccess = async (req, res) => {
     res.redirect("/profile#orders");
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 
@@ -276,7 +276,7 @@ const payNowCancel = async (req, res) => {
     res.redirect("/profile#orders");
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal server error");
+    res.status(500).render("internalError");
   }
 };
 

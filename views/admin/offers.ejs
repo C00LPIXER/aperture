@@ -36,13 +36,6 @@
           <h2 class="content-title card-title">Offers</h2>
           <p>Add and delete Offers</p>
         </div>
-        <div>
-          <input
-            type="text"
-            placeholder="Search Offers"
-            class="form-control bg-white"
-          />
-        </div>
       </div>
 
       <div class="card" id="offer-list">
@@ -201,19 +194,18 @@
                         <a
                           class="me-4"
                           onclick="deleteOffer('<%= offer._id %>')"
-                          ><i
-                            class="fa-solid fa-ban"
-                            style="color: #000000"
-                          ></i
-                        ></a>
+                          >Block</a
+                        >
                         <% }else {%>
-                          <a
+                        <a
                           class="me-4 text-danger"
-                          >unlisted offer</a>
-                          <%}%>
+                          onclick="listOffer('<%= offer._id %>')"
+                          >Unblock</a
+                        >
+                        <%}%>
                       </td>
                     </tr>
-                    <td colspan="6" ><%= offer.description %></td>
+                    <td colspan="6"><%= offer.description %></td>
                     <% }) %>
                   </tbody>
                 </table>
@@ -419,6 +411,41 @@
         }
       );
     }
+
+    function listOffer(id) {
+      swal(
+        {
+          title: "Are you sure?",
+          text: "you want to list this offer now?",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          closeOnConfirm: true,
+          closeOnCancel: true,
+        },
+        function (isConfirm) {
+          if (isConfirm) {
+            $.ajax({
+              url: "/admin/offers/list",
+              type: "PUT",
+              data: { id: id },
+              success: function (response) {
+                if (response.success) {
+                  showToast(response.message);
+                  $("#offerTable").load("/admin/offers #offerTable");
+                } else {
+                  showToastError(response.message);
+                }
+              },
+              error: function (error) {
+                showToastError(response.message);
+              },
+            });
+          }
+        }
+      );
+    }
+
     document
       .getElementById("offerForm")
       .addEventListener("submit", function (e) {
