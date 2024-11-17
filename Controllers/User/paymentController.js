@@ -138,7 +138,7 @@ const paymentSuccess = async (req, res) => {
       }
     }
 
-    res.redirect(`/order-placed/${savedOrder._id}`);
+    res.redirect(`/order-placed?ordeId=${savedOrder._id}`);
   } catch (error) {
     console.error("paymentSuccess:", error.message);
     res.status(500).render("internalError");
@@ -199,7 +199,7 @@ const paymentCancel = async (req, res) => {
       }
     }
 
-    res.redirect(`/order-placed/${savedOrder._id}`);
+    res.redirect(`/order-placed?ordeId=${savedOrder._id}`);
   } catch (error) {
     console.error("paymentCancel:", error.message);
     res.status(500).render("internalError");

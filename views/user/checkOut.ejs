@@ -65,7 +65,7 @@
     </div>
 
     <div id="checkout" class="container p-t-25">
-      <div class="table-responsive col-lg-12">
+      <div class="table-responsive col-lg-12" id="productTable">
         <table class="table">
           <thead>
             <tr>
@@ -524,7 +524,7 @@
       function copyCouponCode(code) {
         navigator.clipboard.writeText(code);
       }
-      // adding coupon
+
       document
         .getElementById("couponForm")
         ?.addEventListener("submit", (event) => {
@@ -549,7 +549,7 @@
                   $("#order-summery").load("/checkout #order-summery > *");
                   location.reload();
                 } else {
-                  showToastifyError(response.message);
+                  showToastError(response.message);
                 }
               },
               error: function () {
@@ -584,7 +584,7 @@
                 $("#order-summery").load("/checkout #order-summery > *");
                 location.reload();
               } else {
-                showToastifyError(response.message);
+                showToastError(response.message);
               }
             },
             error: function () {
@@ -604,13 +604,7 @@
           )?.value;
 
           if (!shippingAddressId) {
-            Toastify({
-              text: "Please make sure you select an address",
-              duration: 3000,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "#dc3545",
-            }).showToast();
+            showToastifyError("Please make sure you select an address");
             return;
           }
 
@@ -628,13 +622,21 @@
                 if (response.success) {
                   window.location.href = response.redirectUrl;
                 } else {
-                  Toastify({
-                    text: response.message,
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#dc3545",
-                  }).showToast();
+                  showToastifyError(response.message);
+
+                  if (
+                    response.message !==
+                    "Order above ₹5000 does not support Cash on Delivery"
+                  ) {
+                    setTimeout(() => {
+                      $("#order-summery").load("/checkout #order-summery > *");
+                      $("#productTable").load("/checkout #productTable > *");
+                      showToastifySuccess(
+                        "These items have been automatically removed. You can now proceed with the purchase of the available products.",
+                        5000
+                      );
+                    }, 3000);
+                  }
                 }
               },
               error: function () {
@@ -658,23 +660,26 @@
                 if (response.success && response.redirectUrl) {
                   window.location.href = response.redirectUrl;
                 } else {
-                  Toastify({
-                    text: "Payment error",
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#dc3545",
-                  }).showToast();
+                  document.getElementById("loader").style.display = "none";
+                  document.getElementById("purchase-button").disabled = false;
+                  showToastifyError(response.message);
+
+                  setTimeout(() => {
+                    $("#order-summery").load("/checkout #order-summery > *");
+                    $("#productTable").load("/checkout #productTable > *");
+                    showToastifySuccess(
+                      "These items have been automatically removed. You can now proceed with the purchase of the available products.",
+                      5000
+                    );
+                  }, 3000);
                 }
               },
               error: function () {
-                Toastify({
-                  text: "An error occurred",
-                  duration: 3000,
-                  gravity: "top",
-                  position: "right",
-                  backgroundColor: "#dc3545",
-                }).showToast();
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("purchase-button").disabled = false;
+                showToastifyError(
+                  "An error occurred during checkout. Please refresh the page and try again."
+                );
               },
             });
           }
@@ -762,9 +767,7 @@
                 }
               },
               error: function (xhr, status, error) {
-                showToastifyError(
-                  "An error occurred while updating the profile."
-                );
+                showToastError("An error occurred while updating the profile.");
               },
             });
           }
@@ -778,10 +781,10 @@
       function showValidationError(fieldId, message) {
         const field = document.getElementById(fieldId);
         field.style.borderColor = "#dc3545";
-        showToastifyError(message);
+        showToastError(message);
       }
 
-      function showToastifyError(message) {
+      function showToastError(message) {
         Toastify({
           text: message,
           duration: 3000,

@@ -390,23 +390,7 @@ const loadCheckOutPage = async (req, res) => {
         const discountAmount = (originalPrice - discountPrice) * item.quantity;
         return totalDiscount + discountAmount;
       }, 0);
-
-      const toRemove = [];
-      for (let i = 0; i < cart.items.length; i++) {
-        if (
-          cart.items[i].productId.stock < 1 ||
-          !cart.items[i].productId.is_Active
-        ) {
-          toRemove.push(cart.items[i].productId._id);
-        }
-      }
-
-      if (toRemove.length > 0) {
-        await Cart.findOneAndUpdate(
-          { _id: cart._id },
-          { $pull: { items: { productId: { $in: toRemove } } } }
-        );
-      }
+      await cart.save();
 
       cart = await Cart.findOne({ userId }).populate("items.productId");
       res.render("checkOut", { cart, user, coupon });
@@ -415,11 +399,9 @@ const loadCheckOutPage = async (req, res) => {
     }
   } catch (error) {
     console.error(error.message);
-    res
-      .status(500)
-      .render("internalError", {
-        message: "Unable to load checkout page. Please try again.",
-      });
+    res.status(500).render("internalError", {
+      message: "Unable to load checkout page. Please try again.",
+    });
   }
 };
 
@@ -435,7 +417,7 @@ const createOrder = async (req, res) => {
     }
 
     const userId = req.session.user;
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
     const shippingAddress = await Address.findById(shippingAddressId);
 
     if (!shippingAddress) {
@@ -445,7 +427,50 @@ const createOrder = async (req, res) => {
       });
     }
 
-    const items = cart.items.map((item) => ({
+    const toRemove = [];
+    const insufficientStock = [];
+    const activeItems = cart.items.filter((item) => {
+      const product = item.productId;
+      if (!product.is_Active || product.stock < item.quantity) {
+        toRemove.push(product._id);
+        if (product.stock < item.quantity) {
+          insufficientStock.push({
+            productId: product._id,
+            name: product.name,
+            availableStock: product.stock,
+          });
+        }
+        return false;
+      }
+      return true;
+    });
+
+    await Cart.findByIdAndUpdate(cart._id, {
+      items: activeItems,
+    });
+
+    if (toRemove.length > 0) {
+      const errorMessage =
+        insufficientStock.length > 0
+          ? "Some products are out of stock or unavailable: " +
+            insufficientStock
+              .map(
+                (item) =>
+                  `${item.name} (Requested: ${
+                    cart.items.find((i) => i.productId.equals(item.productId))
+                      .quantity
+                  }, Available: ${item.availableStock})`
+              )
+              .join(", ")
+          : "Some products are inactive or unavailable.";
+
+      return res.json({
+        success: false,
+        message: errorMessage,
+      });
+    }
+
+    const items = activeItems.map((item) => ({
       product: item.productId,
       quantity: item.quantity,
       price: item.price,
@@ -493,8 +518,9 @@ const createOrder = async (req, res) => {
     } else {
       savedOrder = await newOrder.save();
     }
+
     if (savedOrder) {
-      await Cart.findByIdAndDelete({ _id: cart._id });
+      await Cart.findByIdAndDelete(cart._id);
 
       for (let item of items) {
         await Product.findByIdAndUpdate(item.product, {
@@ -506,7 +532,7 @@ const createOrder = async (req, res) => {
     res.json({
       success: true,
       message: "Order created successfully",
-      redirectUrl: `/order-placed/${savedOrder._id}`,
+      redirectUrl: `/order-placed?ordeId=${savedOrder._id}`,
     });
   } catch (error) {
     console.error(error.message);
@@ -630,7 +656,7 @@ const returnOrder = async (req, res) => {
 
 const successPage = async (req, res) => {
   try {
-    const ordeId = req.params.ordeId;
+    const ordeId = req.query.ordeId;
     const order = await Order.findById(ordeId)
       .populate("userId")
       .populate("items.product");

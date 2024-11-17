@@ -5,6 +5,7 @@ const storeController = require("../Controllers/User/storeController");
 const paymentController = require("../Controllers/User/paymentController");
 const offerController = require("../Controllers/Admin/offerController");
 const userAuthentication = require("../middleware/userAuth");
+const {validateCartAndPayment} = require("../middleware/validateCartAndPayment");
 const passport = require("passport");
 const routes = express.Router();
 const app = express();
@@ -42,17 +43,17 @@ routes.post("/cart/update-quantity", userAuthentication.isLogin, storeController
 routes.delete("/cart/reove-from-cart", userAuthentication.isLogin, storeController.removeFromCart);
 
 //* proceed to checkout
-routes.get("/checkout", userAuthentication.isLogin, storeController.loadCheckOutPage);
+routes.get("/checkout", userAuthentication.pleaseLogin, storeController.loadCheckOutPage);
 routes.post("/checkout/complete", userAuthentication.isLogin, storeController.createOrder);
-routes.get("/order-placed/:ordeId", userAuthentication.isLogin, storeController.successPage);
+routes.get("/order-placed", userAuthentication.isLogin, storeController.successPage);
 routes.post("/checkout/use-coupon", userAuthentication.isLogin, offerController.useCoupon);
 routes.patch("/checkout/remove-coupon", userAuthentication.isLogin, offerController.removeCoupon);
 
 //* Payment and checkout routes
-routes.post("/checkout/pay-with-paypal", userAuthentication.isLogin, paymentController.payWithPaypal);
+routes.post("/checkout/pay-with-paypal", validateCartAndPayment, paymentController.payWithPaypal);
 routes.get("/checkout/payment-success", userAuthentication.isLogin, paymentController.paymentSuccess);
 routes.get("/checkout/payment-failed", userAuthentication.isLogin, paymentController.paymentCancel);
-routes.get("/profile/pay-now/:orderId", userAuthentication.isLogin, paymentController.payFromOrder);
+routes.get("/profile/pay-now/:orderId", validateCartAndPayment, paymentController.payFromOrder);
 routes.get("/profile/payment-success", userAuthentication.isLogin, paymentController.payNowSuccess);
 routes.get("/profile/payment-failed", userAuthentication.isLogin, paymentController.payNowCancel);
 

@@ -233,10 +233,10 @@
   });
 })(jQuery);
 
-function showToastifySuccess(message) {
+function showToastifySuccess(message, duration = 3000) {
   Toastify({
     text: `<i class="fa-regular fa-circle-check fa-lg"></i> ${message}&emsp;`,
-    duration: 2000,
+    duration: duration,
     gravity: "bottom",
     position: "center",
     backgroundColor: "#28a745",
@@ -246,10 +246,10 @@ function showToastifySuccess(message) {
   }).showToast();
 }
 
-function showToastifyError(message) {
+function showToastifyError(message, duration = 3000) {
   Toastify({
     text: `<i class="fa-regular fa-circle-xmark fa-lg"></i> ${message}&emsp;`,
-    duration: 2000,
+    duration: duration,
     gravity: "bottom",
     position: "center",
     backgroundColor: "#dc3545",
@@ -303,7 +303,7 @@ function userLogout() {
     "btn-success"
   ).then((isConfirm) => {
     if (isConfirm) {
-        window.location.href = "/logout"
+      window.location.href = "/logout";
     }
-  })
-  }
+  });
+}
