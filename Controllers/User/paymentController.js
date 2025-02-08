@@ -8,7 +8,7 @@ const Brand = require("../../Models/brandsModel");
 const Cart = require("../../Models/cartModel");
 const Order = require("../../Models/orderModel");
 
-const { PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+const { PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, ROOT_URL } = process.env;
 paypal.configure({
   mode: PAYPAL_MODE,
   client_id: PAYPAL_CLIENT_ID,
@@ -45,8 +45,8 @@ const payWithPaypal = async (req, res) => {
         payment_method: "paypal",
       },
       redirect_urls: {
-        return_url: "http://localhost:3000/checkout/payment-success",
-        cancel_url: "http://localhost:3000/checkout/payment-failed",
+        return_url: `${ROOT_URL}/checkout/payment-success`,
+        cancel_url: `${ROOT_URL}/checkout/payment-failed`,
       },
       transactions: [
         {
@@ -219,8 +219,8 @@ const payFromOrder = async (req, res) => {
         payment_method: "paypal",
       },
       redirect_urls: {
-        return_url: "http://localhost:3000/profile/payment-success",
-        cancel_url: "http://localhost:3000/profile/payment-failed",
+        return_url: `${ROOT_URL}/profile/payment-success`,
+        cancel_url: `${ROOT_URL}/profile/payment-failed`,
       },
       transactions: [
         {

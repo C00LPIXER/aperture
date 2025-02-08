@@ -740,7 +740,9 @@ const loadReviews = async (req, res) => {
     const reviews = await Review.find()
       .populate("productId")
       .skip(skip)
-      .limit(limit);
+      .limit(2);
+
+    console.log("reviews", reviews);
 
     const totalReviews = await Review.countDocuments();
     const totalPages = Math.ceil(totalReviews / limit);
